@@ -1878,6 +1878,8 @@ g $C2CF
 g $C2D0
 c $C2D1 Interrupt routine 0 - Update clock and check keyboard input
 c $C326
+b $C349
+c $C34A
 c $C379
 c $C3A8 Store the current command in the history
 c $C3FF
@@ -1953,6 +1955,7 @@ g $C8C2 Buffer for assembling text to print
 g $C8C6
 g $C8C8
 g $C8CB
+g $C8CC
 g $C8CE Set to 1 to mark end of string (?)
 g $C8CF
 g $C8D0 Pointer to next command text to check
@@ -2025,6 +2028,8 @@ g $D1E3 Current text buffer
 D $D1E3 Terminated with an ENTER (#N$0D) character
 u $D200
 c $D2E5 Expand macros to form a complete string
+c $D30E
+c $D352
 g $D3A9
 g $D3AA Pointer to string data to print
 W $D3AA
