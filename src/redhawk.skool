@@ -7286,7 +7286,7 @@ c$DC07 CALL $DF5E    ;
  $DC0B CALL $F3C5    ;
  $DC0E RET           ;
 
-; Command 03
+; Command 03 - Speech background
 c$DC0F CALL $DF5E    ;
  $DC12 RET NC        ;
  $DC13 CALL $F1A2    ;
@@ -9971,10 +9971,10 @@ c$F0EE LD HL,($EBFC) ;
  $F1A0 POP AF        ;
  $F1A1 RET           ;
 
-; Routine at F1A2
+; Draw a background for a character speaking
 ;
 ; Used by the routines at #R$DC0F and #R$DD9B.
-c$F1A2 CALL $F83F    ;
+c$F1A2 CALL $F83F    ; Set up sprite data
  $F1A5 RET NC        ;
  $F1A6 LD IX,$D1E3   ; Point #REGix at the text buffer (#R$D1E3)
  $F1AA LD ($D3AA),IX ;
@@ -9983,8 +9983,8 @@ c$F1A2 CALL $F83F    ;
  $F1B3 JR Z,$F1C8    ;
  $F1B5 LD A,$01      ;
  $F1B7 LD ($F688),A  ;
- $F1BA PUSH IX       ;
- $F1BC CALL $F68A    ;
+ $F1BA PUSH IX       ; { Draw the sprites
+ $F1BC CALL $F68A    ; }
  $F1BF POP IX        ;
  $F1C1 LD A,$00      ;
  $F1C3 LD ($F688),A  ;
