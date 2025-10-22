@@ -1485,16 +1485,15 @@ b$7DBE DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $80C6 DEFB $00,$00,$7E,$40,$7E,$46,$46,$7E
  $80CE DEFB $00,$00,$7C,$04,$04,$0C,$0C,$0C
  $80D6 DEFB $00,$00,$3C,$24,$7E,$46,$46,$7E
+ $80DE DEFB $00,$00,$7E,$42,$42,$7E,$06,$06
 
-; Pointers to jump tables
+;Unused
+u$80E6 DEFB $00,$00
+
+; Pointers to text tables
 ;
-; Used by the routines in #R$CB37 and #R$D6C0
-b$80DE DEFW $0000   ; Table 00
- $80E0 DEFW $427E   ; Table 01
- $80E2 DEFW $7E42   ; Table 02
- $80E4 DEFW $0606   ; Table 03
- $80E6 DEFW $0000   ; Table 04
- $80E8 DEFW $8124   ; Table 05 : Directions
+; Used by the routine in #R$CB37
+b$80E8 DEFW $8124   ; Table 05 : Directions
  $80EA DEFW $818B   ; Table 06 : Adverbs
  $80EC DEFW $81AC   ; Table 07 : Prepositions
  $80EE DEFW $81FC   ; Table 08 : User flags
@@ -1505,7 +1504,11 @@ b$80DE DEFW $0000   ; Table 00
  $80F8 DEFW $AA5E   ; Table 0D : Nouns
  $80FA DEFW $ADF1   ; Table 0E : Character responses
  $80FC DEFW $B5FF   ; Table 0F : Room specific responses
- $80FE DEFW $BD81   ; Table 10
+
+; Pointers to data tables
+;
+; Used by the routine in #R$D6C0
+b$80FE DEFW $BD81   ; Table 10
  $8100 DEFW $BDCD   ; Table 11
  $8102 DEFW $BE1D   ; Table 12
  $8104 DEFW $BE6D   ; Table 13
@@ -1514,7 +1517,7 @@ b$80DE DEFW $0000   ; Table 00
 b$8106 DEFB $09,$12,$2F,$3C,$3E,$46,$48,$56
  $810E DEFB $69,$8D,$8D,$A5,$D0,$E3,$F7
 
-; Data block at 8115
+; Unused
 b$8115 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $811D DEFB $00,$00,$00,$00,$00,$00,$00
 
@@ -1526,8 +1529,7 @@ t$8124 DEFM $08,"n,north"
  $8142 DEFM $05,"u,up"
  $8147 DEFM $07,"d,down"
  $814E DEFM $15,"in,into,inside,enter"
- $8163 DEFB $28
- $8164 DEFM "out,outside,exit,leave,escape,break out"
+ $8163 DEFB $28,"out,outside,exit,leave,escape,break out"
 
 ; Data table 06
 t$818B DEFM $10,"quickly,rapidly"
@@ -3855,7 +3857,7 @@ g$C277 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $C2B7 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $C2BF DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Set to #N$FF if a command is being executed
+; Current command to execute
 g$C2C7 DEFB $00
 
 ; Nth index for current command
@@ -3873,13 +3875,13 @@ g$C2CC DEFB $00
 ; Number of frames before the next panel should be drawn
 g$C2CD DEFB $05
 
-; Game status buffer entry at C2CE
+; Time before keystroke is registered
 g$C2CE DEFB $FF
 
 ; Set to 1 if there is an active command
 g$C2CF DEFB $00
 
-; Game status buffer entry at C2D0
+; Last character printed in the command window
 g$C2D0 DEFB $00
 
 ; Interrupt routine 0 - Update clock and check keyboard input
@@ -3889,41 +3891,43 @@ c$C2D1 LD A,($C2CF)  ; { Is a command running?
 ; The keyboard can be read
  $C2D9 CALL $C70F    ; Read a keypress
  $C2DC LD A,($C70D)  ; Get the keypress just read (#R$C70D)
- $C2DF LD DE,($C2CC) ; { Get the last key pressed
+ $C2DF LD DE,($C2CC) ; { Is the key pressed the same as before?
  $C2E3 CP E          ; }
- $C2E4 JR NZ,$C2F3   ; Skip the rest of this if the key is same (ie: held down)
- $C2E6 LD A,($C2CE)  ;
+ $C2E4 JR NZ,$C2F3   ; If so, jump forward
+ $C2E6 LD A,($C2CE)  ; { Reduce the time to recognise keystroke
  $C2E9 SUB $01       ;
- $C2EB LD ($C2CE),A  ;
- $C2EE CP $00        ;
- $C2F0 JP NZ,$C46B   ;
-*$C2F3 LD A,$FF      ;
- $C2F5 LD ($C2CE),A  ;
- $C2F8 LD A,($C70D)  ;
- $C2FB LD ($C2CC),A  ;
- $C2FE CP $00        ;
+ $C2EB LD ($C2CE),A  ; }
+ $C2EE CP $00        ; Is this now zero?
+ $C2F0 JP NZ,$C46B   ; If so, jump forward
+*$C2F3 LD A,$FF      ; { Reset time to recognise keystroke as #N$FF
+ $C2F5 LD ($C2CE),A  ; }
+ $C2F8 LD A,($C70D)  ; { Set the last key pressed as this one
+ $C2FB LD ($C2CC),A  ; }
+ $C2FE CP $00        ; { Jump forward if this is a non-alphanumeric key
  $C300 JP Z,$C46B    ;
  $C303 CP $E3        ;
  $C305 JP Z,$C46B    ;
  $C308 CP $0E        ;
- $C30A JP Z,$C46B    ;
- $C30D CP $0D        ;
- $C30F JP Z,$C5E0    ;
- $C312 LD A,($C70E)  ;
- $C315 CP $27        ;
- $C317 JP Z,$C520    ;
- $C31A CP $18        ;
- $C31C JP Z,$C6B3    ;
- $C31F LD A,($C70D)  ;
- $C322 CALL $C326    ;
- $C325 RET           ;
+ $C30A JP Z,$C46B    ; }
+ $C30D CP $0D        ; { Jump forward if RETURN pressed
+ $C30F JP Z,$C5E0    ; }
+ $C312 LD A,($C70E)  ; { Was CAPS pressed?
+ $C315 CP $27        ; }
+ $C317 JP Z,$C520    ; Jump forward if so
+ $C31A CP $18        ; Was SYMBOL SHIFT pressed?
+ $C31C JP Z,$C6B3    ; Jump forward if so
+ $C31F LD A,($C70D)  ; { Print the character of the key pressed and return
+ $C322 CALL $C326    ; 
+ $C325 RET           ; }
 
-; Routine at C326
+; Draw a character in the command window
 ;
 ; Used by the routines at #R$C2D1, #R$C5E0 and #R$C6B3.
-c$C326 LD ($C2D0),A  ;
- $C329 LD HL,($C2C8) ;
- $C32C CALL $C475    ; Get the address of the string
+;
+; A ASCII code of the key pressed
+c$C326 LD ($C2D0),A  ; Set the last printed character to this one
+ $C329 LD HL,($C2C8) ; Get the most recent command
+ $C32C CALL $C475    ; Return with the command data in #REGhl
  $C32F LD A,(HL)     ;
  $C330 CP $3E        ;
  $C332 JP Z,$C34A    ;
@@ -3937,28 +3941,29 @@ c$C326 LD ($C2D0),A  ;
  $C345 CALL $C34A    ;
  $C348 RET           ;
 
-; Next character to draw
-g$C349 DEFB $20
+; Data block at C349
+ $C349 DEFB $20
 
 ; Routine at C34A
 ;
-; Used by the routines at #R$C326 and #R$C520.
-c$C34A CALL $C42B    ;
- $C34D LD HL,($C2C8) ;
- $C350 INC L         ;
- $C351 LD ($C2C8),HL ;
- $C354 LD BC,($C2CA) ;
- $C358 INC C         ;
- $C359 LD ($C2CA),BC ;
+; Used by the routine at #R$C326
+ $C34A CALL $C42B    ;
+ $C34D RET Z         ;
+ $C34E LD HL,$C222   ;
+ $C351 INC HL        ;
+ $C352 RET Z         ;
+ $C353 JP NZ,$4BED   ;
+ $C356 JP Z,$0CC2    ;
+ $C359 LD ($C2CA),BC ; Set the cursor position
  $C35D LD A,C        ;
  $C35E CP $1F        ;
  $C360 JP NZ,$C448   ;
  $C363 LD HL,($C2C8) ;
  $C366 LD L,$00      ;
  $C368 LD ($C2C8),HL ;
- $C36B LD BC,($C2CA) ;
+ $C36B LD BC,($C2CA) ; { Increase the cursor by 2 characters
  $C36F LD C,$02      ;
- $C371 LD ($C2CA),BC ;
+ $C371 LD ($C2CA),BC ; }
  $C375 CALL $C3AB    ;
  $C378 RET           ;
 
@@ -4049,15 +4054,15 @@ c$C3FF CALL $C42B    ;
 ; Routine at C42B
 ;
 ; Used by the routines at #R$C379, #R$C3A8, #R$C3FF, #R$C520 and #R$C5E0.
-c$C42B LD A,($C349)  ; 
- $C42E CP $2B        ; 
+c$C42B LD A,($C349)  ;
+ $C42E CP $2B        ;
  $C430 RET Z         ;
  $C431 LD BC,($C2CA) ; Get the cursor position
  $C435 CALL $C78C    ; Convert co-ordinates to a screen address
- $C438 LD HL,($C2C8) ; Get the string ID (#R$C2C8)
- $C43B CALL $C475    ; Get the address of the string
- $C43E LD A,(HL)     ; Get the first character
- $C43F CALL $C75B    ; Draw it
+ $C438 LD HL,($C2C8) ;
+ $C43B CALL $C475    ;
+ $C43E LD A,(HL)     ;
+ $C43F CALL $C75B    ;  Draw the character
  $C442 LD A,$2B      ;
  $C444 LD ($C349),A  ;
  $C447 RET           ;
@@ -4068,14 +4073,14 @@ c$C42B LD A,($C349)  ;
 ; #R$C5E0.
 c$C448 LD BC,($C2CA) ; Get the cursor position
  $C44C CALL $C78C    ; Convert co-ordinates to a screen address
- $C44F LD HL,$C349   ; { Get the next character to display
- $C452 LD A,(HL)     ; }
- $C453 CALL $C75B    ; Draw it
+ $C44F LD HL,$C349   ;
+ $C452 LD A,(HL)     ;
+ $C453 CALL $C75B    ;  Draw the character
  $C456 LD A,($C349)  ;
  $C459 CP $2B        ;
  $C45B JR NZ,$C466   ;
  $C45D LD HL,($C2C8) ;
- $C460 CALL $C475    ; Get the address of the string
+ $C460 CALL $C475    ;
  $C463 LD A,(HL)     ;
  $C464 JR $C468      ;
 *$C466 LD A,$2B      ;
@@ -4094,20 +4099,20 @@ c$C448 LD BC,($C2CA) ; Get the cursor position
 ;
 ; H Index of command in history
 ; HL On exit, points to the command data
-c$C475 PUSH HL       ; Store #REGhl
- $C476 PUSH HL       ; { Put #REGhl in #REGbc, to #REGb holds a count
- $C477 POP BC        ; starting with the index value }
- $C478 LD HL,$C155   ; Point #REGhl at the command history (#R$C155)
- $C47B LD A,B        ; { Have we reached the right point?
- $C47C CP $00        ; }
- $C47E JR Z,$C486    ; Jump forward if not
- $C480 LD DE,$001D   ; { Skip to the next entry and repeat
+c$C475 PUSH HL       ;
+ $C476 PUSH HL       ;
+ $C477 POP BC        ;
+ $C478 LD HL,$C155   ;
+ $C47B LD A,B        ;
+ $C47C CP $00        ;
+ $C47E JR Z,$C486    ;
+ $C480 LD DE,$001D   ;
 *$C483 ADD HL,DE     ;
- $C484 DJNZ $C483    ; }
-*$C486 POP DE        ; Restore #REGde
- $C487 LD D,$00      ; { Move to the next entry and return
+ $C484 DJNZ $C483    ;
+*$C486 POP DE        ;
+ $C487 LD D,$00      ;
  $C489 ADD HL,DE     ;
- $C48A RET           ; }
+ $C48A RET           ;
 
 ; Data block at C48B
 b$C48B DEFB $00,$00
@@ -4145,7 +4150,7 @@ c$C48D LD BC,$1302   ;
  $C4C0 JR $C490      ;
 *$C4C2 LD HL,($C2C8) ;
  $C4C5 LD L,$00      ;
- $C4C7 CALL $C475    ; Get the address of the string
+ $C4C7 CALL $C475    ;
  $C4CA PUSH HL       ;
  $C4CB POP IY        ;
  $C4CD LD BC,$1502   ;
@@ -4186,7 +4191,7 @@ c$C4D7 LD BC,$1402   ;
  $C509 JR $C4DA      ;
 *$C50B LD HL,($C2C8) ;
  $C50E LD L,$00      ;
- $C510 CALL $C475    ; Get the address of the string
+ $C510 CALL $C475    ;
  $C513 PUSH HL       ;
  $C514 POP IY        ;
  $C516 LD BC,$1202   ;
@@ -4217,7 +4222,7 @@ c$C520 LD A,$08      ;
  $C549 JP $C46B      ;
 *$C54C CALL $C379    ;
  $C54F LD HL,($C2C8) ;
- $C552 CALL $C475    ; Get the address of the string
+ $C552 CALL $C475    ;
  $C555 LD A,(HL)     ;
  $C556 CP $3E        ;
  $C558 JR NZ,$C55F   ;
@@ -4234,11 +4239,11 @@ c$C520 LD A,$08      ;
  $C575 RET           ;
 *$C576 CALL $C42B    ;
  $C579 LD HL,($C2C8) ;
- $C57C CALL $C475    ; Get the address of the string
+ $C57C CALL $C475    ;
  $C57F PUSH HL       ;
  $C580 LD HL,($C2C8) ;
  $C583 LD L,$1C      ;
- $C585 CALL $C475    ; Get the address of the string
+ $C585 CALL $C475    ;
  $C588 POP BC        ;
  $C589 SBC HL,BC     ;
  $C58B LD A,L        ;
@@ -4247,7 +4252,7 @@ c$C520 LD A,$08      ;
  $C58F PUSH BC       ;
  $C590 LD HL,($C2C8) ;
  $C593 LD L,$1C      ;
- $C595 CALL $C475    ; Get the address of the string
+ $C595 CALL $C475    ;
  $C598 PUSH HL       ;
  $C599 POP DE        ;
  $C59A DEC HL        ;
@@ -4255,7 +4260,7 @@ c$C520 LD A,$08      ;
  $C59C PUSH BC       ;
  $C59D LDDR          ;
  $C59F LD HL,($C2C8) ;
- $C5A2 CALL $C475    ; Get the address of the string
+ $C5A2 CALL $C475    ;
  $C5A5 LD (HL),$20   ;
  $C5A7 LD BC,($C2CA) ; Get the cursor position
  $C5AB LD C,$1D      ;
@@ -4302,7 +4307,7 @@ c$C5E0 LD A,($C2C7)  ;
 *$C5ED LD A,$00      ;
  $C5EF LD ($C2CF),A  ;
  $C5F2 LD HL,($C2C8) ;
- $C5F5 CALL $C475    ; Get the address of the string
+ $C5F5 CALL $C475    ;
 *$C5F8 DEC HL        ;
  $C5F9 LD A,(HL)     ;
  $C5FA CP $3E        ;
@@ -4310,7 +4315,7 @@ c$C5E0 LD A,($C2C7)  ;
  $C5FE INC HL        ;
  $C5FF PUSH HL       ;
  $C600 LD HL,($C2C8) ;
- $C603 CALL $C475    ; Get the address of the string
+ $C603 CALL $C475    ;
  $C606 POP DE        ;
  $C607 SBC HL,DE     ;
  $C609 PUSH HL       ;
@@ -4322,13 +4327,13 @@ c$C5E0 LD A,($C2C7)  ;
  $C613 JP Z,$C448    ;
  $C616 PUSH DE       ;
  $C617 POP HL        ;
- $C618 LD DE,$C277   ; Point #REGde at the working buffer (#R$C277)
- $C61B LDIR          ; Copy it
- $C61D LD A,$0D      ; { Ensure the command is terminated with a new line
- $C61F LD (DE),A     ; }
+ $C618 LD DE,$C277   ;
+ $C61B LDIR          ;
+ $C61D LD A,$0D      ;
+ $C61F LD (DE),A     ;
  $C620 CALL $C42B    ;
  $C623 LD HL,($C2C8) ;
- $C626 CALL $C475    ; Get the address of the string
+ $C626 CALL $C475    ;
  $C629 LD A,$2E      ;
  $C62B LD (HL),A     ;
  $C62C LD BC,($C2CA) ; Get the cursor position
@@ -4344,8 +4349,8 @@ c$C5E0 LD A,($C2C7)  ;
  $C64A CALL $C3AB    ;
  $C64D LD A,$3E      ;
  $C64F CALL $C326    ;
- $C652 LD A,$FF      ; { Set to "command executing"
- $C654 LD ($C2C7),A  ; }
+ $C652 LD A,$FF      ;
+ $C654 LD ($C2C7),A  ;
  $C657 LD A,$00      ;
  $C659 LD ($C2CD),A  ;
  $C65C RET           ;
@@ -4776,10 +4781,7 @@ g$C8C6 DEFB $00,$00
 g$C8C8 DEFB $00,$00,$00
 
 ; Game status buffer entry at C8CB
-g$C8CB DEFB $00
-
-; Game status buffer entry at C8CC
-g$C8CC DEFB $00,$00
+g$C8CB DEFB $00,$00,$00
 
 ; Set to 1 to mark end of string (?)
 g$C8CE DEFB $00
@@ -4801,19 +4803,15 @@ g$C8D6 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $C8DE DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $C8E6 DEFB $00,$00,$00
 
-; Data block at C8E9
-b$C8E9 DEFB $00,$00
-
-; Data block at C8EB
-b$C8EB DEFB $00,$00,$00,$00
-
-; Data block at C8EF
-b$C8EF DEFB $00
+; First letter of last command in each text table
+;
+; This allows fast lookup
+b$C8E9 DEFB $00,$00,$00,$00,$00,$00,$00
 
 ; Last buffer entry searched for
 g$C8F0 DEFB $00
 
-; Game status buffer entry at C8F1
+; Last index in the command buffer searched for
 g$C8F1 DEFB $00
 
 ; Game status buffer entry at C8F2
@@ -5179,25 +5177,25 @@ c$CB10 LD IX,($C8D2) ;
 *$CB33 LD HL,$CB33   ;
  $CB36 RET           ;
 
-; Look up data from a table
+; Look up data in a text table
 ;
 ; Used by the routines at #R$CCA6 and #R$CCD2.
 ;
 ; B Data index
-; C Data table ID
+; C Text table ID
 ; IX On exit, points to the data
 c$CB37 LD HL,$C8E9   ; Point #REGhl at the command table entries starting from #R$C8E9
  $CB3A LD A,B        ; { Store the data table index in #R$EBFA
  $CB3B LD ($EBFA),A  ; }
- $CB3E LD B,$00      ; { Add the data table ID 
+ $CB3E LD B,$00      ; { Add the text table type
  $CB40 ADD HL,BC     ; }
- $CB41 LD A,(HL)     ; { Set the index found there (?)
+ $CB41 LD A,(HL)     ; { Set the index found there
  $CB42 LD ($C8F1),A  ; }
 ; This entry point is used by the routine at #R$D2E5.
-*$CB45 LD A,C        ; { Double the command ID to get a word offset
+*$CB45 LD A,C        ; { Double the table ID to get a word offset
  $CB46 SLA A         ;
  $CB48 LD C,A        ; }
- $CB49 LD HL,$80DE   ; { Add the base address of the jump table (#R$80DE)
+ $CB49 LD HL,$80DE   ; { Add the base address of the jump table (#R$80E8)
  $CB4C ADD HL,BC     ; }
  $CB4D LD E,(HL)     ; { Put the address found in #REGix
  $CB4E INC HL        ;
@@ -5209,16 +5207,16 @@ c$CB37 LD HL,$C8E9   ; Point #REGhl at the command table entries starting from #
  $CB58 LD A,($EBFA)  ; { Restore the data table index into #REGb
  $CB5B LD B,A        ; }
  $CB5C CP $00        ; Is it zero?
- $CB5E JR Z,$CB76    ; Jump forward if so
+ $CB5E JR Z,$CB76    ; Jump forward if so, already found it
 ; Look up the relevant command in the table
-*$CB60 LD HL,$C8F1   ; Point #REGhl to the buffer at #R$C8F1
- $CB63 LD E,(IX+$00) ; { Add the found offset
+*$CB60 LD HL,$C8F1   ; Point #REGhl to the previously stored index in #R$C8F1
+ $CB63 LD E,(IX+$00) ; { Put the length in #REGde and add it
  $CB66 LD D,$00      ; 
  $CB68 ADD IX,DE     ; }
- $CB6A LD A,(IX+$01) ;
- $CB6D CP (HL)       ;
- $CB6E JR NZ,$CB60   ;
- $CB70 DEC B         ; Decrease the command count
+ $CB6A LD A,(IX+$01) ; Get the first letter
+ $CB6D CP (HL)       ; Does it equal this one?
+ $CB6E JR NZ,$CB60   ; Jump back if it doesn't
+ $CB70 DEC B         ; Decrease the count
  $CB71 LD A,B        ; { Is it now zero?
  $CB72 CP $00        ; }
  $CB74 JR NZ,$CB60   ; Jump back if it isn't
@@ -5231,9 +5229,9 @@ c$CB37 LD HL,$C8E9   ; Point #REGhl at the command table entries starting from #
  $CB85 LD D,$00      ;
  $CB87 ADD IX,DE     ; }
  $CB89 LD ($C8D0),IX ; Store this as the active command
- $CB8D LD IX,($C8D2) ;
- $CB91 LD ($C8D4),IX ;
- $CB95 RET           ;
+ $CB8D LD IX,($C8D2) ; { Move the previous command back in the history
+ $CB91 LD ($C8D4),IX ; }
+ $CB95 RET           ; All done
 
 ; Get the next text entry to display
 ;
@@ -5320,7 +5318,7 @@ c$CBBF LD A,($C8CC)  ;
  $CC4A POP AF        ;
  $CC4B LD E,A        ;
  $CC4C LD D,$00      ;
- $CC4E LD IX,$C277   ; Point #REGix to the working command (#R$C277)
+ $CC4E LD IX,$C277   ;
  $CC52 ADD IX,DE     ;
  $CC54 LD ($CD7C),IX ;
  $CC58 LD A,$00      ;
@@ -5349,7 +5347,7 @@ c$CBBF LD A,($C8CC)  ;
  $CC89 JR Z,$CCA3    ;
  $CC8B LD DE,($C8CC) ;
  $CC8F LD D,$00      ;
- $CC91 LD IX,$C277   ; Point #REGix to the current command (#R$C277)
+ $CC91 LD IX,$C277   ;
  $CC95 ADD IX,DE     ;
  $CC97 LD ($CD7C),IX ;
  $CC9B LD A,$00      ;
@@ -5362,6 +5360,8 @@ c$CBBF LD A,($C8CC)  ;
 ; Process input
 ;
 ; Used by the routine at #R$CFCA.
+;
+; BC ???
 c$CCA6 LD HL,$8106   ; Point #REGhl at the offset buffer
  $CCA9 ADD HL,BC     ; Add the command ID
  $CCAA LD A,(HL)     ;
@@ -5467,7 +5467,7 @@ b$CD54 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $CD5C DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $CD64 DEFB $00,$00
 
-; Macro definition table
+; Data block at CD66
 b$CD66 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $CD6E DEFB $00,$00,$00,$00,$00,$00,$44,$41
  $CD76 DEFB $50,$56,$4C,$4F,$43
@@ -5510,7 +5510,7 @@ c$CDB6 LD A,($CD7B)  ;
  $CDC5 CALL $CF46    ;
  $CDC8 CP $0D        ;
  $CDCA JP Z,$CE3F    ;
- $CDCD LD DE,$C277   ; Point #REGde to the working command
+ $CDCD LD DE,$C277   ;
  $CDD0 PUSH IX       ;
  $CDD2 POP HL        ;
  $CDD3 SCF           ;
@@ -5579,7 +5579,7 @@ c$CDB6 LD A,($CD7B)  ;
  $CE5B INC IX        ;
  $CE5D PUSH IX       ;
  $CE5F POP HL        ;
- $CE60 LD DE,$C277   ; Point #REGde at the working command
+ $CE60 LD DE,$C277   ;
  $CE63 SCF           ;
  $CE64 CCF           ;
  $CE65 SBC HL,DE     ;
@@ -6064,46 +6064,40 @@ c$D2E5 LD IX,$D1E3   ; Point #REGix at the text buffer (#R$D1E3)
 *$D2E9 LD A,($C8CE)  ;
  $D2EC CP $00        ;
  $D2EE JR NZ,$D303   ;
- $D2F0 PUSH IX       ; { Process the next character
- $D2F2 CALL $CB10    ; and return it in #REGa.
- $D2F5 POP IX        ; }
- $D2F7 CP $00        ; { If bit 7 is set, this is a macro,
- $D2F9 JP M,$D309    ; so jump forward and expand it }
- $D2FC LD (IX+$00),A ; { Otherwise, store the character directly
- $D2FF INC IX        ; and loop to the next one
- $D301 JR $D2E9      ; }
-*$D303 LD A,$0D      ; { Terminate the string with newline and return
+ $D2F0 PUSH IX       ;
+ $D2F2 CALL $CB10    ;
+ $D2F5 POP IX        ;
+ $D2F7 CP $00        ;
+ $D2F9 JP M,$D309    ;
+ $D2FC LD (IX+$00),A ;
+ $D2FF INC IX        ;
+ $D301 JR $D2E9      ;
+*$D303 LD A,$0D      ;
  $D305 LD (IX+$00),A ;
- $D308 RET           ; }
-*$D309 CALL $D30E    ; { Expand the macro character
- $D30C JR $D2E9      ; and loop back }
-
-; Expand a macro character to a full string
-;
-; Used by the routine at #R$D2E5.
-;
-; A Character to expand
-c$D30E CP $FE        ;
+ $D308 RET           ;
+*$D309 CALL $D30E    ;
+ $D30C JR $D2E9      ;
+*$D30E CP $FE        ;
  $D310 JR NC,$D352   ;
- $D312 AND $7F       ; Turn bit 7 off
- $D314 LD HL,$8106   ; { Subtract the offset (9) to get the real value
- $D317 SUB (HL)      ; }
+ $D312 AND $7F       ;
+ $D314 LD HL,$8106   ;
+ $D317 SUB (HL)      ;
  $D318 CP $07        ;
  $D31A JP Z,$D3AC    ;
  $D31D CP $08        ;
  $D31F JP Z,$D3B3    ;
- $D322 SLA A         ; Double the value to get a word offset
- $D324 LD E,A        ; { Put this in #REGde
- $D325 LD D,$00      ; }
- $D327 LD IY,$CD66   ; { Add the base offset of the macro table (#R$CD66)
- $D32B ADD IY,DE     ; }
+ $D322 SLA A         ;
+ $D324 LD E,A        ;
+ $D325 LD D,$00      ;
+ $D327 LD IY,$CD66   ;
+ $D32B ADD IY,DE     ;
  $D32D LD A,(IY+$01) ;
  $D330 LD ($D2E4),A  ;
  $D333 CP $00        ;
  $D335 JR Z,$D303    ;
  $D337 LD A,(IY+$00) ;
  $D33A LD E,A        ;
- $D33B LD IY,$C277   ; Point #REGiy at the working command
+ $D33B LD IY,$C277   ;
  $D33F ADD IY,DE     ;
 *$D341 LD A,(IY+$00) ;
  $D344 INC IY        ;
@@ -6113,11 +6107,8 @@ c$D30E CP $FE        ;
  $D34E DEC (HL)      ;
  $D34F JR NZ,$D341   ;
  $D351 RET           ;
-
-; Routine at D352
-;
-; Used by the routines at #R$D30E and #R$D3AC.
-c$D352 LD ($D2E3),A  ;
+; This entry point is used by the routine at #R$D3AC.
+*$D352 LD ($D2E3),A  ;
  $D355 PUSH IX       ;
  $D357 CALL $CB10    ;
  $D35A POP IX        ;
@@ -6593,7 +6584,7 @@ c$D6AA LD C,$08      ; Select table 8 (user flags)
 c$D6C0 PUSH BC        ; Store #REGbc
  $D6C1 SLA C          ; Double the action type to get a word offset
  $D6C3 PUSH BC        ; Store #REGbc
- $D6C4 LD B,$00       ; { Add the base address at #R$80DE
+ $D6C4 LD B,$00       ; { Add the base address (#R$80FE)
  $D6C6 LD HL,$80DE    ;
  $D6C9 ADD HL,BC      ; }
  $D6CA LD A,(HL)      ; { Point the graphics update buffer to this (#R$C8C2)
@@ -7795,7 +7786,7 @@ c$DFD2 LD IY,($C8D2) ;
 ; Routine at DFF3
 ;
 ; Used by the routine at #R$DFD2.
-c$DFF3 LD IX,$C277   ; Point #REGix at the working command
+c$DFF3 LD IX,$C277   ;
  $DFF7 LD DE,($CD70) ;
  $DFFB LD D,$00      ;
  $DFFD ADD IX,DE     ;
@@ -7986,10 +7977,10 @@ c$E15A LD IX,$5DB7   ; { Put the stack somewhere safe
 c$E186 CALL $C906    ;
  $E189 LD HL,($80FC) ;
  $E18C LD ($E146),HL ;
- $E18F LD A,$00      ; Set #REGa to 0 to apply to some flags
+ $E18F LD A,$00      ;
  $E191 LD ($CD7B),A  ;
  $E194 LD ($E148),A  ;
- $E197 LD ($C2C7),A  ; Set no command
+ $E197 LD ($C2C7),A  ;
  $E19A LD A,$00      ; { Turn off fast time
  $E19C LD ($BFDB),A  ; }
  $E19F LD B,$08      ;
@@ -8052,8 +8043,8 @@ c$E1D7 LD HL,$E151   ;
  $E217 LD A,($E148)  ;
  $E21A CP $00        ;
  $E21C JR Z,$E1D7    ;
- $E21E LD A,($C2C7)  ; Get the current command (#R$C2C7)
- $E221 CP $00        ; Is it 0 (no command)?
+ $E21E LD A,($C2C7)  ;
+ $E221 CP $00        ;
  $E223 JR NZ,$E1D7   ;
  $E225 CALL $D4CC    ;
  $E228 JR $E1D7      ; Jump to the start of the loop.
@@ -8062,8 +8053,8 @@ c$E1D7 LD HL,$E151   ;
  $E22F JR $E1D7      ; Jump to the start of the loop.
 *$E231 CALL $E265    ;
  $E234 CALL $E448    ;
- $E237 LD A,$00      ; { Set to no command executing
- $E239 LD ($C2C7),A  ; }
+ $E237 LD A,$00      ;
+ $E239 LD ($C2C7),A  ;
  $E23C LD ($CD7B),A  ;
  $E23F LD HL,$C277   ;
  $E242 LD ($CD7C),HL ;
