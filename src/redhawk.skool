@@ -10507,7 +10507,7 @@ c$F52B LD HL,$F529   ; Point #REGhl to the length
  $F5C1 RET           ; }
 
 ; Game status buffer entry at F5C2
-g$F5C@ DEFB $00
+g$F5C2 DEFB $00
 
 ; Buffer for sprites in a room
 g$F5C3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
