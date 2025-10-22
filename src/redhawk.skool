@@ -3617,16 +3617,15 @@ b$BFB0 DEFB $01         ; Set to 1 to enable interrupts or 0 to disable
 
 
 ; Time update bitfield
+;
+; Bits 0-5 are set for each digit that needs updating
 g$BFC5 DEFB $00
 
-; Data block at BFC6
+; Current time (in minutes)
 w$BFC6 DEFW $0000
 
 ; Current time (in digits)
-g$BFC8 DEFB $00,$00,$00,$00,$00
-
-; Game status buffer entry at BFCD
-g$BFCD DEFB $00
+g$BFC8 DEFB $00,$00,$00,$00,$00,$00
 
 ; Time digit positions
 g$BFCE DEFW $49EA
@@ -4866,7 +4865,7 @@ c$C920 CALL $CA1A    ; Initialize the game data pointer
  $C929 LD A,($E147)  ;
  $C92C CALL $CA08    ; }
  $C92F LD B,$08      ; Set 8 bytes to dump
- $C931 LD IX,$BFCD   ; Point #REGix to #R$BFCD (??)
+ $C931 LD IX,$BFCD   ; Point #REGix to the end of the time buffer (#R$BFC8)
 *$C935 LD A,(IX+$00) ; { Set the next byte
  $C938 CALL $CA08    ; }
  $C93B DEC IX        ; Move backwards to the next byte
@@ -4883,7 +4882,7 @@ c$C945 CALL $CA1A    ; Initialize the game data pointer
  $C94E CALL $CA11    ;
  $C951 LD ($E147),A  ; }
  $C954 LD B,$08      ; Set 8 bytes to read
- $C956 LD IX,$BFCD   ; Point #REGix to #R$BFCD (??)
+ $C956 LD IX,$BFCD   ; Point #REGix to the end of the time buffer (#R$BFC8))
 *$C95A CALL $CA11    ; { Read the byte
  $C95D LD (IX+$00),A ; }
  $C960 DEC IX        ; Move backwards to the next byte
@@ -5398,7 +5397,7 @@ c$CCD2 LD ($C8F0),A  ; Put the value to search to #R$C8F0
  $CCDB ADD HL,BC     ; }
  $CCDC LD A,(HL)     ; { Store the found command value (?)
  $CCDD LD ($C8F1),A  ; }
- $CCE0 LD HL,$C8EF   ; Point #REGhl at the command table entries starting from #R$C8EF
+ $CCE0 LD HL,$C8EF   ; Point #REGhl at the back of the command table entries (#R$C8E9)
  $CCE3 ADD HL,BC     ; Add the command ID
  $CCE4 LD A,(HL)     ;
  $CCE5 LD ($C8F2),A  ;
@@ -7949,7 +7948,7 @@ b$E149 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; Game status buffer entry at E151
 g$E151 DEFB $00
 
-; Data block at E152
+; Default time
 b$E152 DEFB $02,$73,$01,$00,$02,$07,$00,$00
 
 ; Main entry point
@@ -7962,8 +7961,8 @@ c$E15A LD IX,$5DB7   ; { Put the stack somewhere safe
  $E16A CALL $0556    ; }
  $E16D LD A,$00      ;
  $E16F LD ($E151),A  ;
- $E172 CALL $FD93    ; Initialize the game
- $E175 CALL $E186    ;
+ $E172 CALL $FD93    ; Draw the playing area
+ $E175 CALL $E186    ; Initialize game data
  $E178 CALL $CA65    ; Set up the command buffers
  $E17B CALL $CAA8    ; Draw the timer
  $E17E CALL $C920    ; Set up for a new game
@@ -7971,7 +7970,7 @@ c$E15A LD IX,$5DB7   ; { Put the stack somewhere safe
                      ; initialization routine at #R$FD93, which isn't used after tihs point. }
  $E184 JR $E1D7      ; Enter the main loop
 
-; Routine at E186
+; Initialize game data
 ;
 ; Used by the routines at #R$E15A and #R$E1B6.
 c$E186 CALL $C906    ;
@@ -7983,15 +7982,16 @@ c$E186 CALL $C906    ;
  $E197 LD ($C2C7),A  ;
  $E19A LD A,$00      ; { Turn off fast time
  $E19C LD ($BFDB),A  ; }
- $E19F LD B,$08      ;
- $E1A1 LD IX,$E152   ;
+; Set the default time
+ $E19F LD B,$08      ; 8 bytes to copy (2 bytes for minutes, 6 bytes for digits)
+ $E1A1 LD IX,$E152   ; { Copy from default time (#R$E152) to working time (#R$BFC6)
  $E1A5 LD IY,$BFC6   ;
 *$E1A9 LD A,(IX+$00) ;
  $E1AC LD (IY+$00),A ;
  $E1AF INC IX        ;
  $E1B1 INC IY        ;
- $E1B3 DJNZ $E1A9    ;
- $E1B5 RET           ;
+ $E1B3 DJNZ $E1A9    ; }
+ $E1B5 RET           ; All done
 
 ; Routine at E1B6
 ;
@@ -10506,9 +10506,12 @@ c$F52B LD HL,$F529   ; Point #REGhl to the length
 *$F5BD LD ($BF6A),DE ; { Store the next screen address (#R$BF6A) and return
  $F5C1 RET           ; }
 
+; Game status buffer entry at F5C2
+g$F5C@ DEFB $00
+
 ; Buffer for sprites in a room
-g$F5C2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $F5CA DEFB $00,$00
+g$F5C3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $F5CB DEFB $00
 
 ; Sprite lookup data
 b$F5CC DEFB $00,$0D,$01,$06,$01,$06,$02,$00
@@ -10690,7 +10693,7 @@ c$F68A LD IX,$F5C2   ; Point #REGix at the room buffer (#R$F5C2)
  $F7BC LD HL,$D757   ;
  $F7BF LD A,$01      ;
  $F7C1 LD ($F5C2),A  ;
- $F7C4 LD DE,$F5C3   ;
+ $F7C4 LD DE,$F5C3   ; Point #REGde to the sprite definitons
 *$F7C7 LD A,(DE)     ;
  $F7C8 CP (HL)       ;
  $F7C9 JR Z,$F7E8    ;
@@ -10707,13 +10710,13 @@ c$F68A LD IX,$F5C2   ; Point #REGix at the room buffer (#R$F5C2)
  $F7E3 LD A,$06      ;
  $F7E5 LD ($F686),A  ;
 *$F7E8 LD A,(DE)     ;
- $F7E9 SLA A         ;
+ $F7E9 SLA A         ; { Multiply by 8
  $F7EB SLA A         ;
- $F7ED SLA A         ;
- $F7EF LD BC,$F5CC   ;
- $F7F2 LD L,A        ;
- $F7F3 LD H,$00      ;
- $F7F5 ADD HL,BC     ;
+ $F7ED SLA A         ; }
+ $F7EF LD BC,$F5CC   ; Set #REGbc to the base offset of the sprite definition table
+ $F7F2 LD L,A        ; { Put the offset in #REGhl
+ $F7F3 LD H,$00      ; }
+ $F7F5 ADD HL,BC     ; Add them
  $F7F6 LD A,($F686)  ;
  $F7F9 AND $FE       ;
  $F7FB LD C,A        ;
@@ -10758,7 +10761,7 @@ c$F83F CALL $E265    ;
  $F84A LD HL,$CD5F   ;
  $F84D CP (HL)       ;
  $F84E JR NZ,$F8B0   ;
- $F850 LD IY,$F5C3   ;
+ $F850 LD IY,$F5C3   ; Point #REGiy at the sprite definitions
  $F854 LD A,$00      ;
  $F856 LD ($F5C2),A  ;
  $F859 LD HL,$C8C8   ;
@@ -11289,7 +11292,7 @@ b$FD7B DEFB $B2,$12,$B2,$F9,$93,$F9
  $FD87 DEFB $88,$81,$88,$C9,$79,$C9
  $FD8D DEFB $82,$19,$82,$59,$79,$59
 
-; Initialize game
+; Draw the playing area
 ;
 ; This routine is later overwritten at the routine at #R$CAF3 with an IM2 jump
 ; table to #N$FDFD, which jumps to #R$BF6C
