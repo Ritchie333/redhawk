@@ -3562,25 +3562,27 @@ c$BF6C PUSH IY       ; { Store the main registers
 *$BF84 LD E,(HL)     ; { Put the address in #REGde
  $BF85 INC HL        ;
  $BF86 LD D,(HL)     ; }
- $BF87 INC HL        ; { Put the parameter (?) in #REGc
+ $BF87 INC HL        ; { Put the enabled flag #REGc
  $BF88 LD C,(HL)     ; }
- $BF89 INC HL        ; Move to the counter
- $BF8A SRA C         ;
- $BF8C JR NC,$BF9D   ;
- $BF8E DEC (HL)      ;
- $BF8F JR NZ,$BF9D   ;
- $BF91 INC HL        ;
+ $BF89 INC HL        ; Move #REGhl to the tick count
+ $BF8A SRA C         ; Is this routine enabled?
+ $BF8C JR NC,$BF9D   ; Jump forward if not
+ $BF8E DEC (HL)      ; Otherwise, decrement the tick count
+ $BF8F JR NZ,$BF9D   ; Skip the next bit if it is not zero
+; An interrupt routine is enabled and scheduled to run
+ $BF91 INC HL        ; { Set the tick count to the frequency
  $BF92 LD A,(HL)     ;
  $BF93 DEC HL        ;
- $BF94 LD (HL),A     ;
+ $BF94 LD (HL),A     ; }
  $BF95 PUSH BC       ; { Store #REGbc and #REGhl
  $BF96 PUSH HL       ; }
  $BF97 EX DE,HL      ; Put the routine address in #REGhl
  $BF98 CALL $BFAF    ; Run the routine
  $BF9B POP HL        ; { Restore #REGbbc and #REGhl
  $BF9C POP BC        ; }
-*$BF9D INC HL        ;
- $BF9E INC HL        ;
+; All done with this routine
+*$BF9D INC HL        ; { Point #REGhl to the next routine
+ $BF9E INC HL        ; }
  $BF9F DJNZ $BF84    ; Loop back round if there are more entries
  $BFA1 POP DE        ; { Restore #REGde and #REGbc
  $BFA2 POP BC        ; }
@@ -3604,17 +3606,24 @@ c$BFAF JP (HL)       ;
 b$BFB0 DEFB $01         ; Set to 1 to enable interrupts or 0 to disable
 ; Routine 0
  $BFB1 DEFW $C2D1       ; Routine
- $BFB3 DEFB $01,$01,$01 ; Flags
+ $BFB3 DEFB $01         ; Enabled
+ $BF84 DEFB $01         ; Tick count
+ $BF85 DEFB $01         ; Frequency
 ; Routine 1
  $BFB6 DEFW $BFDC       ; Routine
- $BFB8 DEFB $01,$08,$08 ; Flags
+ $BFB8 DEFB $01         ; Enabled
+ $BFB9 DEFB $08         ; Tick count
+ $BFBA DEFB $08         ; Frequency
 ; Routine 2
  $BFBB DEFW $C7AC       ; Routine
- $BFBD DEFB $01,$01,$FA ; Flags
+ $BFBD DEFB $01         ; Enabled
+ $BFBE DEFB $01         ; Tick count
+ $BFBE DEFB $FA         ; Frequency
 ; Routine 3
  $BFC0 DEFW $C875       ; Routine
- $BFC2 DEFB $01,$01,$FA ; Flags
-
+ $BFC2 DEFB $01         ; Enabled
+ $BFC3 DEFB $01         ; Tick count
+ $BFC4 DEFB $FA         ; Frequency
 
 ; Time update bitfield
 ;
@@ -3648,15 +3657,17 @@ g$BFDA DEFB $00
 g$BFDB DEFB $00
 
 ; Interrupt routine 1 - Update time
-c$BFDC LD A,($BFDA)  ;
- $BFDF CP $00        ;
- $BFE1 JP NZ,$C092   ;
- $BFE4 LD HL,$BFC5   ;
- $BFE7 LD (HL),$00   ;
+c$BFDC LD A,($BFDA)  ; Is the timer tick counter (#R$BFDA) zero?
+ $BFDF CP $00        ; { Skip the update if it isn't
+ $BFE1 JP NZ,$C092   ; }
+; The timer needs to tick
+ $BFE4 LD HL,$BFC5   ; { Initialize the update flags (#R$BFC5) to zero 
+ $BFE7 LD (HL),$00   ; }
  $BFE9 LD A,($BFDB)  ; Get the "fast timer" flag
  $BFEC CP $00        ; Is it normal time?
  $BFEE JR NZ,$C018   ; Jump forward if it isn't
- $BFF0 LD (HL),$01   ;
+; Normal time, so update seconds
+ $BFF0 LD (HL),$01   ; Set bit 0 (second units)
  $BFF2 LD A,($BFCD)  ;
  $BFF5 ADD A,$01     ;
  $BFF7 LD ($BFCD),A  ;
@@ -3664,7 +3675,7 @@ c$BFDC LD A,($BFDA)  ;
  $BFFC JP NZ,$C08D   ;
  $BFFF LD A,$00      ;
  $C001 LD ($BFCD),A  ;
- $C004 SET 1,(HL)    ;
+ $C004 SET 1,(HL)    ; Set bit 1 (second tens)
  $C006 LD A,($BFCC)  ;
  $C009 ADD A,$01     ;
  $C00B LD ($BFCC),A  ;
@@ -3672,7 +3683,8 @@ c$BFDC LD A,($BFDA)  ;
  $C010 JP NZ,$C08D   ;
  $C013 LD A,$00      ;
  $C015 LD ($BFCC),A  ;
-*$C018 SET 2,(HL)    ;
+; Update the minutes
+*$C018 SET 2,(HL)    ; Set bit 2 (minutes units)
  $C01A LD A,($BFC7)  ;
  $C01D ADD A,$01     ;
  $C01F LD ($BFC7),A  ;
@@ -3686,15 +3698,16 @@ c$BFDC LD A,($BFDA)  ;
  $C034 JP NZ,$C08D   ;
  $C037 LD A,$00      ;
  $C039 LD ($BFCB),A  ;
- $C03C SET 3,(HL)    ;
+ $C03C SET 3,(HL)    ; Set bit 3 (minutes tens)
  $C03E LD A,($BFCA)  ;
  $C041 ADD A,$01     ;
  $C043 LD ($BFCA),A  ;
  $C046 CP $06        ;
  $C048 JP NZ,$C08D   ;
+; Update the hours
  $C04B LD A,$00      ;
  $C04D LD ($BFCA),A  ;
- $C050 SET 4,(HL)    ;
+ $C050 SET 4,(HL)    ; Set bit 4 (hours units)
  $C052 LD A,($BFC9)  ;
  $C055 ADD A,$01     ;
  $C057 LD ($BFC9),A  ;
@@ -3708,7 +3721,7 @@ c$BFDC LD A,($BFDA)  ;
  $C06C JP $C083      ;
 *$C06F LD A,$00      ;
  $C071 LD ($BFC9),A  ;
- $C074 SET 5,(HL)    ;
+ $C074 SET 5,(HL)    ; Set bit 5 (hours units)
  $C076 LD A,($BFC8)  ;
  $C079 ADD A,$01     ;
  $C07B LD ($BFC8),A  ;
@@ -3717,11 +3730,12 @@ c$BFDC LD A,($BFDA)  ;
 *$C083 LD A,$00      ;
  $C085 LD ($BFC9),A  ;
  $C088 LD ($BFC8),A  ;
- $C08B SET 5,(HL)    ;
-*$C08D LD A,$08      ;
- $C08F LD ($BFDA),A  ;
-*$C092 LD A,($BFDA)  ;
- $C095 LD B,A        ;
+ $C08B SET 5,(HL)    ; Set bit 5 (hours units)
+*$C08D LD A,$08      ; { Reset the tick count to 8
+ $C08F LD ($BFDA),A  ; }
+; Now draw the time
+*$C092 LD A,($BFDA)  ; { Put the tick count in #REGb
+ $C095 LD B,A        ; }
  $C096 LD HL,$BFC5   ;
  $C099 BIT 0,(HL)    ;
  $C09B JR Z,$C0AE    ;
@@ -3782,33 +3796,35 @@ c$BFDC LD A,($BFDA)  ;
  $C121 LD A,(HL)     ;
  $C122 LD HL,($BFD8) ;
  $C125 LD (HL),A     ;
-*$C126 DEC B         ;
+*$C126 DEC B         ; { Decrement the tick count and store it
  $C127 LD A,B        ;
- $C128 LD ($BFDA),A  ;
- $C12B RET           ;
+ $C128 LD ($BFDA),A  ; }
+ $C12B RET           ; All done
 
-; Get the next location to update timer digits
+; Scroll a timer digit
 ;
 ; Used by the routine at #R$BFDC.
-c$C12C PUSH BC       ;
- $C12D DEC H         ;
- $C12E PUSH HL       ;
- $C12F LD B,$06      ;
-*$C131 POP HL        ;
- $C132 PUSH HL       ;
- $C133 LD A,H        ;
+;
+; HL A pointer to a screen address
+c$C12C PUSH BC       ; Store #REGbc
+ $C12D DEC H         ; { Move up a row and store it
+ $C12E PUSH HL       ; }
+ $C12F LD B,$06      ; Six rows to check
+*$C131 POP HL        ; Retrieve the base screen address
+ $C132 PUSH HL       ; Store it
+ $C133 LD A,H        ; { Skip forward 'n' rows based on the row count
  $C134 ADD A,B       ;
- $C135 LD H,A        ;
- $C136 LD A,(HL)     ;
+ $C135 LD H,A        ; }
+ $C136 LD A,(HL)     ; { Copy this row to the one below it
  $C137 INC H         ;
- $C138 LD (HL),A     ;
- $C139 DEC B         ;
- $C13A LD A,B        ;
+ $C138 LD (HL),A     ; }
+ $C139 DEC B         ; Decrement the row count
+ $C13A LD A,B        ; { Loop back if there is more to do
  $C13B CP $FF        ;
- $C13D JR NZ,$C131   ;
- $C13F POP HL        ;
- $C140 POP BC        ;
- $C141 RET           ;
+ $C13D JR NZ,$C131   ; }
+ $C13F POP HL        ; Restore the active row
+ $C140 POP BC        ; { Restore #REGbc and return
+ $C141 RET           ; }
 
 ; Get the address for a timer digit graphic
 ;
@@ -3966,7 +3982,7 @@ c$C326 LD ($C2D0),A  ; Set the last printed character to this one
  $C375 CALL $C3AB    ;
  $C378 RET           ;
 
-; Routine at C379
+; Handle a keypress when CAPS is held
 ;
 ; Used by the routine at #R$C520.
 c$C379 CALL $C42B    ;
@@ -4085,11 +4101,12 @@ c$C448 LD BC,($C2CA) ; Get the cursor position
 *$C466 LD A,$2B      ;
 *$C468 LD ($C349),A  ;
 ; This entry point is used by the routines at #R$C2D1, #R$C520 and #R$C6B3.
-*$C46B LD HL,$C70D   ;
+; At this point, no action should be taken on the keyboard
+*$C46B LD HL,$C70D   ; { Clear the keypress and shift flags
  $C46E LD A,$00      ;
  $C470 LD ($C70E),A  ;
- $C473 LD (HL),A     ;
- $C474 RET           ;
+ $C473 LD (HL),A     ; }
+ $C474 RET           ; All done
 
 ; Get a pointer to the 'nth' command in history
 ;
@@ -4326,8 +4343,8 @@ c$C5E0 LD A,($C2C7)  ;
  $C613 JP Z,$C448    ;
  $C616 PUSH DE       ;
  $C617 POP HL        ;
- $C618 LD DE,$C277   ;
- $C61B LDIR          ;
+ $C618 LD DE,$C277   ; Set the destination to the working command buffer (#R$C277)
+ $C61B LDIR          ; Copy it
  $C61D LD A,$0D      ;
  $C61F LD (DE),A     ;
  $C620 CALL $C42B    ;
@@ -4378,60 +4395,67 @@ b$C69F DEFW $C698
  $C6AF DEFW $C68A
  $C6B1 DEFW $C692
 
-; Fill in a shortcut command with its replacement text
+; Handle a keypress when SYMBOL SHIFT is held
 ;
 ; Used by the routine at #R$C2D1.
-c$C6B3 LD A,($C70D)  ;
- $C6B6 CP $2F        ;
+c$C6B3 LD A,($C70D)  ; Get the most recent keypress (#R$C70D)
+ $C6B6 CP $2F        ; { Skip forward if it isn't a number
  $C6B8 JR C,$C6DF    ;
  $C6BA CP $3A        ;
- $C6BC JR NC,$C6DF   ;
- $C6BE SUB $30       ;
- $C6C0 RLA           ;
- $C6C1 LD HL,$C69F   ;
- $C6C4 LD C,A        ;
+ $C6BC JR NC,$C6DF   ; }
+; SYMBOL SHIFT + a number selects a shortcut
+ $C6BE SUB $30       ; Convert into a numeric index
+ $C6C0 RLA           ; Double to get a word offset
+ $C6C1 LD HL,$C69F   ; Point #REGhl at the shortcut buffer (#R$C69F)
+ $C6C4 LD C,A        ; { Add the appropriate offset
  $C6C5 LD B,$00      ;
- $C6C7 ADD HL,BC     ;
- $C6C8 LD E,(HL)     ;
+ $C6C7 ADD HL,BC     ; }
+ $C6C8 LD E,(HL)     ; { Put the address of the shortcut text in #REGiy
  $C6C9 INC HL        ;
  $C6CA LD D,(HL)     ;
  $C6CB PUSH DE       ;
- $C6CC POP IY        ;
-*$C6CE LD A,(IY+$00) ;
- $C6D1 CP $00        ;
- $C6D3 RET Z         ;
- $C6D4 PUSH IY       ;
+ $C6CC POP IY        ; }
+; Copy the shortcut text into the buffer
+*$C6CE LD A,(IY+$00) ; Get the next character
+ $C6D1 CP $00        ; { Return if it is zero
+ $C6D3 RET Z         ; }
+ $C6D4 PUSH IY       ; { Process the character
  $C6D6 CALL $C326    ;
- $C6D9 POP IY        ;
- $C6DB INC IY        ;
- $C6DD JR $C6CE      ;
-*$C6DF LD A,($C70D)  ;
- $C6E2 CP $50        ;
- $C6E4 JR Z,$C6F5    ;
- $C6E6 CP $4E        ;
- $C6E8 JR Z,$C6FB    ;
- $C6EA CP $4D        ;
- $C6EC JR Z,$C701    ;
- $C6EE CP $5A        ;
- $C6F0 JR Z,$C707    ;
- $C6F2 JP $C46B      ;
-*$C6F5 LD A,$22      ;
+ $C6D9 POP IY        ; }
+ $C6DB INC IY        ; { Move to handle the next one
+ $C6DD JR $C6CE      ; }
+; Handle SYMBOL SHIFT + non-numeric key
+*$C6DF LD A,($C70D)  ; Get the most recent keypress (#R$C70D)
+ $C6E2 CP $50        ; { Handle P
+ $C6E4 JR Z,$C6F5    ; }
+ $C6E6 CP $4E        ; { Handle N
+ $C6E8 JR Z,$C6FB    ; }
+ $C6EA CP $4D        ; { Handle M
+ $C6EC JR Z,$C701    ; }
+ $C6EE CP $5A        ; { Handle Z
+ $C6F0 JR Z,$C707    ; }
+ $C6F2 JP $C46B      ; Any other key is "no action"
+; SYMBOL_SHIFT + P
+*$C6F5 LD A,$22      ; { Process a quote
  $C6F7 CALL $C326    ;
- $C6FA RET           ;
-*$C6FB LD A,$2C      ;
+ $C6FA RET           ; }
+; SYMBOL_SHIFT + N
+*$C6FB LD A,$2C      ; { Process a comma
  $C6FD CALL $C326    ;
- $C700 RET           ;
-*$C701 LD A,$2E      ;
+ $C700 RET           ; }
+; SYMBOL_SHIFT + M
+*$C701 LD A,$2E      ; { Process a dot
  $C703 CALL $C326    ;
- $C706 RET           ;
-*$C707 LD A,$3A      ;
+ $C706 RET           ; }
+; SYMBOL_SHIFT + Z
+*$C707 LD A,$3A      ; { Process a colon
  $C709 CALL $C326    ;
- $C70C RET           ;
+ $C70C RET           ; }
 
-; Recent key pressed
+; Most recent key pressed
 g$C70D DEFB $00
 
-; Game status buffer entry at C70E
+; Most recent shift key held
 g$C70E DEFB $00
 
 ; Read a keypress and convert to a character
@@ -5315,10 +5339,10 @@ c$CBBF LD A,($C8CC)  ;
  $CC48 POP AF        ;
  $CC49 POP AF        ;
  $CC4A POP AF        ;
- $CC4B LD E,A        ;
- $CC4C LD D,$00      ;
- $CC4E LD IX,$C277   ;
- $CC52 ADD IX,DE     ;
+ $CC4B LD E,A        ; { Put this in #REGde
+ $CC4C LD D,$00      ; }
+ $CC4E LD IX,$C277   ; Point #REGix at the working command buffer (#R$C277)
+ $CC52 ADD IX,DE     ; Add the offset
  $CC54 LD ($CD7C),IX ;
  $CC58 LD A,$00      ;
  $CC5A LD ($CD7B),A  ;
@@ -5356,19 +5380,21 @@ c$CBBF LD A,($C8CC)  ;
  $CCA4 CCF           ;
  $CCA5 RET           ;
 
-; Process input
+; Check if a command matches a list in a text table
 ;
 ; Used by the routine at #R$CFCA.
 ;
-; BC ???
+; C Text table type to search
+; A On exit, holds the ID of the text if there was a match
+; F On exit, the carry flag is set if there is a match
 c$CCA6 LD HL,$8106   ; Point #REGhl at the offset buffer
- $CCA9 ADD HL,BC     ; Add the command ID
- $CCAA LD A,(HL)     ;
+ $CCA9 ADD HL,BC     ; Add the text table type
+ $CCAA LD A,(HL)     ; { Store the word here in #R$C8EE
  $CCAB LD ($C8EE),A  ;
  $CCAE DEC HL        ;
  $CCAF LD A,(HL)     ;
- $CCB0 LD ($C8EF),A  ;
- $CCB3 LD B,$00      ;
+ $CCB0 LD ($C8EF),A  ; }
+ $CCB3 LD B,$00      ; Set index 0
  $CCB5 CALL $CB37    ; Look up the table data and point to it in #REGix.
 *$CCB8 CALL $CBBF    ;
  $CCBB JR C,$CCCE    ;
@@ -5489,11 +5515,8 @@ b$CDA0 DEFB $02,$00,$03,$01,$02,$02,$02,$00
  $CDA8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $CDB0 DEFB $00,$00,$00
  
-; Current time stamp for command
-g$CDB3 DEFB $00
-
-; Current command
-g$CDB4 DEFB $00
+; Current text table and ID
+g$CDB3 DEFB $00,$00
 
 ; Game status buffer entry at CDB5
 g$CDB5 DEFB $00
@@ -5773,28 +5796,30 @@ b$CFCA LD A,$00      ;
  $CFF7 JR NC,$CFFC   ;
  $CFF9 LD A,$01      ;
  $CFFB RET           ;
-*$CFFC LD BC,$0005   ; Set #REGbc to command list 5 (directions)
+; Check for a command match in the text tables
+*$CFFC LD BC,$0005   ; Set #REGbc to text table 5 (directions)
  $CFFF LD ($CDB3),BC ; Store this (#R$CDB3)
-*$D003 LD BC,($CDB3) ;
- $D007 CALL $CCA6    ;
- $D00A JR C,$D04F    ;
- $D00C LD A,($CDB3)  ;
+*$D003 LD BC,($CDB3) ; Get the next table type
+ $D007 CALL $CCA6    ; Look for a match
+ $D00A JR C,$D04F    ; Jump forward if there is one
+ $D00C LD A,($CDB3)  ; { Increment the text table type
  $D00F ADD A,$01     ;
- $D011 LD ($CDB3),A  ;
- $D014 CP $08        ;
- $D016 JR NZ,$D003   ;
+ $D011 LD ($CDB3),A  ; }
+ $D014 CP $08        ; Has it reached 8 (flags)?
+ $D016 JR NZ,$D003   ; Jump back, if not
  $D018 LD A,$56      ;
- $D01A LD BC,$000B   ; Set #REGbc to command list B (actions)
- $D01D LD ($CDB3),BC ;
-*$D021 LD BC,($CDB3) ;
- $D025 CALL $CD15    ;
- $D028 JR C,$D05F    ;
- $D02A LD A,($CDB3)  ;
+ $D01A LD BC,$000B   ; { Set the table type text table B
+ $D01D LD ($CDB3),BC ; }
+*$D021 LD BC,($CDB3) ; Get the next table type
+ $D025 CALL $CD15    ; Check for a match
+ $D028 JR C,$D05F    ; Jump forward if there is one
+ $D02A LD A,($CDB3)  ; { Increment the text table type
  $D02D ADD A,$01     ;
- $D02F LD ($CDB3),A  ;
- $D032 CP $0F        ;
+ $D02F LD ($CDB3),A  ; }
+ $D032 CP $0F        ; Has it reached F?
  $D034 LD A,$4E      ;
- $D036 JR NZ,$D021   ;
+ $D036 JR NZ,$D021   ; Jump back if not
+; No command found
  $D038 LD A,($C8CC)  ;
  $D03B LD ($CD72),A  ;
  $D03E LD A,($C8EA)  ;
@@ -5804,6 +5829,7 @@ b$CFCA LD A,$00      ;
  $D049 LD A,$FF      ;
  $D04B LD ($CD7B),A  ;
  $D04E RET           ;
+; A command has been round in tables 5 - 7
 *$D04F LD ($C8BA),A  ;
  $D052 LD A,$FF      ;
  $D054 LD ($C8BB),A  ;
@@ -5811,6 +5837,7 @@ b$CFCA LD A,$00      ;
  $D05A SUB $05       ;
  $D05C LD E,A        ;
  $D05D JR $D07B      ;
+; A command has been found in tables B - F
 *$D05F LD BC,($CDB3) ;
  $D063 LD HL,$8105   ;
  $D066 ADD HL,BC     ;
@@ -5826,6 +5853,7 @@ b$CFCA LD A,$00      ;
  $D077 LD A,C        ;
  $D078 SUB $08       ;
  $D07A LD E,A        ;
+; Set command data
 *$D07B LD D,$00      ;
  $D07D LD B,$00      ;
  $D07F LD HL,$CDA0   ;
@@ -6514,7 +6542,7 @@ c$D649 AND $7F       ;
  $D651 POP AF        ;
  $D652 LD BC,$0000   ;
 *$D655 LD ($C8B7),A  ;
- $D658 LD HL,$8106   ;
+ $D658 LD HL,$8106   ; Point #REGhl at the offsets table (#R$8106)
  $D65B ADD HL,BC     ;
  $D65C CP (HL)       ;
  $D65D JR C,$D672    ;
