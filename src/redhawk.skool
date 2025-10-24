@@ -5391,7 +5391,7 @@ c$CBBF LD A,($C8CC)  ;
 ; F On exit, the carry flag is set if there is a match
 c$CCA6 LD HL,$8106   ; Point #REGhl at the offset buffer
  $CCA9 ADD HL,BC     ; Add the text table type
- $CCAA LD A,(HL)     ; { Store the word here in #R$C8EE
+ $CCAA LD A,(HL)     ; { Store the word here in #N$C8EE
  $CCAB LD ($C8EE),A  ;
  $CCAE DEC HL        ;
  $CCAF LD A,(HL)     ;
@@ -6177,7 +6177,10 @@ c$D2E5 LD IX,$D1E3   ; Point #REGix at the text buffer (#R$D1E3)
  $D34E DEC (HL)      ;
  $D34F JR NZ,$D341   ;
  $D351 RET           ;
-; This entry point is used by the routine at #R$D3AC.
+
+; Routine at D352
+;
+; Used by the routine at #R$D3AC.
 *$D352 LD ($D2E3),A  ;
  $D355 PUSH IX       ;
  $D357 CALL $CB10    ;
@@ -6224,29 +6227,29 @@ g$D3A9 DEFB $00
 ; Pointer to string data to print
 g$D3AA DEFW $0000
 
-; Routine at D3AC
+; Prepare text in a speech bubble
 ;
 ; Used by the routine at #R$D2E5.
 ;
-; IX ???
-c$D3AC LD C,$0C      ;
+; IX Holds the text to say
+c$D3AC LD C,$0C      ; Use text table #N$0C
  $D3AE LD A,($D758)  ;
  $D3B1 JR $D3B8      ;
 ; This entry point is used by the routine at #R$D2E5.
-*$D3B3 LD C,$0E      ;
+*$D3B3 LD C,$0E      ; Use text table #N$0E
  $D3B5 LD A,($D757)  ;
 *$D3B8 LD ($D3AA),IX ;
  $D3BC LD B,A        ;
  $D3BD CALL $D711    ;
- $D3C0 LD A,$4E      ;
- $D3C2 CALL $CCD2    ;
+ $D3C0 LD A,$4E      ; { Look up an entry starting with #N$4E
+ $D3C2 CALL $CCD2    ; }
  $D3C5 JR NC,$D40C   ;
  $D3C7 LD A,$FF      ;
  $D3C9 LD ($D3A9),A  ;
  $D3CC LD IX,($D3AA) ;
-*$D3D0 PUSH IX       ;
+*$D3D0 PUSH IX       ; { Process the next character
  $D3D2 CALL $CB10    ;
- $D3D5 POP IX        ;
+ $D3D5 POP IX        ; }
  $D3D7 CP $00        ;
  $D3D9 JP P,$D3E1    ;
  $D3DC CALL $D352    ;
@@ -6368,7 +6371,7 @@ c$D412 LD C,$08      ;
 ; Execute a command
 ;
 ; Used by the routine at #R$E1D7.
-c$D4CC CALL $CF5D    ;
+c$D4CC CALL $CF5D    ; Set up the buffers
  $D4CF LD HL,($CDA7) ; Point #REGhl at the current end of the queue
  $D4D2 LD DE,$CDA9   ; { Subtract the start address to get an offset
  $D4D5 SBC HL,DE     ; }
@@ -10066,13 +10069,13 @@ c$F1A2 CALL $F83F    ; Set up sprite data
  $F1AE LD A,(IX+$00) ;
  $F1B1 CP $40        ;
  $F1B3 JR Z,$F1C8    ;
- $F1B5 LD A,$01      ;
- $F1B7 LD ($F688),A  ;
+ $F1B5 LD A,$01      ; { Set the "character speaking" flag
+ $F1B7 LD ($F688),A  ; }
  $F1BA PUSH IX       ; { Draw the sprites
- $F1BC CALL $F68A    ; }
- $F1BF POP IX        ;
- $F1C1 LD A,$00      ;
- $F1C3 LD ($F688),A  ;
+ $F1BC CALL $F68A    ; 
+ $F1BF POP IX        ; }
+ $F1C1 LD A,$00      ; { Turn off the "character speaking" flag
+ $F1C3 LD ($F688),A  ; }
  $F1C6 JR $F1CA      ; Print the speech bubble
 *$F1C8 INC IX        ;
 
@@ -10131,7 +10134,7 @@ c$F1CA LD ($D3AA),IX ;
  $F238 DJNZ $F220    ;
 *$F23A CALL $F241    ;
  $F23D RET NC        ;
- $F23E JP $F1CE      ;
+ $F23E JP $F1CE      ; Jump back to draw some more
 
 ; Return with the carry flag set if BREAK was pressed
 ;
@@ -10224,7 +10227,13 @@ b$F2F8 DEFB $00,$00,$81,$82,$44,$48,$30,$20
 ; Number of rows left to clear on a column
 ;
 ; Used by the routine in #R$F30B
-g$F308 DEFB $00,$00,$18
+g$F308 DEFB $00
+
+; Game status buffer at F309
+g$F309 DEFB $00
+
+; Number of bits across when drawing a sprite
+g$F30A DEFB $18
 
 ; Blank out part of the screen
 ;
@@ -10270,7 +10279,7 @@ c$F32C LD HL,$4056   ; { Clear 8 characters starting at #N$4056
  $F347 LD ($FAC8),A  ;
  $F34A LD A,$13      ;
  $F34C LD ($FAC7),A  ;
- $F34F CALL $FADD    ;
+ $F34F CALL $FADD    ; Draw it
  $F352 LD HL,$F2A7   ; { Set the next graphic (#R$FAC3) to the bottom (#R$F2A7)
  $F355 LD ($FAC3),HL ; }
  $F358 LD A,$06      ;
@@ -10591,7 +10600,7 @@ c$F52B LD HL,$F529   ; Point #REGhl to the length
 *$F5BD LD ($BF6A),DE ; { Store the next screen address (#R$BF6A) and return
  $F5C1 RET           ; }
 
-; Game status buffer entry at F5C2
+; Number of sprites in a room
 g$F5C2 DEFB $00
 
 ; Buffer for sprites in a room
@@ -10635,7 +10644,7 @@ g$F686 DEFB $05
 ; Game status buffer entry at F687
 g$F687 DEFB $00
 
-; Game status buffer entry at F688
+; Set to 1 to draw a sprite for speaking something
 g$F688 DEFB $00
 
 ; Game status buffer entry at F689
@@ -10644,13 +10653,13 @@ g$F689 DEFB $01
 ; Draw sprites and backgrounds in a panel
 ;
 ; Used by the routines at #R$F1A2 and #R$F3C5.
-c$F68A LD IX,$F5C2   ; Point #REGix at the room buffer (#R$F5C2)
- $F68E LD A,(IX+$00) ;
- $F691 CP $01        ;
- $F693 JR NZ,$F6D8   ;
- $F695 LD A,($F688)  ;
- $F698 CP $00        ;
- $F69A JR Z,$F6D8    ;
+c$F68A LD IX,$F5C2   ; Point #REGix at the sprite data (#R$F5C2)
+ $F68E LD A,(IX+$00) ; Put the count of sprites in #REGa
+ $F691 CP $01        ; Is there only one sprite?
+ $F693 JR NZ,$F6D8   ; Jump forward if there are several
+ $F695 LD A,($F688)  ; { Is the sprite speaking something?
+ $F698 CP $00        ; }
+ $F69A JR Z,$F6D8    ; Jump forward if not
  $F69C LD A,($F689)  ;
  $F69F CP $01        ;
  $F6A1 JR NZ,$F6D8   ;
@@ -10667,13 +10676,13 @@ c$F68A LD IX,$F5C2   ; Point #REGix at the room buffer (#R$F5C2)
  $F6BA LD ($FAC7),A  ; }
  $F6BD LD A,$38      ; { Set number of rows
  $F6BF LD ($FAC5),A  ; }
- $F6C2 LD ($F30A),A  ;
- $F6C5 LD A,$07      ;
- $F6C7 LD ($FAC6),A  ;
+ $F6C2 LD ($F30A),A  ; { Set number of pixels across }
+ $F6C5 LD A,$07      ; { Set number of columns
+ $F6C7 LD ($FAC6),A  ; }
  $F6CA CALL $ECD4    ; Update the panels
- $F6CD LD A,$01      ;
- $F6CF LD ($FADC),A  ;
- $F6D2 CALL $FADD    ; 
+ $F6CD LD A,$01      ; { Set to merge
+ $F6CF LD ($FADC),A  ; }
+ $F6D2 CALL $FADD    ; Do the drawing
  $F6D5 JP $F832      ; Nothing else to draw here, so skip forward
 ; Draw mid-range characters
 *$F6D8 LD A,($D758)  ; Get the current room graphic ID (#R$D758)
@@ -10773,18 +10782,18 @@ c$F68A LD IX,$F5C2   ; Point #REGix at the room buffer (#R$F5C2)
  $F7B0 LD ($F687),A  ;
  $F7B3 LD A,$C0      ;
  $F7B5 LD ($F8B9),A  ;
- $F7B8 LD A,($F5C2)  ;
- $F7BB LD B,A        ;
+ $F7B8 LD A,($F5C2)  ; {Put the count of sprites in #REGb
+ $F7BB LD B,A        ; }
  $F7BC LD HL,$D757   ;
- $F7BF LD A,$01      ;
- $F7C1 LD ($F5C2),A  ;
+ $F7BF LD A,$01      ; { Set one sprite in the room
+ $F7C1 LD ($F5C2),A  ; }
  $F7C4 LD DE,$F5C3   ; Point #REGde to the sprite definitons
 *$F7C7 LD A,(DE)     ;
  $F7C8 CP (HL)       ;
  $F7C9 JR Z,$F7E8    ;
  $F7CB INC DE        ;
  $F7CC DJNZ $F7C7    ;
-*$F7CE LD DE,$F5C2   ;
+*$F7CE LD DE,$F5C2   ; Set #REGde to just before the sprite buffer (#R$F5C3)
  $F7D1 LD A,($F5C2)  ;
  $F7D4 LD ($F687),A  ;
 *$F7D7 INC DE        ;
@@ -10836,42 +10845,42 @@ c$F68A LD IX,$F5C2   ; Point #REGix at the room buffer (#R$F5C2)
  $F83B CALL $EBC8    ; }
  $F83E RET           ; All done
 
-; Put characters in a panel (?)
+; Put sprites in a panel
 ;
 ; Used by the routines at #R$F1A2 and #R$F3C5.
 c$F83F CALL $E265    ; Get the current character
  $F842 LD C,$11      ; Select data table #N$C11
- $F844 CALL $D6C0    ; 
- $F847 LD A,($C8BF)  ;
+ $F844 CALL $D6C0    ; Get the data
+ $F847 LD A,($C8BF)  ; Put the current character in #REGa
  $F84A LD HL,$CD5F   ;
  $F84D CP (HL)       ;
  $F84E JR NZ,$F8B0   ;
- $F850 LD IY,$F5C3   ; Point #REGiy at the sprite definitions
- $F854 LD A,$00      ;
- $F856 LD ($F5C2),A  ;
+ $F850 LD IY,$F5C3   ; Point #REGiy at the sprite definitions (#R$F5C3)
+ $F854 LD A,$00      ; { Set no sprites currently in a room
+ $F856 LD ($F5C2),A  ; }
  $F859 LD HL,$C8C8   ;
  $F85C LD B,(HL)     ;
  $F85D LD C,$11      ; Select data table #N$11
-*$F85F PUSH IY       ;
- $F861 CALL $D6C0    ; 
- $F864 POP IY        ;
- $F866 LD A,($C8BF)  ;
+*$F85F PUSH IY       ; { Get the data 
+ $F861 CALL $D6C0    ;  
+ $F864 POP IY        ; }
+ $F866 LD A,($C8BF)  ; Put the character in #REGa
  $F869 LD HL,$CD5F   ;
  $F86C CP (HL)       ;
  $F86D JR NZ,$F87C   ;
  $F86F LD (IY+$00),B ;
  $F872 INC IY        ;
- $F874 LD A,($F5C2)  ;
+ $F874 LD A,($F5C2)  ; { Increment the sprite count
  $F877 ADD A,$01     ;
- $F879 LD ($F5C2),A  ;
+ $F879 LD ($F5C2),A  ; }
 *$F87C DEC B         ;
  $F87D LD A,B        ;
  $F87E CP $00        ;
  $F880 JP P,$F85F    ;
- $F883 LD IY,$F5C3   ;
- $F887 LD A,(IY-$01) ;
- $F88A CP $04        ;
- $F88C JR C,$F8AE    ;
+ $F883 LD IY,$F5C3   ; Point #REGiy at the sprite definitions (#R$F5C3)
+ $F887 LD A,(IY-$01) ; Put the sprite count in #REGa
+ $F88A CP $04        ; { Skip the next bit if there are 3 sprites in the room
+ $F88C JR C,$F8AE    ; }
  $F88E LD HL,$D757   ;
  $F891 LD B,$00      ;
 *$F893 LD A,(IY+$00) ;
@@ -10885,8 +10894,8 @@ c$F83F CALL $E265    ; Get the current character
  $F8A1 JR C,$F8A9    ;
  $F8A3 LD A,($D757)  ;
  $F8A6 LD ($F5C5),A  ;
-*$F8A9 LD A,$03      ;
- $F8AB LD ($F5C2),A  ;
+*$F8A9 LD A,$03      ; { Set 3 sprites in the room
+ $F8AB LD ($F5C2),A  ; }
 *$F8AE SCF           ;
  $F8AF RET           ;
 *$F8B0 SCF           ;
@@ -10904,7 +10913,7 @@ b$F8B9 DEFB $B0
 ; Draw a sprite in the panel
 ;
 ; Used by the routine in #R$F68A
-; On entry, #R$FAC3 points to the 'nth' sprite type, and #R$FAC4 points to the 'nth' sprite index
+; On entry, #R$FAC3 points to the address holding the sprite data
 c$F8BA LD A,($FAC3)  ; Put the index in #REGa
  $F8BD SLA A         ; Double it to get a word offset
  $F8BF LD HL,$F8B3   ; Point #REGhl at the sprite position table (#R$F8B3)
@@ -10915,17 +10924,17 @@ c$F8BA LD A,($FAC3)  ; Put the index in #REGa
  $F8C7 INC HL        ;
  $F8C8 LD D,(HL)     ; }
  $F8C9 EX DE,HL      ; Swap it into #REGhl
- $F8CA LD A,(HL)     ; { Store the pointed to sprite positions in #R$FAC5
- $F8CB LD ($FAC5),A  ;
- $F8CE INC HL        ;
- $F8CF LD A,(HL)     ;
+ $F8CA LD A,(HL)     ; { Set this as the number of rows to draw (#R$FAC5)
+ $F8CB LD ($FAC5),A  ; }
+ $F8CE INC HL        ; Move to the next entry
+ $F8CF LD A,(HL)     ; { Set this as the number of columns to draw (#R$FAC6)
  $F8D0 LD ($FAC6),A  ; }
- $F8D3 SLA A         ;
+ $F8D3 SLA A         ; { Multiply by 8 to get the number of bits
  $F8D5 SLA A         ;
- $F8D7 SLA A         ;
- $F8D9 LD ($F30A),A  ;
+ $F8D7 SLA A         ; }
+ $F8D9 LD ($F30A),A  ; Set this (#R$F30A)
  $F8DC INC HL        ; Increment #REGhl to point to the sprite size
- $F8DD LD A,($FAC4)  ; Put the sprite index (#R$FAC4) in #REGa
+ $F8DD LD A,($FAC4)  ; Put the high byte of sprite data in #REGa
  $F8E0 CP $00        ; Is it zero?
  $F8E2 JR Z,$F8EB    ; If so, we're pointing at the correct sprite
  $F8E4 LD B,A        ; Count the number of sprites
@@ -10936,29 +10945,29 @@ c$F8BA LD A,($FAC3)  ; Put the index in #REGa
 *$F8EB INC HL        ; Increment #REGhl to point to the sprite
 ; #REGhl now points at the correct sprite to use
  $F8EC LD ($FAC3),HL ; Put a copy of this in #R$FAC3
- $F8EF LD A,($F8B9)  ;
- $F8F2 LD ($FAC8),A  ;
- $F8F5 LD DE,($FAC5) ;
- $F8F9 LD A,$68      ;
- $F8FB SUB E         ;
- $F8FC LD ($FAC7),A  ;
+ $F8EF LD A,($F8B9)  ; Put the previously drawn offset in #REGa
+ $F8F2 LD ($FAC8),A  ; Set this as the x co-ordinate
+ $F8F5 LD DE,($FAC5) ; Put the size in #REGde
+ $F8F9 LD A,$68      ; { Subtract #N$68 from the height to give an offset relative to the frame
+ $F8FB SUB E         ; }
+ $F8FC LD ($FAC7),A  ; Store this as the y co-ordinate
  $F8FF LD A,$28      ;
  $F901 CP E          ;
  $F902 JR NZ,$F90C   ;
  $F904 LD A,($FAC7)  ;
  $F907 SUB $04       ;
  $F909 LD ($FAC7),A  ;
-*$F90C LD A,D        ;
- $F90D SLA A         ;
+*$F90C LD A,D        ; Get the width
+ $F90D SLA A         ; { Multiply by 8 to give a pixel count
  $F90F SLA A         ;
- $F911 SLA A         ;
- $F913 LD D,A        ;
- $F914 LD A,($FAC8)  ;
- $F917 ADD A,D       ;
- $F918 LD ($F8B9),A  ;
+ $F911 SLA A         ; }
+ $F913 LD D,A        ; Set this
+ $F914 LD A,($FAC8)  ; { Add the height
+ $F917 ADD A,D       ; }
+ $F918 LD ($F8B9),A  ; Store this
  $F91B LD A,$00      ;
  $F91D LD ($FADC),A  ;
- $F920 JP $FADD      ;
+ $F920 JP $FADD      ; Draw it
 
 ; Data block at F923
 b$F923 DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -11016,11 +11025,8 @@ b$F93B DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $FAB3 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $FABB DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Next sprite type to draw in the buffer
-g$FAC3 DEFB $00
-
-; Next sprite ID to draw in the buffer
-g$FAC4 DEFB $00
+; Address of next sprite data to draw into the graphic buffer
+g$FAC3 DEFB $0000
 
 ; Number of rows to draw into the graphic buffer
 g$FAC5 DEFB $00
@@ -11042,42 +11048,43 @@ g$FADC DEFB $00
 ; Draw into the graphics buffer
 ;
 ; Used by the routines at #R$F32C, #R$F68A, #R$F8BA and #R$FD93.
-c$FADD LD HL,$F93B   ;
+c$FADD LD HL,$F93B   ; { Wipe the current contents
  $FAE0 LD DE,$F93C   ;
  $FAE3 LD (HL),$00   ;
  $FAE5 LD BC,$0187   ;
- $FAE8 LDIR          ;
- $FAEA LD A,($FADC)  ;
- $FAED CP $00        ;
- $FAEF JR NZ,$FAF7   ;
+ $FAE8 LDIR          ; }
+ $FAEA LD A,($FADC)  ; { Should the sprite be merged? (#R$FADC)
+ $FAED CP $00        ; }
+ $FAEF JR NZ,$FAF7   ; Skip the next bit if not
+; The sprite needs merging with the background
  $FAF1 CALL $FB2E    ;
  $FAF4 CALL $FBD1    ;
 ; This entry point is used by the routine at #R$F32C.
-*$FAF7 LD IX,$F93B   ;
-*$FAFB LD HL,($FAC7) ;
- $FAFE CALL $FC96    ;
- $FB01 LD HL,($FAC3) ;
- $FB04 LD A,($FAC6)  ;
- $FB07 LD B,A        ;
+*$FAF7 LD IX,$F93B   ; Point #REGix to the graphics buffer
+*$FAFB LD HL,($FAC7) ; Get the next screen co-ordinate to draw
+ $FAFE CALL $FC96    ; Convert this to a screen address
+ $FB01 LD HL,($FAC3) ; Point #REGhl at the sprite data
+ $FB04 LD A,($FAC6)  ; { Set #REGb to the number of columns
+ $FB07 LD B,A        ; }
 *$FB08 NOP           ;
- $FB09 LD A,(DE)     ;
- $FB0A AND (IX+$00)  ;
- $FB0D OR (HL)       ;
- $FB0E LD (DE),A     ;
- $FB0F INC HL        ;
+ $FB09 LD A,(DE)     ; Get the current screen contents 
+ $FB0A AND (IX+$00)  ; Filter against what's in the buffer
+ $FB0D OR (HL)       ; Merge the pixels
+ $FB0E LD (DE),A     ; Set the new value on screen
+ $FB0F INC HL        ; { Move forward 8 pixels
  $FB10 INC IX        ;
  $FB12 INC IY        ;
- $FB14 INC DE        ;
- $FB15 DJNZ $FB08    ;
- $FB17 LD ($FAC3),HL ;
- $FB1A LD BC,($FAC7) ;
- $FB1E INC C         ;
- $FB1F LD A,($FAC5)  ;
+ $FB14 INC DE        ; }
+ $FB15 DJNZ $FB08    ; Loop until all columns drawn
+ $FB17 LD ($FAC3),HL ; Set the next sprite address
+ $FB1A LD BC,($FAC7) ; { Move down one row
+ $FB1E INC C         ; }
+ $FB1F LD A,($FAC5)  ; { Set one row less to draw
  $FB22 SUB $01       ;
- $FB24 LD ($FAC5),A  ;
- $FB27 RET Z         ;
- $FB28 LD ($FAC7),BC ;
- $FB2C JR $FAFB      ;
+ $FB24 LD ($FAC5),A  ; }
+ $FB27 RET Z         ; Return if everything's drawn
+ $FB28 LD ($FAC7),BC ; { Otherwise set the new destination co-ordinates
+ $FB2C JR $FAFB      ; and loop back to draw some more }
 
 ; Routine at FB2E
 ;
