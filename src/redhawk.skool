@@ -3522,7 +3522,9 @@ b$BE6D DEFW $0000
 ; Data block at BF07
 b$BF07 DEFB $00
 
-; Data block at BF08
+; Status bar graphics
+;
+; #CALL:print_udg(#PC,status_bar,3,4,56)
 b$BF08 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$00,$00
  $BF10 DEFB $00,$FF,$FF,$FF,$00,$00,$00,$FF
  $BF18 DEFB $FF,$FF,$00,$00,$00,$39,$CF,$FF
@@ -3844,7 +3846,7 @@ g$C155 DEFB $01,$11,$08,$21,$2A,$AA,$A1,$08,$AA,$21,$57,$55,$21,$45,$57,$21,$75,
  $C23D DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
  $C25A DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-; Current command to execute
+; Input buffer
 g$C277 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $C27F DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $C287 DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -3856,7 +3858,7 @@ g$C277 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $C2B7 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $C2BF DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Current command to execute
+; Set to 0 to signal the input buffer is ready
 g$C2C7 DEFB $00
 
 ; Nth index for current command
@@ -4326,7 +4328,7 @@ c$C5E0 LD A,($C2C7)  ;
  $C613 JP Z,$C448    ;
  $C616 PUSH DE       ;
  $C617 POP HL        ;
- $C618 LD DE,$C277   ;
+ $C618 LD DE,$C277   ; Set the destination to the input buffer #R$C277
  $C61B LDIR          ;
  $C61D LD A,$0D      ;
  $C61F LD (DE),A     ;
@@ -4759,13 +4761,10 @@ c$C875 LD IX,($80EE) ; Point #REGix at the flags (#R$80EE) = #R$81FC
 ; Data block at C8B7
 b$C8B7 DEFB $00,$00,$00,$00,$00,$00,$00
 
-; Buffer for invalidating graphics
-g$C8BE DEFB $00,00
-
-; Pointer to current entry in table
+; Data extracted from a table
 ;
-; This is an entry in the table pointed by #R$C8C2
-g$C8C0 DEFB $00,$00
+; Used by the routine at #R$D6C0
+g$C8BE DEFB $00,00,$00,$00
 
 ; Graphics updating tab;e
 g$C8C2 DEFW $0000
@@ -4780,7 +4779,10 @@ g$C8C6 DEFB $00,$00
 g$C8C8 DEFB $00,$00,$00
 
 ; Game status buffer entry at C8CB
-g$C8CB DEFB $00,$00,$00
+g$C8CB DEFB $00
+
+; Current offset of the input buffer being processed
+g$C8CC DEFW $0000
 
 ; Set to 1 to mark end of string (?)
 g$C8CE DEFB $00
@@ -5045,27 +5047,27 @@ c$CA2E LD DE,$00FF   ; Length is #N$FF
  $CA38 CALL $0556    ; { Call the ROM load routine and return
  $CA3B RET           ; }
 
-; Routine at CA3C
+; Set up data for current player and room
 ;
 ; Used by the routines at #R$CF5D, #R$DC24, #R$DC85, #R$DCE0, #R$DD31, #R$DD6B,
 ; #R$E2E2 and #R$E30D.
-c$CA3C LD ($D757),A  ;
- $CA3F LD B,A        ;
- $CA40 LD HL,$8113   ;
- $CA43 ADD A,(HL)    ;
+c$CA3C LD ($D757),A  ; Put the current player in #R$D757
+ $CA3F LD B,A        ; Store this as a data index
+ $CA40 LD HL,$8113   ; { Add an offset (#N$E3)
+ $CA43 ADD A,(HL)    ; }
  $CA44 LD ($CD61),A  ;
  $CA47 LD A,$68      ;
  $CA49 LD ($CD60),A  ;
  $CA4C LD C,$11      ; Select data table 11
- $CA4E CALL $D6C0    ; 
- $CA51 LD HL,($C8BE) ;
- $CA54 LD ($CD5E),HL ;
+ $CA4E CALL $D6C0    ; Get the data
+ $CA51 LD HL,($C8BE) ; { Copy the first two bytes to #N$CD5E
+ $CA54 LD ($CD5E),HL ; }
  $CA57 LD A,($C8BF)  ; Get the next room graphic ID
  $CA5A LD HL,$8111   ; Point #REGhl at the bit key table
  $CA5D SUB (HL)      ; Subtract the relevant bits to get the real ID
  $CA5E LD ($D758),A  ; Store it (#R$D758)
- $CA61 CALL $E252    ;
- $CA64 RET           ;
+ $CA61 CALL $E252    ; Make a snapshot of time
+ $CA64 RET           ; All done
 
 ; Initialize command buffers
 ;
@@ -5317,7 +5319,7 @@ c$CBBF LD A,($C8CC)  ;
  $CC4A POP AF        ;
  $CC4B LD E,A        ;
  $CC4C LD D,$00      ;
- $CC4E LD IX,$C277   ;
+ $CC4E LD IX,$C277   ; Point #REGix at the input buffer
  $CC52 ADD IX,DE     ;
  $CC54 LD ($CD7C),IX ;
  $CC58 LD A,$00      ;
@@ -5356,13 +5358,13 @@ c$CBBF LD A,($C8CC)  ;
  $CCA4 CCF           ;
  $CCA5 RET           ;
 
-; Process input
+; Find a match on the entered word in a text table
 ;
 ; Used by the routine at #R$CFCA.
 ;
-; BC ???
+; BC ID of the text table to check
 c$CCA6 LD HL,$8106   ; Point #REGhl at the offset buffer
- $CCA9 ADD HL,BC     ; Add the command ID
+ $CCA9 ADD HL,BC     ; Add the text table ID
  $CCAA LD A,(HL)     ;
  $CCAB LD ($C8EE),A  ;
  $CCAE DEC HL        ;
@@ -5370,8 +5372,8 @@ c$CCA6 LD HL,$8106   ; Point #REGhl at the offset buffer
  $CCB0 LD ($C8EF),A  ;
  $CCB3 LD B,$00      ;
  $CCB5 CALL $CB37    ; Look up the table data and point to it in #REGix.
-*$CCB8 CALL $CBBF    ;
- $CCBB JR C,$CCCE    ;
+*$CCB8 CALL $CBBF    ; Was a match found?
+ $CCBB JR C,$CCCE    ; Jump forward if so
  $CCBD CALL $CB96    ;
  $CCC0 LD HL,$C8EF   ;
  $CCC3 INC (HL)      ;
@@ -5461,20 +5463,32 @@ c$CD15 LD B,$00      ;
 *$CD50 LD A,($C8EF)  ;
  $CD53 RET           ;
 
-; Data block at CD54
+; Buffer for processing commands
 b$CD54 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $CD5C DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $CD64 DEFB $00,$00
+ $CD5C DEFB $00,$00,$00,$00
+ 
+; Game status buffer entry at CD60
+g$CD60 DEFW $0000
+ 
+; Time snapshot 
+b$CD62 DEFW $0000
+ 
+; Data block at CD64
+b$CD64 DEFB $00,$00
 
 ; Data block at CD66
 b$CD66 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $CD6E DEFB $00,$00,$00,$00,$00,$00,$44,$41
- $CD76 DEFB $50,$56,$4C,$4F,$43
+ $CD6E DEFB $00,$00,$00,$00,$00,$00
 
-; Game status buffer entry at CD7B
+; Data block at CD74
+b$CD74 DEFB $44,$41,$50,$56,$4C,$4F,$43
+
+; Block input
+;
+; Set to 0 to allow commands to be executed, or #N$FF to block them
 g$CD7B DEFB $00
 
-; Data block at CD7C
+; Current position in the input buffer
 w$CD7C DEFW $0000
 
 ; Data block at CD7E
@@ -5485,9 +5499,16 @@ b$CD7E DEFB $12,$74,$68,$65,$2C,$74,$68,$65
  $CD9E DEFB $60,$68
 
 ; Data block at CDA0
-b$CDA0 DEFB $02,$00,$03,$01,$02,$02,$02,$00
- $CDA8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $CDB0 DEFB $00,$00,$00
+b$CDA0 DEFB $02,$00,$03,$01,$02,$02,$02
+
+; Pointer to queue (?)
+;
+; This points to a location in the buffer at #R$CDA9
+w$CDA7 DEFW $0000
+
+; Data block at CDA9
+b$CDA9 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $CDB1 DEFB $00,$00,$00,$00,$00
  
 ; Current time stamp for command
 g$CDB3 DEFB $00
@@ -5498,81 +5519,90 @@ g$CDB4 DEFB $00
 ; Game status buffer entry at CDB5
 g$CDB5 DEFB $00
 
-; Routine at CDB6
+; Copy a word into the command buffer
 ;
 ; Used by the routines at #R$CBBF and #R$CF5D.
-c$CDB6 LD A,($CD7B)  ;
- $CDB9 CP $00        ;
- $CDBB JP NZ,$CE3F   ;
- $CDBE LD IX,($CD7C) ;
- $CDC2 LD A,(IX+$00) ;
- $CDC5 CALL $CF46    ;
- $CDC8 CP $0D        ;
- $CDCA JP Z,$CE3F    ;
- $CDCD LD DE,$C277   ;
- $CDD0 PUSH IX       ;
- $CDD2 POP HL        ;
- $CDD3 SCF           ;
+;
+; A On return, set to 1 if data was read
+c$CDB6 LD A,($CD7B)  ; { Is input blocked?
+ $CDB9 CP $00        ; }
+ $CDBB JP NZ,$CE3F   ; Jump forward if it is
+ $CDBE LD IX,($CD7C) ; Point #REGix at the current place in the input buffer
+ $CDC2 LD A,(IX+$00) ; Get the next character in the buffer
+ $CDC5 CALL $CF46    ; Skip over whitespace
+ $CDC8 CP $0D        ; Is the next character a newline?
+ $CDCA JP Z,$CE3F    ; If so, jump forward to parse the buffer
+ $CDCD LD DE,$C277   ; Point #REGde at the start of the input buffer
+ $CDD0 PUSH IX       ; { Copy the current location to #REGhl
+ $CDD2 POP HL        ; }
+ $CDD3 SCF           ; { Subtract the two to get the length
  $CDD4 CCF           ;
- $CDD5 SBC HL,DE     ;
- $CDD7 LD ($C8CC),HL ;
- $CDDA CP $2C        ;
- $CDDC JR Z,$CE47    ;
- $CDDE CP $2E        ;
- $CDE0 JR Z,$CE49    ;
- $CDE2 CP $22        ;
- $CDE4 JR Z,$CE56    ;
- $CDE6 CP $30        ;
- $CDE8 JR C,$CDEF    ;
- $CDEA CP $39        ;
- $CDEC JP C,$CEAA    ;
-*$CDEF CP $0D        ;
- $CDF1 JR Z,$CE2C    ;
- $CDF3 LD IY,$C8D6   ;
-*$CDF7 CP $5B        ;
+ $CDD5 SBC HL,DE     ; }
+ $CDD7 LD ($C8CC),HL ; Store this
+; Do a syntax check on the next character
+ $CDDA CP $2C        ; Is this a comma?
+ $CDDC JR Z,$CE47    ; Jump forward if so
+ $CDDE CP $2E        ; Is this a full stop?
+ $CDE0 JR Z,$CE49    ; Jump forward if so
+ $CDE2 CP $22        ; Is this a quote character?
+ $CDE4 JR Z,$CE56    ; Jump forward if so
+ $CDE6 CP $30        ; Is this below #N$30?
+ $CDE8 JR C,$CDEF    ; Jump forward if so
+ $CDEA CP $39        ; Is this below #N$39?
+ $CDEC JP C,$CEAA    ; Jump forward if so
+; Handle letters and other general characters
+*$CDEF CP $0D        ; Is this a newline?
+ $CDF1 JR Z,$CE2C    ; Jump forward if so
+ $CDF3 LD IY,$C8D6   ; Point #regY at the parsed command (#R$C8D6)
+*$CDF7 CP $5B        ; { Convert upper case characters to lower case
  $CDF9 JR NC,$CE01   ;
  $CDFB CP $41        ;
  $CDFD JR C,$CE01    ;
- $CDFF ADD A,$20     ;
-*$CE01 LD (IY+$00),A ;
- $CE04 LD (IX+$00),A ;
- $CE07 INC IY        ;
- $CE09 INC IX        ;
- $CE0B PUSH IY       ;
- $CE0D LD DE,$C8EA   ;
+ $CDFF ADD A,$20     ; }
+*$CE01 LD (IY+$00),A ; { Set the character in the parsed command and the input buffer
+ $CE04 LD (IX+$00),A ; }
+ $CE07 INC IY        ; { Move forward one character in both buffers
+ $CE09 INC IX        ; }
+ $CE0B PUSH IY       ; Store the position in the parsed buffer
+ $CE0D LD DE,$C8EA   ; { Break out of the loop if the end of the buffer is reached
  $CE10 PUSH IY       ;
  $CE12 POP HL        ;
  $CE13 SBC HL,DE     ;
- $CE15 POP IY        ;
- $CE17 JR NC,$CE2C   ;
- $CE19 LD A,(IX+$00) ;
- $CE1C CP $20        ;
- $CE1E JR Z,$CE2C    ;
+ $CE15 POP IY        ; 
+ $CE17 JR NC,$CE2C   ; }
+ $CE19 LD A,(IX+$00) ; Get the next character
+ $CE1C CP $20        ; { Break out of the loop if space, comma, full stop
+ $CE1E JR Z,$CE2C    ; or newline found, which denotes the end of a word
  $CE20 CP $2C        ;
  $CE22 JR Z,$CE2C    ;
  $CE24 CP $2E        ;
- $CE26 JR Z,$CE2C    ;
- $CE28 CP $0D        ;
- $CE2A JR NZ,$CDF7   ;
-*$CE2C LD ($CD7C),IX ;
- $CE30 LD DE,$C8D6   ;
+ $CE26 JR Z,$CE2C    ; 
+ $CE28 CP $0D        ; 
+ $CE2A JR NZ,$CDF7   ; }
+; Processed this character, now more forward in the input buffer
+*$CE2C LD ($CD7C),IX ; Set the new position in the input buffer
+ $CE30 LD DE,$C8D6   ; { Store the new length in #N$C8EA
  $CE33 PUSH IY       ;
  $CE35 POP HL        ;
  $CE36 SBC HL,DE     ;
  $CE38 LD A,L        ;
- $CE39 LD ($C8EA),A  ;
- $CE3C LD A,$01      ;
- $CE3E RET           ;
-*$CE3F LD A,$FF      ;
- $CE41 LD ($CD7B),A  ;
+ $CE39 LD ($C8EA),A  ; }
+ $CE3C LD A,$01      ; { Signal character read and return
+ $CE3E RET           ; }
+; The input buffer has been read
+*$CE3F LD A,$FF      ; { Block input (#R$CD7B)
+ $CE41 LD ($CD7B),A  ; }
  $CE44 LD A,$00      ;
  $CE46 RET           ;
+; Handle comma
 *$CE47 LD A,$26      ;
+; Handle full stop
 *$CE49 LD IY,$C8D6   ;
  $CE4D LD (IY+$00),A ;
  $CE50 INC IY        ;
  $CE52 INC IX        ;
  $CE54 JR $CE2C      ;
+; Handle quote
 *$CE56 LD A,$51      ;
  $CE58 CALL $CF54    ;
  $CE5B INC IX        ;
@@ -5602,7 +5632,7 @@ c$CDB6 LD A,($CD7B)  ;
  $CE8B INC IX        ;
  $CE8D JR $CE6E      ;
 *$CE8F DEC IX        ;
-*$CE91 LD ($CD7C),IX ;
+*$CE91 LD ($CD7C),IX ; 
  $CE95 LD A,($CD71)  ;
  $CE98 CP $00        ;
  $CE9A JR NZ,$CEA3   ;
@@ -5616,9 +5646,12 @@ c$CDB6 LD A,($CD7B)  ;
 ; Data block at CEA6
 b$CEA6 DEFB $00,$00,$00,$00
 
-; Routine at CEAA
+; Handle numbers in the input buffer
 ;
 ; Used by the routine at #R$CDB6.
+;
+; A current character
+; IX current position in the input buffer
 c$CEAA LD A,($CD59)  ;
  $CEAD CP $00        ;
  $CEAF JR NZ,$CF06   ;
@@ -5665,8 +5698,8 @@ c$CEAA LD A,($CD59)  ;
  $CF08 JR $CEFE      ;
 *$CF0A LD A,$58      ;
  $CF0C CALL $CF54    ;
- $CF0F LD A,$FF      ;
- $CF11 LD ($CD7B),A  ;
+ $CF0F LD A,$FF      ; { Block input (#R$CD7B)
+ $CF11 LD ($CD7B),A  ; }
  $CF14 LD A,$FE      ;
  $CF16 RET           ;
 *$CF17 LD HL,$0000   ;
@@ -5692,16 +5725,19 @@ c$CEAA LD A,($CD59)  ;
  $CF42 INC IX        ;
  $CF44 JR $CF1D      ;
 
-; Routine at CF46
+; Skip over whitespace
 ;
 ; Used by the routine at #R$CDB6.
-c$CF46 LD HL,$C8EC   ;
- $CF49 INC (HL)      ;
- $CF4A CP $20        ;
- $CF4C RET NZ        ;
- $CF4D INC IX        ;
+;
+; A Current character in the input buffer
+; IX Current position in the input buffer
+c$CF46 LD HL,$C8EC   ; { Increment running count of characters
+ $CF49 INC (HL)      ; }
+ $CF4A CP $20        ; Is the current character a space?
+ $CF4C RET NZ        ; Return if is isn't
+ $CF4D INC IX        ; { Otherwise, get the next character and repeat
  $CF4F LD A,(IX+$00) ;
- $CF52 JR $CF46      ;
+ $CF52 JR $CF46      ; }
 
 ; Routine at CF54
 ;
@@ -5712,35 +5748,36 @@ c$CF54 LD HL,($CDA7) ;
  $CF5B INC (HL)      ;
  $CF5C RET           ;
 
-; Routine at CF5D
+; Set up a command for processing
 ;
 ; Used by the routine at #R$D4CC.
-c$CF5D LD A,($CD7B)  ;
- $CF60 CP $00        ;
- $CF62 RET NZ        ;
- $CF63 LD HL,$CDA9   ;
- $CF66 LD ($CDA7),HL ;
+c$CF5D LD A,($CD7B)  ; { Check the blocking flag (#R$CD7B)
+ $CF60 CP $00        ; }
+ $CF62 RET NZ        ; Return if interrupt is blocked
+ $CF63 LD HL,$CDA9   ; { Set the buffer pointer (#R$CDA7) to point to the start (#R$CDA9)
+ $CF66 LD ($CDA7),HL ; }
  $CF69 LD A,$00      ;
  $CF6B LD ($CDB5),A  ;
- $CF6E LD HL,$CD54   ;
+ $CF6E LD HL,$CD54   ; { Clear the buffer's contents
  $CF71 LD DE,$CD55   ;
  $CF74 LD (HL),$00   ;
  $CF76 LD BC,$001F   ;
- $CF79 LDIR          ;
- $CF7B CALL $E265    ;
- $CF7E CALL $CA3C    ;
-*$CF81 CALL $CDB6    ;
- $CF84 CP $00        ;
- $CF86 JR Z,$CFC9    ;
- $CF88 JP P,$CF91    ;
- $CF8B CP $FF        ;
- $CF8D JR Z,$CF81    ;
- $CF8F JR NZ,$CF9B   ;
+ $CF79 LDIR          ; }
+ $CF7B CALL $E265    ; Get the current character
+ $CF7E CALL $CA3C    ; Populate flags for the current player and room
+*$CF81 CALL $CDB6    ; Put the next word in the command buffer
+ $CF84 CP $00        ; Was data read?
+ $CF86 JR Z,$CFC9    ; If not, jump forward and leave the routine
+ $CF88 JP P,$CF91    ; Was the whole command read successfully?
+ $CF8B CP $FF        ; { If not, is there more input?
+ $CF8D JR Z,$CF81    ; }
+ $CF8F JR NZ,$CF9B   ; If not, jump forward to exit the routine
+; A word was read from the buffer
 *$CF91 CALL $CFCA    ;
  $CF94 CP $00        ;
  $CF96 JR Z,$CF81    ;
  $CF98 JP P,$CFC9    ;
-*$CF9B RET           ;
+*$CF9B RET           ; All done
 
 ; Data block at CF9C
 b$CF9C DEFB $4C,$45,$58,$20,$42,$45,$49,$4E
@@ -5748,12 +5785,17 @@ b$CF9C DEFB $4C,$45,$58,$20,$42,$45,$49,$4E
  $CFAC DEFB $20,$20,$20,$53,$45,$44,$0D,$57
  $CFB4 DEFB $4F,$52,$44,$20,$20,$20,$20,$20
  $CFBC DEFB $20,$20,$4E,$4F,$54,$20,$46,$4F
- $CFC4 DEFB $55,$4E,$44,$21,$0D,$C9
+ $CFC4 DEFB $55,$4E,$44,$21,$0D
 
-; Routine at CFCA
+; Finished processing command
 ;
 ; Used by the routine at #R$CF5D.
-b$CFCA LD A,$00      ;
+c$CFC9 RET           ; All done
+
+; Process a word in the command
+;
+; Used by the routine at #R$CF5D.
+c$CFCA LD A,$00      ;
  $CFCC LD ($C8CE),A  ;
  $CFCF LD A,($CD7E)  ;
  $CFD2 LD ($C8CF),A  ;
@@ -5773,16 +5815,17 @@ b$CFCA LD A,$00      ;
  $CFF7 JR NC,$CFFC   ;
  $CFF9 LD A,$01      ;
  $CFFB RET           ;
-*$CFFC LD BC,$0005   ; Set #REGbc to command list 5 (directions)
+*$CFFC LD BC,$0005   ; Set #REGbc to text table type 5 (directions)
  $CFFF LD ($CDB3),BC ; Store this (#R$CDB3)
-*$D003 LD BC,($CDB3) ;
- $D007 CALL $CCA6    ;
- $D00A JR C,$D04F    ;
- $D00C LD A,($CDB3)  ;
+; Look through text tables looking for a match
+*$D003 LD BC,($CDB3) ; Put the next table type in #REGbc
+ $D007 CALL $CCA6    ; Was a match found?
+ $D00A JR C,$D04F    ; Jump forward if so
+ $D00C LD A,($CDB3)  ; { Otherwise move to the next table type
  $D00F ADD A,$01     ;
- $D011 LD ($CDB3),A  ;
- $D014 CP $08        ;
- $D016 JR NZ,$D003   ;
+ $D011 LD ($CDB3),A  ; }
+ $D014 CP $08        ; { Loop until table type 8
+ $D016 JR NZ,$D003   ; }
  $D018 LD A,$56      ;
  $D01A LD BC,$000B   ; Set #REGbc to command list B (actions)
  $D01D LD ($CDB3),BC ;
@@ -5801,8 +5844,8 @@ b$CFCA LD A,$00      ;
  $D041 LD ($CD73),A  ;
  $D044 LD A,$58      ;
  $D046 CALL $CF54    ;
- $D049 LD A,$FF      ;
- $D04B LD ($CD7B),A  ;
+ $D049 LD A,$FF      ; { Block input (#R$CD7B)
+ $D04B LD ($CD7B),A  ; }
  $D04E RET           ;
 *$D04F LD ($C8BA),A  ;
  $D052 LD A,$FF      ;
@@ -5874,8 +5917,8 @@ b$CFCA LD A,$00      ;
  $D0CC CP $00        ;
  $D0CE JR NZ,$D0D1   ;
  $D0D0 RET           ;
-*$D0D1 LD A,$FF      ;
- $D0D3 LD ($CD7B),A  ;
+*$D0D1 LD A,$FF      ; { Block input (#R$CD7B)
+ $D0D3 LD ($CD7B),A  ; }
  $D0D6 LD A,$FE      ;
  $D0D8 RET           ;
 
@@ -6294,14 +6337,14 @@ c$D412 LD C,$08      ;
  $D4C8 LD ($D410),HL ;
  $D4CB RET           ;
 
-; Routine at D4CC
+; Execute a command
 ;
 ; Used by the routine at #R$E1D7.
 c$D4CC CALL $CF5D    ;
- $D4CF LD HL,($CDA7) ;
- $D4D2 LD DE,$CDA9   ;
- $D4D5 SBC HL,DE     ;
- $D4D7 JR Z,$D4FE    ;
+ $D4CF LD HL,($CDA7) ; Point #REGhl at the current end of the queue
+ $D4D2 LD DE,$CDA9   ; { Subtract the start address to get an offset
+ $D4D5 SBC HL,DE     ; }
+ $D4D7 JR Z,$D4FE    ; Skip forward if there is nothing in the queue
  $D4D9 LD A,($CD56)  ;
  $D4DC CP $00        ;
  $D4DE JR Z,$D4F9    ;
@@ -6318,18 +6361,19 @@ c$D4CC CALL $CF5D    ;
  $D4F7 JR NC,$D4FF   ;
 *$D4F9 CALL $D520    ;
  $D4FC JR NC,$D50F   ;
+; All done with the command
 *$D4FE RET           ;
 *$D4FF LD C,$0B      ;
  $D501 LD A,($C8CA)  ;
  $D504 LD B,A        ;
  $D505 CALL $D0D9    ; Check for blocking messages
- $D508 LD A,$FF      ;
- $D50A LD ($CD7B),A  ;
+ $D508 LD A,$FF      ; { Block input (#R$CD7B)
+ $D50A LD ($CD7B),A  ; }
  $D50D JR C,$D4FE    ;
 *$D50F LD C,$0A      ;
  $D511 LD B,$00      ;
- $D513 LD A,$FF      ;
- $D515 LD ($CD7B),A  ;
+ $D513 LD A,$FF      ; { Block input (#R$CD7B)
+ $D515 LD ($CD7B),A  ; }
  $D518 JP $D0D9      ; Check for blocking messages
 
 ; Data block at D51B
@@ -6571,12 +6615,12 @@ c$D6AA LD C,$08      ; Select table 8 (user flags)
  $D6BC CALL $D62A    ;
  $D6BF RET           ;
 
-; Update text / data
+; Look up data in a table
 ;
 ; Used by the routines at #R$C99B, #R$CA3C, #R$D412, #R$D6AA, #R$D7B5, #R$D801,
 ; #R$DBB6, #R$DCE0, #R$DD31, #R$DDD8, #R$DEE2, #R$DF1B, #R$DF79, #R$DF9C,
 ; #R$E259, #R$E265, #R$E30D, #R$E3CC, #R$E453 and #R$F83F.
-; On return, #R$C8C2 points to the update buffer and #N$C8BE to the parameters
+; On return, #R$C8C2 points to the sart of the data table, and #R$C8BE to the four bytes extracted
 ;
 ; B Data index
 ; C Data table
@@ -6586,23 +6630,23 @@ c$D6C0 PUSH BC        ; Store #REGbc
  $D6C4 LD B,$00       ; { Add the base address (#R$80FE)
  $D6C6 LD HL,$80DE    ;
  $D6C9 ADD HL,BC      ; }
- $D6CA LD A,(HL)      ; { Point the graphics update buffer to this (#R$C8C2)
+ $D6CA LD A,(HL)      ; { Put the table address in #R$C8C2
  $D6CB LD ($C8C2),A   ; 
  $D6CE INC HL         ; 
  $D6CF LD A,(HL)      ;
  $D6D0 LD ($C8C3),A   ; }
  $D6D3 POP BC         ; Restore #REGbc
- $D6D4 LD C,$00       ; { Add the base address at #R$C8BE
+ $D6D4 LD C,$00       ; { Initialize the parameters (#R$C8BE) to 0
  $D6D6 LD HL,$C8BE    ; }
- $D6D9 LD (HL),C      ; Initialize this value to 0
+ $D6D9 LD (HL),C      ; 
  $D6DA LD A,B         ; Get the index
- $D6DB SLA A          ; 
- $D6DD RL (HL)        ; 
+ $D6DB SLA A          ; { Quadruple it to get a 4 byte offset,
+ $D6DD RL (HL)        ; and adjust the parameter offset
  $D6DF SLA A          ; 
- $D6E1 RL (HL)        ; 
- $D6E3 LD IX,$C8C2    ; Point #REGix at the graphics update buffer (#R$C8C2)
- $D6E7 ADD A,(IX+$00) ; { Add the offset to the next entry and store it
- $D6EA LD (IX+$00),A  ;
+ $D6E1 RL (HL)        ; }
+ $D6E3 LD IX,$C8C2    ; Point #REGix at the start of the data table (#R$C8C2)
+ $D6E7 ADD A,(IX+$00) ; { Adjust the value with the data index offset
+ $D6EA LD (IX+$00),A  ; so it points to the right place
  $D6ED LD A,(HL)      ;
  $D6EE ADC A,(IX+$01) ;
  $D6F1 LD (IX+$01),A  ; }
@@ -6668,7 +6712,7 @@ c$D734 POP DE        ;
  $D755 PUSH DE       ;
  $D756 RET           ;
 
-; Game status buffer entry at D757
+; Current player
 g$D757 DEFB $00
 
 ; Current room graphics
@@ -6745,12 +6789,12 @@ c$D7B5 LD A,C        ;
  $D7C7 JR Z,$D7D1    ;
  $D7C9 CP $0D        ;
  $D7CB JR NZ,$D7F7   ;
- $D7CD LD C,$10      ;
- $D7CF JR $D7D3      ;
-*$D7D1 LD C,$11      ; Use data table #N$11
-*$D7D3 CALL $D6C0    ; 
+ $D7CD LD C,$10      ; { Use data table #N$10
+ $D7CF JR $D7D3      ; }
+*$D7D1 LD C,$11      ; Otherwise use data table #N$11
+*$D7D3 CALL $D6C0    ; Get the data
  $D7D6 LD HL,($CD5E) ;
- $D7D9 LD DE,($C8BE) ;
+ $D7D9 LD DE,($C8BE) ; Point #REGde at the extracted data
  $D7DD SCF           ;
  $D7DE CCF           ;
  $D7DF SBC HL,DE     ;
@@ -6759,7 +6803,7 @@ c$D7B5 LD A,C        ;
 *$D7E3 LD HL,($CD60) ;
  $D7E6 SCF           ;
  $D7E7 CCF           ;
- $D7E8 LD DE,($C8BE) ;
+ $D7E8 LD DE,($C8BE) ; Point #REGde at the extracted data
  $D7EC SBC HL,DE     ;
  $D7EE JR NZ,$D7F7   ;
 ; This entry point is used by the routines at #R$D7F2, #R$D7FA, #R$D877 and
@@ -7293,8 +7337,8 @@ c$DC0F CALL $DF5E    ;
  $DC16 RET           ;
 
 ; Command 04 - Restart game
-c$DC17 LD A,$FF      ;
- $DC19 LD ($CD7B),A  ;
+c$DC17 LD A,$FF      ; { Block input (#R$CD7B)
+ $DC19 LD ($CD7B),A  ; }
  $DC1C CALL $DF5E    ;
  $DC1F RET NC        ;
  $DC20 CALL $DB34    ; Print a blocking message and beep
@@ -7305,7 +7349,7 @@ c$DC24 CALL $DF5E    ;
  $DC27 RET NC        ;
  $DC28 LD A,($D757)  ;
  $DC2B PUSH AF       ;
- $DC2C CALL $E265    ;
+ $DC2C CALL $E265    ; Get the current character
  $DC2F CALL $CA3C    ;
  $DC32 LD C,$0D      ;
  $DC34 LD B,$06      ;
@@ -7327,7 +7371,7 @@ c$DC24 CALL $DF5E    ;
  $DC60 CALL $EBC8    ;
  $DC63 LD A,$38      ;
  $DC65 LD ($F30A),A  ;
- $DC68 CALL $E265    ;
+ $DC68 CALL $E265    ; Get the current character
  $DC6B LD ($F5C3),A  ;
  $DC6E LD A,$01      ;
  $DC70 LD ($F5C2),A  ;
@@ -7350,7 +7394,7 @@ c$DC85 CALL $DF9C    ;
  $DC93 LD A,($DB32)  ;
  $DC96 CP $00        ;
  $DC98 RET NZ        ;
- $DC99 CALL $E265    ;
+ $DC99 CALL $E265    ; Get the current character
  $DC9C CALL $CA3C    ;
  $DC9F RET           ;
 
@@ -7945,7 +7989,7 @@ g$E148 DEFB $00
 ; Data block at E149
 b$E149 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
-; Game status buffer entry at E151
+; Set bit 1 to mark a game should be loaded
 g$E151 DEFB $00
 
 ; Default time
@@ -7976,8 +8020,8 @@ c$E15A LD IX,$5DB7   ; { Put the stack somewhere safe
 c$E186 CALL $C906    ;
  $E189 LD HL,($80FC) ;
  $E18C LD ($E146),HL ;
- $E18F LD A,$00      ;
- $E191 LD ($CD7B),A  ;
+ $E18F LD A,$00      ; Set #REGa to 0 for some flags
+ $E191 LD ($CD7B),A  ; Allow input (#R$CD7B)
  $E194 LD ($E148),A  ;
  $E197 LD ($C2C7),A  ;
  $E19A LD A,$00      ; { Turn off fast time
@@ -7993,10 +8037,10 @@ c$E186 CALL $C906    ;
  $E1B3 DJNZ $E1A9    ; }
  $E1B5 RET           ; All done
 
-; Routine at E1B6
+; Handle loading a game
 ;
 ; Used by the routine at #R$E1D7.
-c$E1B6 CALL $E186    ;
+c$E1B6 CALL $E186    ; Initialize game data
  $E1B9 LD HL,$E151   ;
  $E1BC SRL (HL)      ;
  $E1BE JR NC,$E1D2   ;
@@ -8013,85 +8057,95 @@ c$E1B6 CALL $E186    ;
 ; Main loop
 ;
 ; Used by the routines at #R$E15A and #R$E1B6.
-c$E1D7 LD HL,$E151   ;
- $E1DA SRL (HL)      ;
- $E1DC JR C,$E1B6    ;
- $E1DE LD A,($C2C7)  ; Get the current command to execute (#R$C2C7)
- $E1E1 CP $00        ; Is it 0 (no command?)
- $E1E3 JR Z,$E202    ; Jump forward if it is
+c$E1D7 LD HL,$E151   ; Get the tape load flag (#R$E151)
+ $E1DA SRL (HL)      ; { If bit 0 is set, load the game
+ $E1DC JR C,$E1B6    ; }
+ $E1DE LD A,($C2C7)  ; { Is there a command to execute? (#R$C2C7)
+ $E1E1 CP $00        ; }
+ $E1E3 JR Z,$E202    ; Jump forward if there isn't
 ; There is a command to execute
- $E1E5 LD A,($E148)  ; { Is there a backlogged queue of commands?
+ $E1E5 LD A,($E148)  ; { Is there a command waiting in the input buffer?
  $E1E8 CP $00        ; }
- $E1EA JR Z,$E231    ; Jump forward if not
- $E1EC CALL $E259    ;
- $E1EF AND $40       ;
- $E1F1 JR NZ,$E202   ;
+ $E1EA JR Z,$E231    ; Jump forward if so
+ $E1EC CALL $E259    ; Get the player flags
+ $E1EF AND $40       ; Is bit 6 set?
+ $E1F1 JR NZ,$E202   ; Jump forward if not
  $E1F3 LD A,($C8BE)  ;
  $E1F6 CP $00        ;
  $E1F8 JP M,$E231    ;
  $E1FB LD A,($BFDB)  ; Get the "fast timer" flag
  $E1FE CP $01        ; Is it set to fast time?
  $E200 JR Z,$E231    ; Jump forward if it is
-*$E202 CALL $E252    ;
+; The command is in the input buffer, ready to be dealt with
+*$E202 CALL $E252    ; Get a time snapshot
  $E205 CALL $E275    ; Check for state / room movement
- $E208 CALL $E259    ;
- $E20B CP $00        ;
- $E20D JP P,$E1D7    ; 
- $E210 LD A,($CD7B)  ;
- $E213 CP $00        ;
- $E215 JR NZ,$E22A   ;
- $E217 LD A,($E148)  ;
- $E21A CP $00        ;
- $E21C JR Z,$E1D7    ;
- $E21E LD A,($C2C7)  ;
- $E221 CP $00        ;
- $E223 JR NZ,$E1D7   ;
- $E225 CALL $D4CC    ;
+ $E208 CALL $E259    ; Get the player flags
+ $E20B CP $00        ; Is the command blocked? (???)
+ $E20D JP P,$E1D7    ; Jump back if so
+ $E210 LD A,($CD7B)  ; { Is input blocked?
+ $E213 CP $00        ; }
+ $E215 JR NZ,$E22A   ; If so, cancel any current command
+ $E217 LD A,($E148)  ; { Is there a command waiting?
+ $E21A CP $00        ; }
+ $E21C JR Z,$E1D7    ; Jump back to the start of the loop if not
+ $E21E LD A,($C2C7)  ; { Is a command in the input buffer?
+ $E221 CP $00        ; }
+ $E223 JR NZ,$E1D7   ; Jump back to the start of the loop if not
+; The command is active and ready, so run it
+ $E225 CALL $D4CC    ; Run the command
  $E228 JR $E1D7      ; Jump to the start of the loop.
-*$E22A LD A,$00      ;
- $E22C LD ($E148),A  ;
+; The command was cancelled
+*$E22A LD A,$00      ; { Set to no command waiting
+ $E22C LD ($E148),A  ; }
  $E22F JR $E1D7      ; Jump to the start of the loop.
-*$E231 CALL $E265    ;
- $E234 CALL $E448    ;
- $E237 LD A,$00      ;
- $E239 LD ($C2C7),A  ;
+; A command is waiting, so set it up for processing
+*$E231 CALL $E265    ; Get the current character
+ $E234 CALL $E448    ; Get the player flags
+ $E237 LD A,$00      ; Set #REGa to 0 for some flags
+ $E239 LD ($C2C7),A  ; Set no command to execute
  $E23C LD ($CD7B),A  ;
- $E23F LD HL,$C277   ;
- $E242 LD ($CD7C),HL ;
- $E245 LD A,$FF      ;
- $E247 LD ($E148),A  ;
+ $E23F LD HL,$C277   ; { Set the current position (#R$CD7C) at the start of the input buffer (#R$C277) 
+ $E242 LD ($CD7C),HL ; }
+ $E245 LD A,$FF      ; { Signal a backlog of commands
+ $E247 LD ($E148),A  ; }
  $E24A LD A,$00      ; { Turn off the "fast time" flag (#R$BFDB)
  $E24C LD ($BFDB),A  ; }
  $E24F JP $E1D7      ; Jump to the start of the loop.
 
-; Routine at E252
+; Make a copy of the current time
 ;
 ; Used by the routines at #R$CA3C and #R$E1D7.
-c$E252 LD HL,($BFC6) ;
- $E255 LD ($CD62),HL ;
- $E258 RET           ;
+; This routine allows events to happen at a specific time, while the main clock continues
+c$E252 LD HL,($BFC6) ; Put the current time (#R$BFC6) in #REGhl
+ $E255 LD ($CD62),HL ; Store a copy of this (#R$CD62)
+ $E258 RET           ; All done
 
-; Routine at E259
+; Get the player flags
 ;
 ; Used by the routine at #R$E1D7.
-c$E259 CALL $E265    ;
+;
+; A On return, holds player flags
+c$E259 CALL $E265    ; Get the current character
  $E25C LD C,$13      ; Use data table #N$13
- $E25E CALL $D6C0    ; 
- $E261 LD A,($C8BE)  ;
- $E264 RET           ;
+ $E25E CALL $D6C0    ; Extract the data
+ $E261 LD A,($C8BE)  ; { Put the first extracted value in #REGa and return
+ $E264 RET           ; }
 
-; Routine at E265
+; Get the current character
 ;
 ; Used by the routines at #R$CF5D, #R$DC24, #R$DC85, #R$E1D7, #R$E259 and
 ; #R$F83F.
+;
+; A On return holds 0 for Kevin and 1 for Redhawk
+; B As above. This is used to pass a data index into a call to #R$D6C0
 c$E265 LD C,$08      ; Use data table 8 (user flags)
- $E267 LD B,$00      ;
- $E269 CALL $D6C0    ; 
- $E26C LD A,($C8BF)  ;
- $E26F LD HL,$8113   ;
- $E272 SUB (HL)      ;
- $E273 LD B,A        ;
- $E274 RET           ;
+ $E267 LD B,$00      ; Use index 0
+ $E269 CALL $D6C0    ; Extract the data
+ $E26C LD A,($C8BF)  ; Get the second byte (character flag)
+ $E26F LD HL,$8113   ; Point #REGhl at the offset difference table (#N$E3)
+ $E272 SUB (HL)      ; Subtract it
+ $E273 LD B,A        ; { Store this in B
+ $E274 RET           ; }
 
 ; Check for moving to another room or state
 ;
@@ -8323,22 +8377,25 @@ c$E3CC LD A,($C8C8)  ;
  $E446 CCF           ;
  $E447 RET           ;
 
-; Routine at E448
+; Turn on high bit on player flags (?)
 ;
 ; Used by the routines at #R$E1D7 and #R$E304.
-c$E448 CALL $E453    ;
- $E44B LD HL,($C8C2) ;
- $E44E LD A,(HL)     ;
+;
+; A Current character
+c$E448 CALL $E453    ; Get the player flags
+ $E44B LD HL,($C8C2) ; Point #REGhl at the address of the extracted data
+ $E44E LD A,(HL)     ; { Set bit 7
  $E44F OR $80        ;
- $E451 LD (HL),A     ;
- $E452 RET           ;
+ $E451 LD (HL),A     ; }
+ $E452 RET           ; All done
 
-; Routine at E453
+; Get player flags
 ;
 ; Used by the routines at #R$D92A, #R$E275 and #R$E448.
-c$E453 LD B,A        ;
+; A Current character
+c$E453 LD B,A        ; Select data index as the character
  $E454 LD C,$13      ; Select data table #N$13
- $E456 JP $D6C0      ; 
+ $E456 JP $D6C0      ; Get the data
 
 ; Attribute for room background
 ;
@@ -10754,7 +10811,7 @@ c$F68A LD IX,$F5C2   ; Point #REGix at the room buffer (#R$F5C2)
 ; Put characters in a panel (?)
 ;
 ; Used by the routines at #R$F1A2 and #R$F3C5.
-c$F83F CALL $E265    ;
+c$F83F CALL $E265    ; Get the current character
  $F842 LD C,$11      ; Select data table #N$C11
  $F844 CALL $D6C0    ; 
  $F847 LD A,($C8BF)  ;
@@ -11384,45 +11441,47 @@ c$FD93 LD HL,$4000   ; { Clear the screen
  $FE6B SUB $01       ;
  $FE6D LD ($F308),A  ;
  $FE70 JR NZ,$FE34   ;
- $FE72 LD A,$70      ;
+ ; Draw the graphics next to the status bars
+ $FE72 LD A,$70      ; { Draw at #N$70, #N$70
  $FE74 LD ($FAC8),A  ;
  $FE77 LD A,$70      ;
- $FE79 LD ($FAC7),A  ;
- $FE7C LD HL,$BF08   ;
- $FE7F LD ($FAC3),HL ;
- $FE82 LD A,$03      ;
- $FE84 LD ($FAC6),A  ;
- $FE87 LD A,$20      ;
- $FE89 LD ($FAC5),A  ;
- $FE8C LD A,$01      ;
- $FE8E LD ($FADC),A  ;
- $FE91 CALL $FADD    ;
- $FE94 LD A,$B0      ;
- $FE96 LD ($FAC7),A  ;
+ $FE79 LD ($FAC7),A  ; }
+ $FE7C LD HL,$BF08   ; Point #REGhl at the status bar graphic (#R$BF08)
+ $FE7F LD ($FAC3),HL ; Set this as the graphic to draw (#R$FAC3)
+ $FE82 LD A,$03      ; { Set the width to 3
+ $FE84 LD ($FAC6),A  ; }
+ $FE87 LD A,$20      ; { Set the height to #N$20
+ $FE89 LD ($FAC5),A  ; }
+ $FE8C LD A,$01      ; { Set to merge with background
+ $FE8E LD ($FADC),A  ; }
+ $FE91 CALL $FADD    ; Draw it
+; Draw an empty space at the bottom of the screen
+ $FE94 LD A,$B0      ; { Draw at #N$08,#N$B0
+ $FE96 LD ($FAC7),A  ; 
  $FE99 LD A,$08      ;
- $FE9B LD ($FAC8),A  ;
- $FE9E LD HL,$5B00   ;
- $FEA1 LD ($FAC3),HL ;
- $FEA4 LD A,$1F      ;
- $FEA6 LD ($FAC6),A  ;
- $FEA9 LD A,$08      ;
- $FEAB LD ($FAC5),A  ;
- $FEAE LD A,$01      ;
- $FEB0 LD ($FADC),A  ;
- $FEB3 CALL $FADD    ;
- $FEB6 LD A,$B8      ;
+ $FE9B LD ($FAC8),A  ; }
+ $FE9E LD HL,$5B00   ; { Draw at a bit of memory currently unused
+ $FEA1 LD ($FAC3),HL ; }
+ $FEA4 LD A,$1F      ; { Set the width to #N$1F
+ $FEA6 LD ($FAC6),A  ; }
+ $FEA9 LD A,$08      ; { Set the height to 8
+ $FEAB LD ($FAC5),A  ; }
+ $FEAE LD A,$01      ; { Set to merge with background
+ $FEB0 LD ($FADC),A  ; }
+ $FEB3 CALL $FADD    ; Draw it
+ $FEB6 LD A,$B8      ; { Draw at #N$08,#N$B8
  $FEB8 LD ($FAC7),A  ;
  $FEBB LD A,$08      ;
- $FEBD LD ($FAC8),A  ;
+ $FEBD LD ($FAC8),A  ; }
  $FEC0 LD HL,$C155   ;
  $FEC3 LD ($FAC3),HL ;
  $FEC6 LD A,$08      ;
  $FEC8 LD ($FAC5),A  ;
  $FECB LD A,$1F      ;
  $FECD LD ($FAC6),A  ;
- $FED0 CALL $FADD    ;
+ $FED0 CALL $FADD    ; Draw it
  $FED3 LD BC,$0001   ;
- $FED6 LD DE,$1F18   ;
+ $FED6 LD DE,$1F18   ;ß
  $FED9 LD A,$38      ;
  $FEDB CALL $EBC8    ;
  $FEDE LD A,$B0      ;

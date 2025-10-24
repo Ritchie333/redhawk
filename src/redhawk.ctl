@@ -2008,11 +2008,14 @@ c $CCD2
 c $CD15
 b $CD54
 b $CD66
+b $CD74
 g $CD7B
 g $CD7C Pointer to current position in command text
 w $CD7C
 b $CD7E
 b $CDA0
+w $CDA7
+b $CDA9
 c $CDB6
 b $CEA6
 c $CEAA
@@ -2020,7 +2023,8 @@ c $CF46
 c $CF54
 c $CF5D
 b $CF9C
-c $CFC7
+c $CFC9
+c $CFCA
 c $D0D9
 c $D103
 g $D1E2
