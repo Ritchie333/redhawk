@@ -559,15 +559,19 @@ b$6856 DEFB $28,$02,$54,$00,$58,$36,$01,$12
  $686E DEFB $00
 
 ; Room graphics 26
+; Room graphics 26
 b$686F DEFB $28,$02,$54,$00,$58,$36,$01,$12
  $6877 DEFB $64,$08,$64,$58,$FF,$10,$34,$00
  $687F DEFB $18,$20,$12,$30,$08,$30,$58,$FF
  $6887 DEFB $10,$34,$20,$18,$20,$10,$34,$40
  $688F DEFB $18,$20,$06,$14,$08,$50,$10,$4D
- $6897 DEFB $45,$54,$52,$4F,$00,$00,$00,$00
- $689F DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $68A7 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $68AF DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $6897 DEFB $45,$54,$52,$4F,$00
+
+; Unused
+u$689C DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $68A4 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $68AC DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $68B4 DEFB $00,$00,$00
 
 ; Kevin large
 ;
@@ -1518,11 +1522,11 @@ b$8106 DEFB $09,$12,$2F,$3C,$3E,$46,$48,$56
  $810E DEFB $69,$8D,$8D,$A5,$D0,$E3,$F7
 
 ; Unused
-b$8115 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+u$8115 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $811D DEFB $00,$00,$00,$00,$00,$00,$00
 
 ; Data table 05
-t$8124 DEFM $08,"n,north"
+b$8124 DEFM $08,"n,north"
  $812C DEFM $08,"s,south"
  $8134 DEFM $07,"e,east"
  $813B DEFM $07,"w,west"
@@ -1532,11 +1536,11 @@ t$8124 DEFM $08,"n,north"
  $8163 DEFB $28,"out,outside,exit,leave,escape,break out"
 
 ; Data table 06
-t$818B DEFM $10,"quickly,rapidly"
+b$818B DEFM $10,"quickly,rapidly"
  $819B DEFM $11,"slowly,carefully"
 
 ; Data table 07
-t$81AC DEFM $0D,"about,around"
+b$81AC DEFM $0D,"about,around"
  $81B9 DEFM $05,"from"
  $81BE DEFM $08,"on,onto"
  $81C6 DEFM $03,"of"
@@ -1607,7 +1611,7 @@ g$820A DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $8242 DEFB $00,$00,$00,$00,$00,$00
 
 ; Data table 09
-t$8248 DEFM $06,"what "
+b$8248 DEFM $06,"what "
  $824E DEFM $04,$FE,$00,"?"
  $8252 DEFM $07,"where?"
  $8259 DEFM $05,"the "
@@ -1650,7 +1654,7 @@ t$8248 DEFM $06,"what "
  $8375 DEFM $1C,"Likely place to get mugged?"
 
 ; Data table 0A
-t$8391 DEFM $14,"M#X,-\"",$8F,"\" confuses ",$91
+b$8391 DEFM $14,"M#X,-\"",$8F,"\" confuses ",$91
  $83A5 DEFM $13,"M#N#C#,-Do ",$FE,$00,"to ",$8D,"?"
  $83B8 DEFM $11,"M#C#,-Do ",$FE,$00,"to ",$8B,"?"
  $83C9 DEFM $15,"M#O#,-Do ",$FE,$00,"with ",$FE,$03,$8B,"?"
@@ -1661,72 +1665,85 @@ t$8391 DEFM $14,"M#X,-\"",$8F,"\" confuses ",$91
  $842C DEFM $19,"M#,-",$91," doesn't understand"
 
 ; Data table 0B
-t$8445 DEFM $0D,"Vgo,walk,run"
- $8452 DEFM $0D,"HaVpDa,aVpLa"
+b$8445 DEFM $0D,"Vgo,walk,run"
+ $8452 DEFB $0D,$48,$61,$56,$70,$44,$61,$2C
+ $845A DEFB $61,$56,$70,$4C,$61
  $845F DEFM $09,"MV,-",$8A," ",$FE,$02
  $8468 DEFM $0D,"MVP#,-",$8A," ",$8C," ",$FE,$02
  $8475 DEFM $05,"Vfly"
- $847A DEFM $0D,"HaVpDa,aVpLa"
+ $847A DEFB $0D,$48,$61,$56,$70,$44,$61,$2C
+ $8482 DEFB $61,$56,$70,$4C,$61
  $8487 DEFM $09,"MV,-",$8A," ",$FE,$02
  $8490 DEFM $0D,"MVP#,-",$8A," ",$8C," ",$FE,$02
  $849D DEFM $11,"Vremove,take off"
- $84AE DEFM $04,"HVO"
+ $84AE DEFB $04,$48,$56,$4F
  $84B2 DEFM $0F,"Vget,take,pick"
- $84C1 DEFM $17,"HaVdOa,aVOda,VLPL,VOPC"
+ $84C1 DEFB $17,$48,$61,$56,$64,$4F,$61,$2C
+ $84C9 DEFB $61,$56,$4F,$64,$61,$2C,$56,$4C
+ $84D1 DEFB $50,$4C,$2C,$56,$4F,$50,$43
  $84D8 DEFM $11,"MVDl,VlD,-",$8A," ",$8B," ",$FE,$01
  $84E9 DEFM $12,"MVL#,-",$8A," ",$FE,$06,$8B," to ",$FE,$02
  $84FB DEFM $06,"Vdrop"
- $8501 DEFM $04,"HVO"
+ $8501 DEFB $04,$48,$56,$4F
  $8505 DEFM $0D,"Vwear,put on"
- $8512 DEFM $04,"HVO"
+ $8512 DEFB $04,$48,$56,$4F
  $8516 DEFM $0C,"Vput,insert"
- $8522 DEFM $1C,"HVOPC,aVOPOa,VOD,VDO,aVODOa"
+ $8522 DEFB $1C,$48,$56,$4F,$50,$43,$2C,$61
+ $852A DEFB $56,$4F,$50,$4F,$61,$2C,$56,$4F
+ $8532 DEFB $44,$2C,$56,$44,$4F,$2C,$61,$56
+ $853A DEFB $4F,$44,$4F,$61
  $853E DEFM $0D,"MVOP,-",$8A," ",$8C," ",$FE,$01
  $854B DEFM $0F,"MVO#,-",$8A," ",$FE,$03,$8B," ",$FE,$02
  $855A DEFM $0C,"Vgive,offer"
- $8566 DEFM $07,"HaVOPC"
+ $8566 DEFB $07,$48,$61,$56,$4F,$50,$43
  $856D DEFM $15,"MaVO#,-",$8A," ",$FE,$03,$8B," to who?"
  $8582 DEFM $07,"Vthrow"
- $8589 DEFM $12,"HaVOPC,aVOPO,aVOD"
+ $8589 DEFB $12,$48,$61,$56,$4F,$50,$43,$2C
+ $8591 DEFB $61,$56,$4F,$50,$4F,$2C,$61,$56
+ $8599 DEFB $4F,$44
  $859B DEFM $0E,"MaVOP,-",$8A," ",$8C," ",$FE,$01
  $85A9 DEFM $0F,"MaVO,-",$8A," ",$FE,$03,$8B," ",$FE,$02
  $85B8 DEFM $06,"Vwait"
- $85BE DEFM $07,"HV,VPT"
+ $85BE DEFB $07,$48,$56,$2C,$56,$50,$54
  $85C5 DEFM $14,"MVp#,-",$8A," until when?"
  $85D9 DEFM $13,"Varrest,stop,catch"
- $85EC DEFM $05,"HaVC"
+ $85EC DEFB $05,$48,$61,$56,$43
  $85F1 DEFM $0D,"MaV#,-",$8A," who?"
  $85FE DEFM $15,"Vexam,examine,search"
- $8613 DEFM $10,"HaVOa,aVCa,aVLa"
+ $8613 DEFB $10,$48,$61,$56,$4F,$61,$2C,$61
+ $861B DEFB $56,$43,$61,$2C,$61,$56,$4C,$61
  $8623 DEFM $06,"Vread"
- $8629 DEFM $06,"HaVoa"
+ $8629 DEFB $06,$48,$61,$56,$6F,$61
  $862F DEFM $0C,"MaVna,-",$8A," ",$FE,$01
  $863B DEFM $08,"Vl,look"
- $8643 DEFM $07,"HaVpna"
+ $8643 DEFB $07,$48,$61,$56,$70,$6E,$61
  $864A DEFM $18,"Vi,inv,invent,inventory"
- $8662 DEFM $03,"HV"
+ $8662 DEFB $03,$48,$56
  $8665 DEFM $06,"Vhelp"
- $866B DEFM $03,"HV"
+ $866B DEFB $03,$48,$56
  $866E DEFM "#Vfight,hit,attack,kill,punch,break"
- $8691 DEFM $11,"HVC,VCPO,VO,VOPO"
+ $8691 DEFB $11,$48,$56,$43,$2C,$56,$43,$50
+ $8699 DEFB $4F,$2C,$56,$4F,$2C,$56,$4F,$50
+ $86A1 DEFB $4F
  $86A2 DEFM $15,"MVCP#,VOP#,-",$8A," ",$8B," ",$8C," ",$FE,$01
  $86B7 DEFM $0B,"Vsay,shout"
- $86C2 DEFM $0E,"HVQ,VQPC,VPCQ"
+ $86C2 DEFB $0E,$48,$56,$51,$2C,$56,$51,$50
+ $86CA DEFB $43,$2C,$56,$50,$43,$51
  $86D0 DEFM $07,"Vstore"
- $86D7 DEFM $03,"HV"
+ $86D7 DEFB $03,$48,$56
  $86DA DEFM $08,"Vrecall"
- $86E2 DEFM $03,"HV"
+ $86E2 DEFB $03,$48,$56
  $86E5 DEFM $09,"Vrestart"
- $86EE DEFM $03,"HV"
+ $86EE DEFB $03,$48,$56
  $86F1 DEFM $06,"Vsave"
- $86F7 DEFM $03,"HV"
+ $86F7 DEFB $03,$48,$56
  $86FA DEFM $06,"Vload"
- $8700 DEFM $03,"HV"
+ $8700 DEFB $03,$48,$56
  $8703 DEFM $0B,"Vquit game"
- $870E DEFM $03,"HV"
+ $870E DEFB $03,$48,$56
 
 ; Data table 0C
-t$8711 DEFM $02,"L"
+b$8711 DEFM $02,"L"
  $8713 DEFM $02,"T"
  $8715 DEFM $0B,"*",$B3,$82,$00,$00,"-",$B3,$82,$84,"."
  $8720 DEFM $07,$96,"What!"
@@ -2773,7 +2790,7 @@ t$8711 DEFM $02,"L"
  $AA5A DEFM $04,"X",$FE," "
 
 ; Data table 0D
-t$AA5E DEFM $02,"O"
+b$AA5E DEFM $02,"O"
  $AA60 DEFM $08,"Ncamera"
  $AA68 DEFM $16,"D*",$B2,$60,$D1,",",$FE,$06,"loaded camera"
  $AA7E DEFM $10,"D*",$B2,$60,$D1,"-,",$FE,$06,"camera"
@@ -2853,18 +2870,19 @@ t$AA5E DEFM $02,"O"
  $ADE2 DEFM $0F,"Xlooks ancient"
 
 ; Data table 0E
-t$ADF1 DEFM $02,"C"
+b$ADF1 DEFM $02,"C"
  $ADF3 DEFM $07,"Nkevin"
  $ADFA DEFM $07,"DKEVIN"
  $AE01 DEFM $10,"XA weedy person"
- $AE11 DEFM $09,"TP",$91,"P",$95,$02,$60,$D0
+ $AE11 DEFB $09,$54,$50,$91,$50,$95,$02,$60,$D0
  $AE1A DEFM $06,"*",$B3,$86,"h",$E3
  $AE20 DEFM $11,$94,$91," eyes up his ",$8B
  $AE31 DEFM $11,$95,"No! It'll break"
- $AE42 DEFM $06,"TP",$94,"P",$93
+ $AE42 DEFB $06,$54,$50,$94,$50,$93
  $AE48 DEFM $10,"*",$B3,$86,"h",$E3,$B3,$82,$60,$D0,$B3,$84,$60,$D0,"/."
  $AE58 DEFM $12,$95,"NO! I'LL LOSE IT"
- $AE6A DEFM $09,"TP",$9D,$03,$D3,$04,$60,$D0
+ $AE6A DEFB $09,$54,$50,$9D,$03,$D3,$04,$60
+ $AE72 DEFB $D0
  $AE73 DEFM $06,"*",$B3,$86,"h",$E3
  $AE79 DEFM $10,$94,$91," swings his ",$8D
  $AE89 DEFM $11,$95,"@No, better not"
@@ -2893,7 +2911,8 @@ t$ADF1 DEFM $02,"C"
  $AF48 DEFM $02,"C"
  $AF4A DEFM $08,"Nlesley"
  $AF52 DEFM $08,"DLesley"
- $AF5A DEFM $0E,"TP",$94,"P",$95,$02,$60,$DC,$03,$D2,$04,"h",$E5
+ $AF5A DEFB $0E,$54,$50,$94,$50,$95,$02,$60
+ $AF62 DEFB $DC,$03,$D2,$04,$68,$E5
  $AF68 DEFM $09,"*",$B2,$60,$DC,$AF,"h",$E5,"."
  $AF71 DEFM $06,$9C,$60,$DC,"h",$E5
  $AF77 DEFM $0B,$94,"(",$91," ",$8A,"s ",$FE,$03,$8B
@@ -2913,7 +2932,8 @@ t$ADF1 DEFM $02,"C"
  $B018 DEFM $06,$92,"h",$E6,$00,$00
  $B01E DEFM $0B,"*",$B3,"@_",$00,$01,$AF,"h",$E3,"."
  $B029 DEFM $15,$95,"Give me some photos"
- $B03E DEFM $0E,"TP",$94,$02,$60,$D1,$60,$D2,$03,$D2,$04,"h",$E6
+ $B03E DEFB $0E,$54,$50,$94,$02,$60,$D1,$60
+ $B046 DEFB $D2,$03,$D2,$04,$68,$E6
  $B04C DEFM $13,"*",$AF,"h",$E3,$B2,$60,$D1,$AF,"h",$E6,$B3,"@c",$00,$00,"..."
  $B05F DEFM $06,$92,"h",$E6,$00,$00
  $B065 DEFM $0C,$95,"Worthless!"
@@ -2949,7 +2969,7 @@ t$ADF1 DEFM $02,"C"
  $B17C DEFM $1C,"D*",$BB,"h",$EB,",Fusor stealing jewels"
  $B198 DEFM $0D,"D*",$BB,"h",$EB,"-,Fusor"
  $B1A5 DEFM $06,"SP",$97,"P",$98
- $B1AB DEFM $02,"T"
+ $B1AB DEFB $02,$54
  $B1AD DEFM $0E,"*",$AF,"h",$EB,$B3,"@g",$86,$BB,"h",$EB,".."
  $B1BB DEFM $05,$98,"ZAP"
  $B1C0 DEFM $0D,$94,"(",$91," is saved"
@@ -2969,7 +2989,8 @@ t$ADF1 DEFM $02,"C"
  $B22A DEFM $1C,"D*",$BB,"h",$EC,",Techno robbing ",$FE,$03,"bank"
  $B246 DEFM $0E,"D*",$BB,"h",$EC,"-,Techno"
  $B254 DEFM $06,"SP",$97,"P",$98
- $B25A DEFM $0F,"TP",$95,"P",$94,$02,$60,$DB,$03,$D2,$D4,$04,"h",$EC
+ $B25A DEFB $0F,$54,$50,$95,$50,$94,$02,$60
+ $B262 DEFB $DB,$03,$D2,$D4,$04,$68,$EC
  $B269 DEFM $0D,"*",$AF,"h",$EC,$B2,$60,$DB,$BB,"h",$EC,".."
  $B276 DEFM $06,$98,"DING"
  $B27C DEFM $0B,$94,"(",$91," ",$8A,"s ",$FE,$03,$8B
@@ -2979,7 +3000,7 @@ t$ADF1 DEFM $02,"C"
  $B29E DEFM $12,$94,$91," is immobilised"
  $B2B0 DEFM $05,$9C,$60,$DB,$85
  $B2B5 DEFM $03,$A8,$86
- $B2B8 DEFM $02,"T"
+ $B2B8 DEFB $02,$54
  $B2BA DEFM $09,"*",$AF,"h",$EC,$BB,"h",$EC,"."
  $B2C3 DEFM $06,$92,"h",$EC,$00,$00
  $B2C9 DEFM $15,$95,"E",$FE,$17,"photons! Sucker!"
@@ -2992,7 +3013,7 @@ t$ADF1 DEFM $02,"C"
  $B2FF DEFM $16,"D*",$BB,"h",$ED,",The R",$FE,$17,"stealing"
  $B315 DEFM $0F,"D*",$BB,"h",$ED,"-,The R",$FE,$17
  $B324 DEFM $06,"SP",$97,"P",$98
- $B32A DEFM $02,"T"
+ $B32A DEFB $02,$54
  $B32C DEFM $0D,"*",$AF,$60,$D9,$AF,"h",$ED,$BB,"h",$ED,".."
  $B339 DEFM $06,$92,"h",$ED,$00,$00
  $B33F DEFM $15,$95,"Aagh! Nasty catsies"
@@ -3019,11 +3040,11 @@ t$ADF1 DEFM $02,"C"
  $B414 DEFM $15,$94,"it affects ",$FE,$03,"caster"
  $B429 DEFM $08,$95,"Oh n",$FE,$05
  $B431 DEFM $03,$A8,$86
- $B434 DEFM $04,"TP",$9E
+ $B434 DEFB $04,$54,$50,$9E
  $B438 DEFM $09,"*",$AF,"h",$EE,$BB,"h",$EE,"."
  $B441 DEFM $08,$95,"Uhh! ",$8E
  $B449 DEFM $03,$A6,$86
- $B44C DEFM $02,"T"
+ $B44C DEFB $02,$54
  $B44E DEFM $09,"*",$AF,"h",$EE,$BB,"h",$EE,"."
  $B457 DEFM $06,$92,"h",$EE,$00,$00
  $B45D DEFM $11,$94,$91," casts ",$FE,$06,"spell"
@@ -3064,7 +3085,7 @@ t$ADF1 DEFM $02,"C"
  $B5FD DEFM $02,"C"
 
 ; Data table 0F
-t$B5FF DEFM $06,"E",$02,"sh",$F5
+b$B5FF DEFM $06,"E",$02,"sh",$F5
  $B605 DEFM $06,$99,"@Vh",$E3
  $B60B DEFM $06,$A9,"h",$E4,"@X"
  $B611 DEFM $0E,$96,$FE,$15," Start >>>"
@@ -3317,7 +3338,7 @@ t$B5FF DEFM $06,"E",$02,"sh",$F5
  $BD7F DEFM $02,"F"
 
 ; Data table 10
-b$BD81 DEFW $0000
+g$BD81 DEFW $0000
  $BD83 DEFW $E368
  $BD85 DEFW $0000
  $BD87 DEFW $A558
@@ -3357,7 +3378,7 @@ b$BD81 DEFW $0000
  $BDCB DEFW $A558
 
 ; Data table 11
-b$BDCD DEFW $0000
+g$BDCD DEFW $0000
  $BDCF DEFW $A758
  $BDD1 DEFW $0000
  $BDD3 DEFW $A558
@@ -3399,7 +3420,7 @@ b$BDCD DEFW $0000
  $BE1B DEFW $A558
 
 ; Data table 12
-b$BE1D DEFW $0000
+g$BE1D DEFW $0000
  $BE1F DEFW $0100
  $BE21 DEFW $0000
  $BE23 DEFW $2100
@@ -3441,7 +3462,7 @@ b$BE1D DEFW $0000
  $BE6B DEFW $0000
 
 ; Data table 13
-b$BE6D DEFW $0000
+g$BE6D DEFW $0000
  $BE6F DEFW $0000
  $BE71 DEFW $0000
  $BE73 DEFW $0000
@@ -3633,7 +3654,7 @@ b$BFB0 DEFB $01         ; Set to 1 to enable interrupts or 0 to disable
 g$BFC5 DEFB $00
 
 ; Current time (in minutes)
-w$BFC6 DEFW $0000
+g$BFC6 DEFW $0000
 
 ; Current time (in digits)
 g$BFC8 DEFB $00,$00,$00,$00,$00,$00
@@ -4217,9 +4238,11 @@ c$C4D7 LD BC,$1402   ;
  $C51C CALL $C77D    ;
  $C51F RET           ;
 
-; Routine at C520
+; Handle a keypress when CAPS SHIFT is held
 ;
 ; Used by the routine at #R$C2D1.
+;
+; HL Points to the last key pressed
 c$C520 LD A,$08      ;
  $C522 LD ($C2CE),A  ;
  $C525 LD A,(HL)     ;
@@ -4868,7 +4891,7 @@ g$C903 DEFW $0000
 ; Number of times per frame to run a callback routine
 g$C905 DEFB $00
 
-; Routine at C906
+; Initialize game flags
 ;
 ; Used by the routine at #R$E186.
 c$C906 LD A,($8114)  ;
@@ -4879,8 +4902,8 @@ c$C906 LD A,($8114)  ;
  $C913 LD HL,$8112   ;
  $C916 SUB (HL)      ;
  $C917 LD ($C8C9),A  ;
- $C91A LD HL,$C9D5   ;
- $C91D JP $C96A      ;
+ $C91A LD HL,$C9D5   ; Set the callback routine to #R$C9D5
+ $C91D JP $C96A      ; Do the callback on data
 
 ; Dump out game flags to the save buffer
 ;
@@ -4897,7 +4920,7 @@ c$C920 CALL $CA1A    ; Initialize the game data pointer
  $C93B DEC IX        ; Move backwards to the next byte
  $C93D DJNZ $C935    ; Loop until all bytes dumped
  $C93F LD HL,$C9EE   ; Set the callback routine to #R$C9EE
- $C942 JP $C96A      ;
+ $C942 JP $C96A      ; Do the callback on data
 
 ; Read game flags from the save buffer
 ;
@@ -4914,7 +4937,7 @@ c$C945 CALL $CA1A    ; Initialize the game data pointer
  $C960 DEC IX        ; Move backwards to the next byte
  $C962 DJNZ $C95A    ; Loop until all bytes read
  $C964 LD HL,$C9FB   ; Set the callback routine to #R$C9FB
- $C967 JP $C96A      ;
+ $C967 JP $C96A      ; Do the callback on data
 
 ; Routine after handling game flags
 ;
@@ -4924,31 +4947,31 @@ c$C945 CALL $CA1A    ; Initialize the game data pointer
 c$C96A LD ($C901),HL ; Put the callback routine in #R$C901
  $C96D LD A,$01      ; { Set the callback to happen once (#R$C905)
  $C96F LD ($C905),A  ; }
- $C972 LD C,$08      ; Run command 8
- $C974 LD B,$08      ;
- $C976 CALL $C99B    ; Run the command
- $C979 LD B,$0D      ; 
- $C97B LD C,$10      ; Run command #N$10
- $C97D CALL $C99B    ; Run the command
- $C980 LD B,$0E      ; 
- $C982 LD C,$11      ; Run command #N$11
- $C984 CALL $C99B    ; Run the command
- $C987 LD B,$0E      ;
- $C989 LD C,$12      ; Run command #N$12
- $C98B CALL $C99B    ; Run the command
+ $C972 LD C,$08      ; Select data table 08 (user flags)
+ $C974 LD B,$08      ; Select value 8
+ $C976 CALL $C99B    ; Run the callback on this data
+ $C979 LD B,$0D      ; Select value #N$0D
+ $C97B LD C,$10      ; Select data table #N$10
+ $C97D CALL $C99B    ; Run the callback on this data
+ $C980 LD B,$0E      ; Select value #N$0E
+ $C982 LD C,$11      ; Select data table #N$11
+ $C984 CALL $C99B    ; Run the callback on this data
+ $C987 LD B,$0E      ; Select value #N$0E
+ $C989 LD C,$12      ; Select data table #N$12
+ $C98B CALL $C99B    ; Run the callback on this data
  $C98E LD A,$03      ; { Set the callback to happen three times (#R$C905)
  $C990 LD ($C905),A  ; }
- $C993 LD B,$0E      ; Run command E
- $C995 LD C,$13      ;
- $C997 CALL $C99B    ; Run the command
+ $C993 LD B,$0E      ; Select value #N$0E
+ $C995 LD C,$13      ; Select data table #N$13
+ $C997 CALL $C99B    ; Run the callback on this data
  $C99A RET           ;
 
-; Run a command in a frame
+; Run a callback routine on table data
 ;
 ; Used by the routine at #R$C96A.
 ;
-; B Index to timers
-; C Command type
+; B Data table ID
+; C Data table type
 c$C99B PUSH BC       ; { Transfer #REGbc to #REGaf 
  $C99C POP AF        ; }
  $C99D LD E,A        ; { Put the index in #REGde
@@ -4958,17 +4981,17 @@ c$C99B PUSH BC       ; { Transfer #REGbc to #REGaf
  $C9A4 LD A,(HL)     ; Get the value here
  $C9A5 DEC HL        ; { Subtract the value from the previous entry
  $C9A6 SUB (HL)      ; }
- $C9A7 LD ($C8C6),A  ; Store this as a frame count
- $C9AA LD A,C        ;
- $C9AB LD ($C8C7),A  ;
+ $C9A7 LD ($C8C6),A  ; Store this as the table index
+ $C9AA LD A,C        ; { Store the table type ID
+ $C9AB LD ($C8C7),A  ; }
 *$C9AE LD HL,$C8C6   ;
  $C9B1 DEC (HL)      ;
  $C9B2 RET M         ; Return if less than zero
- $C9B3 LD A,($C8C6)  ; { Put the time in #REGb 
+ $C9B3 LD A,($C8C6)  ; { Put the current character graphic in #REGb 
  $C9B6 LD B,A        ; }
  $C9B7 LD A,($C8C7)  ; { Put the data table ID in #REGc
  $C9BA LD C,A        ; }
- $C9BB CALL $D6C0    ;
+ $C9BB CALL $D6C0    ; Get the data
  $C9BE LD A,($C905)  ; { Put the number of times to call back in #REGc.
  $C9C1 LD C,A        ; }
  $C9C2 LD B,$00      ; 
@@ -5467,7 +5490,7 @@ c$CD15 LD B,$00      ;
  $CD20 CALL $CBBF    ;
  $CD23 JR C,$CD50    ;
 *$CD25 LD A,($C8F0)  ;
- $CD28 CP $56        ;
+ $CD28 CP $56        ; Is this a verb directive? (#N$56)
  $CD2A JR NZ,$CD30   ;
  $CD2C LD HL,$C8EF   ;
  $CD2F INC (HL)      ;
@@ -5776,7 +5799,7 @@ c$CF54 LD HL,($CDA7) ;
 ; Used by the routine at #R$D4CC.
 c$CF5D LD A,($CD7B)  ; { Check the blocking flag (#R$CD7B)
  $CF60 CP $00        ; }
- $CF62 RET NZ        ; Return if interrupt is blocked
+ $CF62 RET NZ        ; Return if input is blocked
  $CF63 LD HL,$CDA9   ; { Set the buffer pointer (#R$CDA7) to point to the start (#R$CDA9)
  $CF66 LD ($CDA7),HL ; }
  $CF69 LD A,$00      ;
@@ -5850,7 +5873,7 @@ c$CFCA LD A,$00      ;
  $D011 LD ($CDB3),A  ; }
  $D014 CP $08        ; { Loop until table type 8
  $D016 JR NZ,$D003   ; }
- $D018 LD A,$56      ;
+ $D018 LD A,$56      ; Set #REGa to a verb type (#N$56)
  $D01A LD BC,$000B   ; { Set the table type text table B
  $D01D LD ($CDB3),BC ; }
 *$D021 LD BC,($CDB3) ; Get the next table type
@@ -5916,7 +5939,7 @@ c$CFCA LD A,$00      ;
 *$D099 SLA A         ;
  $D09B LD B,$00      ;
  $D09D LD C,A        ;
- $D09E LD HL,$CD54   ;
+ $D09E LD HL,$CD54   ; Point #REGhl to the start of the command buffer
  $D0A1 ADD HL,BC     ;
  $D0A2 LD A,(HL)     ;
  $D0A3 PUSH AF       ;
@@ -5924,7 +5947,7 @@ c$CFCA LD A,$00      ;
  $D0A7 LD HL,$CD99   ;
  $D0AA ADD HL,DE     ;
  $D0AB OR (HL)       ;
- $D0AC LD HL,$CD54   ;
+ $D0AC LD HL,$CD54   ; Point #REGhl to the start of the command buffer
  $D0AF ADD HL,BC     ;
  $D0B0 LD (HL),A     ;
  $D0B1 LD A,($C8BB)  ;
@@ -5954,7 +5977,7 @@ c$CFCA LD A,$00      ;
 ;
 ; Used by the routine at #R$D4CC.
 ;
-; C Command table to use
+; C Data table to use
 c$D0D9 LD A,$0D      ; { Put an empty string in the text buffer (#R$D1E3)
  $D0DB LD ($D1E3),A  ; }
  $D0DE LD A,$4D      ; { Check for a buffer entry starting with #N$4D (denoting blocking message)
@@ -5974,9 +5997,11 @@ c$D0D9 LD A,$0D      ; { Put an empty string in the text buffer (#R$D1E3)
  $D101 SCF           ;
 *$D102 RET           ;
 
-; Routine at D103
+; Check the syntax on a command
 ;
 ; Used by the routines at #R$D0D9 and #R$D4CC.
+;.
+; On return, the carry flag is set if the syntax is okay
 c$D103 CALL $D120    ;
  $D106 JR C,$D11F    ;
  $D108 LD A,($C8CE)  ;
@@ -5992,9 +6017,11 @@ c$D103 CALL $D120    ;
  $D11E RET           ;
 *$D11F RET           ;
 
-; Routine at D120
+; Check to see if parameters match those of a verb entered
 ;
 ; Used by the routine at #R$D103
+;.
+; Returns with the carry flag set if the parameters are okay
 c$D120 LD HL,($CDA7) ;
  $D123 LD DE,$CDA9   ;
  $D126 JR NC,$D129   ;
@@ -6380,29 +6407,30 @@ c$D4CC CALL $CF5D    ; Set up the buffers
  $D4DC CP $00        ;
  $D4DE JR Z,$D4F9    ;
  $D4E0 LD A,($CD57)  ;
- $D4E3 LD HL,$8110   ;
- $D4E6 SUB (HL)      ;
- $D4E7 LD ($C8CA),A  ;
+ $D4E3 LD HL,$8110   ; Point #REGhl to the offsets table
+ $D4E6 SUB (HL)      ; Subtract #N$8D
+ $D4E7 LD ($C8CA),A  ; Store this
  $D4EA LD B,A        ;
- $D4EB LD C,$0B      ;
- $D4ED LD A,$48      ;
- $D4EF CALL $CCD2    ;
- $D4F2 JR NC,$D4F9   ;
- $D4F4 CALL $D103    ;
- $D4F7 JR NC,$D4FF   ;
+ $D4EB LD C,$0B      ; Use data table #N$0B
+ $D4ED LD A,$48      ; Check for entries starting #N$48
+ $D4EF CALL $CCD2    ; Look up the data
+ $D4F2 JR NC,$D4F9   ; Jump forward if it was not found
+ $D4F4 CALL $D103    ; Check the syntax of the command
+ $D4F7 JR NC,$D4FF   ; If the syntax looks wrong, display an error
 *$D4F9 CALL $D520    ;
  $D4FC JR NC,$D50F   ;
 ; All done with the command
 *$D4FE RET           ;
-*$D4FF LD C,$0B      ;
- $D501 LD A,($C8CA)  ;
- $D504 LD B,A        ;
+; The command generated a problem, so print a blocking message
+*$D4FF LD C,$0B      ; Use text table #N$0B
+ $D501 LD A,($C8CA)  ; { Get the table entry
+ $D504 LD B,A        ; }
  $D505 CALL $D0D9    ; Check for blocking messages
  $D508 LD A,$FF      ; { Block input (#R$CD7B)
  $D50A LD ($CD7B),A  ; }
- $D50D JR C,$D4FE    ;
-*$D50F LD C,$0A      ;
- $D511 LD B,$00      ;
+ $D50D JR C,$D4FE    ; Exit if a message was printed
+*$D50F LD C,$0A      ; Use text table #N$0A
+ $D511 LD B,$00      ; Start looking at the first entry ("[word]" confuses "[player]")
  $D513 LD A,$FF      ; { Block input (#R$CD7B)
  $D515 LD ($CD7B),A  ; }
  $D518 JP $D0D9      ; Check for blocking messages
@@ -6421,7 +6449,7 @@ c$D520 LD A,($8114)  ;
  $D52C LD A,$00      ;
  $D52E LD ($D51C),A  ;
 *$D531 LD A,B        ;
- $D532 LD HL,$D757   ;
+ $D532 LD HL,$D757   ; Point #REGhl at the current player
  $D535 CP (HL)       ;
  $D536 JR Z,$D53D    ;
  $D538 LD C,$0E      ;
@@ -6433,21 +6461,27 @@ c$D520 LD A,($8114)  ;
  $D543 LD HL,$D51B   ;
  $D546 CP (HL)       ;
  $D547 JR NZ,$D531   ;
- $D549 LD C,$0E      ;
- $D54B LD A,($D757)  ;
- $D54E LD B,A        ;
- $D54F CALL $D563    ;
- $D552 LD C,$0C      ;
+ $D549 LD C,$0E      ; Set data table #N$0E
+ $D54B LD A,($D757)  ; { Put the current player in #REGb
+ $D54E LD B,A        ; }
+ $D54F CALL $D563    ; Look for the entry
+ $D552 LD C,$0C      ; Set data table #N$0C
  $D554 LD A,($D758)  ;
  $D557 LD B,A        ;
- $D558 CALL $D563    ;
+ $D558 CALL $D563    ; Look for the entry
  $D55B LD C,$0C      ;
  $D55D LD B,$00      ;
- $D55F CALL $D563    ;
+ $D55F CALL $D563    ; Look for the entry
  $D562 RET           ;
-*$D563 LD A,$54      ;
- $D565 CALL $CCD2    ;
- $D568 RET NC        ;
+
+; Look up ??? in a text table
+;
+; Used by the routine at #R$D520.
+;
+; C table type to use
+c$D563 LD A,$54      ; Search for an entry starting with #N$54
+ $D565 CALL $CCD2    ; Do the search
+ $D568 RET NC        ; Return if it wasn't found
 *$D569 CALL $D57C    ;
  $D56C JR C,$D574    ;
 *$D56E CALL $CCF5    ;
@@ -6480,7 +6514,7 @@ c$D57C LD E,$02      ;
  $D59D LD B,$00      ;
  $D59F CP $00        ;
  $D5A1 JP P,$D5AD    ;
- $D5A4 LD HL,$CD54   ;
+ $D5A4 LD HL,$CD54   ; Point #REGhl to the start of the command buffer
  $D5A7 ADD HL,DE     ;
  $D5A8 CP (HL)       ;
  $D5A9 JR NZ,$D588   ;
@@ -6491,7 +6525,7 @@ c$D57C LD E,$02      ;
  $D5B2 POP DE        ;
  $D5B3 LD C,A        ;
  $D5B4 POP AF        ;
- $D5B5 LD HL,$CD54   ;
+ $D5B5 LD HL,$CD54   ; Point #REGhl to the start of the command buffer
  $D5B8 ADD HL,DE     ;
  $D5B9 CP (HL)       ;
  $D5BA JR NZ,$D588   ;
@@ -6620,7 +6654,7 @@ c$D649 AND $7F       ;
  $D68E SLA A         ;
  $D690 LD C,A        ;
  $D691 LD B,$00      ;
- $D693 LD HL,$CD54   ;
+ $D693 LD HL,$CD54   ; Point #REGhl to the start of the command buffer
  $D696 ADD HL,BC     ;
  $D697 LD A,(HL)     ;
  $D698 LD ($C8B8),HL ;
@@ -6639,7 +6673,7 @@ c$D649 AND $7F       ;
 c$D6AA LD C,$08      ; Select table 8 (user flags)
  $D6AC LD A,($C8BD)  ;
  $D6AF LD B,A        ;
- $D6B0 CALL $D6C0    ; 
+ $D6B0 CALL $D6C0    ; Get the data
  $D6B3 LD A,($C8BE)  ;
  $D6B6 CALL $D5F5    ;
  $D6B9 LD A,($C8BF)  ;
@@ -6651,7 +6685,8 @@ c$D6AA LD C,$08      ; Select table 8 (user flags)
 ; Used by the routines at #R$C99B, #R$CA3C, #R$D412, #R$D6AA, #R$D7B5, #R$D801,
 ; #R$DBB6, #R$DCE0, #R$DD31, #R$DDD8, #R$DEE2, #R$DF1B, #R$DF79, #R$DF9C,
 ; #R$E259, #R$E265, #R$E30D, #R$E3CC, #R$E453 and #R$F83F.
-; On return, #R$C8C2 points to the sart of the data table, and #R$C8BE to the four bytes extracted
+; .
+; On return, #R$C8C2 points to the start of the data table, and #R$C8BE to the four bytes extracted
 ;
 ; B Data index
 ; C Data table
@@ -7198,8 +7233,8 @@ c$DAB0 LD IY,($C8D0) ; Point #REGiy at the command text to check
  $DAB4 LD A,(IY+$01) ; { Is there anything to do?
  $DAB7 CP $00        ; }
  $DAB9 JP P,$DAD1    ; Jump forward if there isn't
- $DABC CALL $CB96    ;
- $DABF CALL $CB10    ;
+ $DABC CALL $CB96    ; { Make sure the input is up to date
+ $DABF CALL $CB10    ; }
 ; This entry point is used by the routine at #R$DA73.
 *$DAC2 LD HL,$E150   ; { Signal command handled
  $DAC5 LD (HL),$00   ; }
@@ -7333,8 +7368,8 @@ c$DBB6 LD A,$FF      ;
  $DBCC POP AF        ;
  $DBCD LD B,A        ;
  $DBCE LD C,$13      ; Use data table #N$13
- $DBD0 CALL $D6C0    ; 
- $DBD3 LD IX,$CD62   ;
+ $DBD0 CALL $D6C0    ; Look up the data
+ $DBD3 LD IX,$CD62   ; Point #REGix at the last sampled time
  $DBD7 LD IY,$C8BA   ;
  $DBDB LD H,(IX+$00) ;
  $DBDE LD L,(IX+$01) ;
@@ -7498,7 +7533,7 @@ c$DCE0 CALL $D5E6    ;
  $DD30 RET           ;
 
 ; Command 0B
-c$DD31 LD C,$11      ;
+c$DD31 LD C,$11      ; Use data table #N$11
  $DD33 LD A,($D757)  ;
  $DD36 LD B,A        ;
  $DD37 CALL $D6C0    ; 
@@ -8011,7 +8046,7 @@ c$E08B LD A,$00      ;
  $E141 LD ($E088),BC ;
  $E145 RET           ;
 
-; Data block at E146
+; Temporary pointer to data
 w$E146 DEFW $0000
 
 ; Set to non zero if there is a queue of commands to execute
@@ -8024,6 +8059,8 @@ b$E149 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 g$E151 DEFB $00
 
 ; Default time
+;
+; 10:27am - #N$7302 ticks
 b$E152 DEFB $02,$73,$01,$00,$02,$07,$00,$00
 
 ; Main entry point
@@ -8048,9 +8085,9 @@ c$E15A LD IX,$5DB7   ; { Put the stack somewhere safe
 ; Initialize game data
 ;
 ; Used by the routines at #R$E15A and #R$E1B6.
-c$E186 CALL $C906    ;
- $E189 LD HL,($80FC) ;
- $E18C LD ($E146),HL ;
+c$E186 CALL $C906    ; Initialize game flags
+ $E189 LD HL,($80FC) ; { Make a copy of the pointer to table F
+ $E18C LD ($E146),HL ; }
  $E18F LD A,$00      ; Set #REGa to 0 for some flags
  $E191 LD ($CD7B),A  ; Allow input (#R$CD7B)
  $E194 LD ($E148),A  ;
@@ -8263,7 +8300,7 @@ c$E30D CALL $E398    ;
  $E318 CALL $CB10    ;
  $E31B LD ($E14A),A  ;
  $E31E LD IX,$E149   ;
- $E322 LD IY,$CD62   ;
+ $E322 LD IY,$CD62   ; Point #REGiy at the last sampled time
  $E326 LD H,(IX+$00) ;
  $E329 LD L,(IX+$01) ;
  $E32C LD D,(IY+$00) ;
@@ -8279,7 +8316,7 @@ c$E30D CALL $E398    ;
  $E342 LD ($E14B),A  ;
  $E345 LD C,$13      ; Select data table #N$13
  $E347 LD B,A        ;
- $E348 CALL $D6C0    ;
+ $E348 CALL $D6C0    ; Extract the data
  $E34B LD A,($C8BE)  ;
  $E34E AND $40       ;
  $E350 CP $00        ;
@@ -8364,11 +8401,11 @@ c$E3CC LD A,($C8C8)  ;
 *$E3DA LD C,$13      ; Select data table #N$13
  $E3DC LD A,($E14C)  ;
  $E3DF LD B,A        ;
- $E3E0 CALL $D6C0    ; 
+ $E3E0 CALL $D6C0    ; Extract the data
  $E3E3 LD A,($C8BE)  ;
  $E3E6 CP $00        ;
  $E3E8 JP M,$E430    ;
- $E3EB LD IY,$CD62   ;
+ $E3EB LD IY,$CD62   ; Point #REGiy at the last sampled time
  $E3EF LD IX,$C8BE   ;
  $E3F3 LD A,(IX+$00) ;
  $E3F6 AND $3F       ;
@@ -10849,7 +10886,7 @@ c$F68A LD IX,$F5C2   ; Point #REGix at the sprite data (#R$F5C2)
 ;
 ; Used by the routines at #R$F1A2 and #R$F3C5.
 c$F83F CALL $E265    ; Get the current character
- $F842 LD C,$11      ; Select data table #N$C11
+ $F842 LD C,$11      ; Select data table #N$11
  $F844 CALL $D6C0    ; Get the data
  $F847 LD A,($C8BF)  ; Put the current character in #REGa
  $F84A LD HL,$CD5F   ;
@@ -10969,8 +11006,8 @@ c$F8BA LD A,($FAC3)  ; Put the index in #REGa
  $F91D LD ($FADC),A  ;
  $F920 JP $FADD      ; Draw it
 
-; Data block at F923
-b$F923 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+; Unused
+u$F923 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $F92B DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $F933 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 
@@ -11037,10 +11074,29 @@ g$FAC6 DEFB $00
 ; Next screen co-ordinate to draw into the graphic buffer
 g$FAC7 DEFB $00,$00
 
-; Data block at FAC9
+; Bitmasks
 b$FAC9 DEFB $80,$40,$20,$10,$08,$04,$02,$01
- $FAD1 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $FAD9 DEFB $00,$00,$00
+
+; Game status buffer entry at FAD1
+g$FAD1 DEFW $0000
+ 
+; Game status buffer entry at FAD3
+g$FAD3 DEFW $0000
+
+; Game status buffer entry at FAD5
+g$FAD5 DEFB $00
+
+; Pointer to current bitmask entry
+g$FAD6 DEFW $0000
+
+; Game status buffer entry at FAD8
+g$FAD8 DEFW $0000
+
+; Game status buffer entry at FADA
+g$FADA DEFB $00
+
+; Game status buffer entry at FADB
+g$FADB DEFB $00
 
 ; Set to 1 if a sprite should be merged with the background
 g$FADC DEFB $00
@@ -11095,8 +11151,8 @@ c$FB2E LD HL,($FAC3) ;
  $FB37 LD ($FAD3),HL ;
  $FB3A LD HL,$0001   ;
  $FB3D LD ($FAD8),HL ;
- $FB40 LD HL,$FAC9   ;
- $FB43 LD ($FAD6),HL ;
+ $FB40 LD HL,$FAC9   ; { Set the current bitmask (#R$FAD6) to the start of the list (#R$FAC9)
+ $FB43 LD ($FAD6),HL ; }
  $FB46 CALL $FB71    ;
  $FB49 LD HL,($FAC3) ;
  $FB4C LD IX,$F93B   ;
@@ -11161,8 +11217,8 @@ c$FB71 LD A,($FAC5)  ;
 ; Used by the routine at #R$FADD.
 c$FBD1 LD HL,($FAC3) ;
  $FBD4 LD ($FAD1),HL ;
- $FBD7 LD HL,$FAC9   ;
- $FBDA LD ($FAD6),HL ;
+ $FBD7 LD HL,$FAC9   ; { Set the current bitmask (#R$FAD6) to the start of the list (#R$FAC9)
+ $FBDA LD ($FAD6),HL ; }
  $FBDD LD A,($FAC6)  ;
  $FBE0 LD L,A        ;
  $FBE1 LD H,$00      ;
@@ -11378,7 +11434,7 @@ b$FD60 DEFB $0F,$03,$07
  $FD75 DEFB $14,$02,$1C
  $FD78 DEFB $15,$02,$1C
 
-; ???
+; Buffer at FD7B
 b$FD7B DEFB $B2,$12,$B2,$F9,$93,$F9
  $FD81 DEFB $8A,$E1,$8A,$F1,$79,$F1
  $FD87 DEFB $88,$81,$88,$C9,$79,$C9

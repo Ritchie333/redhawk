@@ -41,6 +41,7 @@ b $6801 Room graphics 23
 b $6820 Room graphics 24
 b $6856 Room graphics 25
 b $686F Room graphics 26
+u $689C Unused
 b $68B7 Kevin large
 b $6A3F Redhawk large
 b $6BCA Redhawk background R
@@ -174,68 +175,68 @@ T $840A
 T $8413
 T $842C
 t $8445 Command list 0B
-T $8452
+B $8452
 T $845F
 T $8468
 T $8475
-T $847A
+B $847A
 T $8487
 T $8490
 T $849D
-T $84AE
+B $84AE
 T $84B2
-T $84C1
+B $84C1
 T $84D8
 T $84E9
 T $84FB
-T $8501
+B $8501
 T $8505
-T $8512
+B $8512
 T $8516
-T $8522
+B $8522
 T $853E
 T $854B
 T $855A
-T $8566
+B $8566
 T $856D
 T $8582
-T $8589
+B $8589
 T $859B
 T $85A9
 T $85B8
-T $85BE
+B $85BE
 T $85C5
 T $85D9
-T $85EC
+B $85EC
 T $85F1
 T $85FE
-T $8613
+B $8613
 T $8623
-T $8629
+B $8629
 T $862F
 T $863B
-T $8643
+B $8643
 T $864A
-T $8662
+B $8662
 T $8665
-T $866B
+B $866B
 T $866E
-T $8691
+B $8691
 T $86A2
 T $86B7
-T $86C2
+B $86C2
 T $86D0
-T $86D7
+B $86D7
 T $86DA
-T $86E2
+B $86E2
 T $86E5
-T $86EE
+B $86EE
 T $86F1
-T $86F7
+B $86F7
 T $86FA
-T $8700
+B $8700
 T $8703
-T $870E
+B $870E
 t $8711 Command list 0C
 T $8713
 T $8715
@@ -1364,14 +1365,14 @@ T $adf1
 T $adf3
 T $adfa
 T $ae01
-T $ae11
+B $ae11
 T $ae1a
 T $ae20
 T $ae31
-T $ae42
+B $ae42
 T $ae48
 T $ae58
-T $ae6a
+B $ae6a
 T $ae73
 T $ae79
 T $ae89
@@ -1400,7 +1401,7 @@ T $af3a
 T $af48
 T $af4a
 T $af52
-T $af5a
+B $af5a
 T $af68
 T $af71
 T $af77
@@ -1420,7 +1421,7 @@ T $b00b
 T $b018
 T $b01e
 T $b029
-T $b03e
+B $b03e
 T $b04c
 T $b05f
 T $b065
@@ -1456,7 +1457,7 @@ T $b175
 T $b17c
 T $b198
 T $b1a5
-T $b1ab
+B $b1ab
 T $b1ad
 T $b1bb
 T $b1c0
@@ -1476,7 +1477,7 @@ T $b222
 T $b22a
 T $b246
 T $b254
-T $b25a
+B $b25a
 T $b269
 T $b276
 T $b27c
@@ -1486,7 +1487,7 @@ T $b293
 T $b29e
 T $b2b0
 T $b2b5
-T $b2b8
+B $b2b8
 T $b2ba
 T $b2c3
 T $b2c9
@@ -1499,7 +1500,7 @@ T $b2f8
 T $b2ff
 T $b315
 T $b324
-T $b32a
+B $b32a
 T $b32c
 T $b339
 T $b33f
@@ -1526,11 +1527,11 @@ T $b40e
 T $b414
 T $b429
 T $b431
-T $b434
+B $b434
 T $b438
 T $b441
 T $b449
-T $b44c
+B $b44c
 T $b44e
 T $b457
 T $b45d
