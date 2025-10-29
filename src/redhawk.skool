@@ -4806,7 +4806,16 @@ c$C875 LD IX,($80EE) ; Point #REGix at the flags (#R$80EE) = #R$81FC
  $C8B6 RET           ; All done
 
 ; Data block at C8B7
-b$C8B7 DEFB $00,$00,$00,$00,$00,$00,$00
+b$C8B7 DEFB $00,$00,$00
+
+; Data block at C8BA
+b$C8BA DEFB $00
+
+; ID of last text table entry found
+b$C8BB DEFB $00
+
+; Data block at C8BC
+b$C8BC DEFB $00,$00
 
 ; Data extracted from a table
 ;
@@ -4834,7 +4843,7 @@ g$C8CC DEFW $0000
 ; Set to 1 to mark end of string (?)
 g$C8CE DEFB $00
 
-; Game status buffer entry at C8CF
+; Number of characters left to process in the current text entry
 g$C8CF DEFB $0D
 
 ; Pointer to next command text to check
@@ -5094,10 +5103,12 @@ c$CA2E LD DE,$00FF   ; Length is #N$FF
  $CA38 CALL $0556    ; { Call the ROM load routine and return
  $CA3B RET           ; }
 
-; Set up data for current player and room
+; Set up data for a data ID and room
 ;
 ; Used by the routines at #R$CF5D, #R$DC24, #R$DC85, #R$DCE0, #R$DD31, #R$DD6B,
 ; #R$E2E2 and #R$E30D.
+;
+; A Data ID to set
 c$CA3C LD ($D757),A  ; Put the current player in #R$D757
  $CA3F LD B,A        ; Store this as a data index
  $CA40 LD HL,$8113   ; { Add an offset (#N$E3)
@@ -5199,29 +5210,30 @@ c$CAF3 LD HL,$FE00   ; Start at #N$FE00
  $CB0D IM 2          ; { Switch to IM2 and return
  $CB0F RET           ; }
 
-; Process next text buffer character
+; Get the next text buffer character
 ;
 ; Used by the routines at #R$CBBF, #R$CCD2, #R$D0D9, #R$D103, #R$D2E5, #R$D3AC,
 ; #R$D57C, #R$D5E6, #R$D9A9, #R$DA73, #R$DAB0, #R$DEE2, #R$DF5E, #R$DF9C and
 ; #R$E30D.
 ;
 ; A On exit, holds the character to process
-c$CB10 LD IX,($C8D2) ;
- $CB14 INC IX        ;
- $CB16 LD ($C8D2),IX ;
- $CB1A LD HL,$C8CF   ;
- $CB1D DEC (HL)      ;
- $CB1E LD A,(HL)     ;
- $CB1F CP $00        ;
- $CB21 JR Z,$CB27    ;
- $CB23 LD A,(IX+$00) ;
- $CB26 RET           ;
-*$CB27 JR NZ,$CB33   ;
- $CB29 LD A,$FF      ;
- $CB2B LD ($C8CE),A  ;
- $CB2E LD A,(IX+$00) ;
+; F On exit, has the carry flag set if the end of the string is reached
+c$CB10 LD IX,($C8D2) ; Point #REGix at the start of the data item being looked at
+ $CB14 INC IX        ; { Shift forward one character, to mark this as being processed
+ $CB16 LD ($C8D2),IX ; }
+ $CB1A LD HL,$C8CF   ; { Decrement the amount of characters left to process
+ $CB1D DEC (HL)      ; }
+ $CB1E LD A,(HL)     ; { Is this now zero?
+ $CB1F CP $00        ; }
+ $CB21 JR Z,$CB27    ; Jump forward if so
+ $CB23 LD A,(IX+$00) ; { Otherwise return the next character
+ $CB26 RET           ; }
+*$CB27 JR NZ,$CB33   ; ???
+ $CB29 LD A,$FF      ; { Mark the end of the string
+ $CB2B LD ($C8CE),A  ; }
+ $CB2E LD A,(IX+$00) ; { Return the last character with the carry flag set
  $CB31 SCF           ;
- $CB32 RET           ;
+ $CB32 RET           ; }
 *$CB33 LD HL,$CB33   ;
  $CB36 RET           ;
 
@@ -5885,7 +5897,7 @@ c$CFCA LD A,$00      ;
  $D032 CP $0F        ; Has it reached F?
  $D034 LD A,$4E      ;
  $D036 JR NZ,$D021   ; Jump back if not
-; No command found
+; No entry found
  $D038 LD A,($C8CC)  ;
  $D03B LD ($CD72),A  ;
  $D03E LD A,($C8EA)  ;
@@ -5895,15 +5907,15 @@ c$CFCA LD A,$00      ;
  $D049 LD A,$FF      ; { Block input (#R$CD7B)
  $D04B LD ($CD7B),A  ; }
  $D04E RET           ;
-; A command has been round in tables 5 - 7
-*$D04F LD ($C8BA),A  ;
+; An entry has been found in tables 5 - 7
+*$D04F LD ($C8BA),A  ; Store this
  $D052 LD A,$FF      ;
  $D054 LD ($C8BB),A  ;
  $D057 LD A,($CDB3)  ;
  $D05A SUB $05       ;
  $D05C LD E,A        ;
  $D05D JR $D07B      ;
-; A command has been found in tables B - F
+; An entry has been found in tables B - F
 *$D05F LD BC,($CDB3) ;
  $D063 LD HL,$8105   ;
  $D066 ADD HL,BC     ;
@@ -6158,27 +6170,36 @@ u$D200 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ;
 ; Used by the routines at #R$D0D9 and #R$DF5E.
 c$D2E5 LD IX,$D1E3   ; Point #REGix at the text buffer (#R$D1E3)
-*$D2E9 LD A,($C8CE)  ;
- $D2EC CP $00        ;
- $D2EE JR NZ,$D303   ;
- $D2F0 PUSH IX       ;
+*$D2E9 LD A,($C8CE)  ; { Is this the end of the string? (#R$C8CE)
+ $D2EC CP $00        ; }
+ $D2EE JR NZ,$D303   ; Jump forward if so
+ $D2F0 PUSH IX       ; { Otherwise, get the next character
  $D2F2 CALL $CB10    ;
- $D2F5 POP IX        ;
- $D2F7 CP $00        ;
- $D2F9 JP M,$D309    ;
- $D2FC LD (IX+$00),A ;
- $D2FF INC IX        ;
- $D301 JR $D2E9      ;
-*$D303 LD A,$0D      ;
+ $D2F5 POP IX        ; }
+ $D2F7 CP $00        ; Is bit 7 set ?
+ $D2F9 JP M,$D309    ; If so, jump forward to process the macro
+ $D2FC LD (IX+$00),A ; { Otherwise just add the character and loop
+ $D2FF INC IX        ; back to process more
+ $D301 JR $D2E9      ; }
+; Reached the end of the processed text
+*$D303 LD A,$0D      ; { Append a new line, then return
  $D305 LD (IX+$00),A ;
- $D308 RET           ;
-*$D309 CALL $D30E    ;
- $D30C JR $D2E9      ;
-*$D30E CP $FE        ;
- $D310 JR NC,$D352   ;
- $D312 AND $7F       ;
- $D314 LD HL,$8106   ;
- $D317 SUB (HL)      ;
+ $D308 RET           ; }
+; A macro has been read in, so process it
+*$D309 CALL $D30E    ; Process the macro
+ $D30C JR $D2E9      ; Repeat to read more input
+
+; Expand a macro
+;
+; Used by the routine at #R$D2E5
+; 
+; A Macro to process
+; IX Pointer to text output buffer
+c$D30E CP $FE        ; Is this #N$FE / 00?
+ $D310 JR NC,$D352   ; Jump forward if it is
+ $D312 AND $7F       ; Switch off bit 7
+ $D314 LD HL,$8106   ; { Subtract 9 to get the real macro definition
+ $D317 SUB (HL)      ; }
  $D318 CP $07        ;
  $D31A JP Z,$D3AC    ;
  $D31D CP $08        ;
@@ -6207,8 +6228,8 @@ c$D2E5 LD IX,$D1E3   ; Point #REGix at the text buffer (#R$D1E3)
 
 ; Routine at D352
 ;
-; Used by the routine at #R$D3AC.
-*$D352 LD ($D2E3),A  ;
+; Used by the routines at #R$D30E and #R$D3AC.
+c$D352 LD ($D2E3),A  ;
  $D355 PUSH IX       ;
  $D357 CALL $CB10    ;
  $D35A POP IX        ;
@@ -6254,20 +6275,20 @@ g$D3A9 DEFB $00
 ; Pointer to string data to print
 g$D3AA DEFW $0000
 
-; Prepare text in a speech bubble
+; Prepare text in response to a macro
 ;
 ; Used by the routine at #R$D2E5.
 ;
-; IX Holds the text to say
+; IX Buffer for output text
 c$D3AC LD C,$0C      ; Use text table #N$0C
  $D3AE LD A,($D758)  ;
  $D3B1 JR $D3B8      ;
 ; This entry point is used by the routine at #R$D2E5.
 *$D3B3 LD C,$0E      ; Use text table #N$0E
- $D3B5 LD A,($D757)  ;
-*$D3B8 LD ($D3AA),IX ;
- $D3BC LD B,A        ;
- $D3BD CALL $D711    ;
+ $D3B5 LD A,($D757)  ; Put the current player in #REGa
+*$D3B8 LD ($D3AA),IX ; Store the current position of the output string
+ $D3BC LD B,A        ; Use data item based on the player
+ $D3BD CALL $D711    ; Push local variables
  $D3C0 LD A,$4E      ; { Look up an entry starting with #N$4E
  $D3C2 CALL $CCD2    ; }
  $D3C5 JR NC,$D40C   ;
@@ -7105,10 +7126,10 @@ c$D958 CALL $D5E6    ;
 *$D9A7 SCF           ;
  $D9A8 RET           ;
 
-; Routine at D9A9
+; Process logic in a line of data
 ;
 ; Used by the routines at #R$DA73, #R$DF5E and #R$E30D.
-c$D9A9 LD A,$00      ;
+c$D9A9 LD A,$00      ; Set #REGa to 0 to set some flags
  $D9AB LD ($D784),A  ;
  $D9AE LD ($D51F),A  ;
  $D9B1 LD A,($C8CE)  ;
@@ -7204,9 +7225,9 @@ c$DA73 CALL $CB96    ;
 *$DA7D CALL $D9A9    ;
  $DA80 JR NC,$DA8E   ;
  $DA82 LD A,($D51F)  ;
- $DA85 PUSH AF       ;
+ $DA85 PUSH AF       ; { Run the command
  $DA86 CALL $DAB0    ;
- $DA89 POP AF        ;
+ $DA89 POP AF        ; }
  $DA8A CP $00        ;
  $DA8C JR Z,$DAAE    ;
 *$DA8E LD IY,($C8D0) ;
@@ -7390,11 +7411,11 @@ c$DBB6 LD A,$FF      ;
  $DC05 RET           ;
 *$DC06 RET           ;
 
-; Command 02 - Display new panel
-c$DC07 CALL $DF5E    ;
- $DC0A RET NC        ;
- $DC0B CALL $F3C5    ;
- $DC0E RET           ;
+; Command 02 - Update panel text
+c$DC07 CALL $DF5E    ; Process the current line
+ $DC0A RET NC        ; Return if there is more to process
+ $DC0B CALL $F3C5    ; { Display the panel
+ $DC0E RET           ; and return }
 
 ; Command 03 - Speech background
 c$DC0F CALL $DF5E    ;
@@ -7804,14 +7825,14 @@ c$DF58 LD A,$00      ; { Set the flag (#R$BFDB) and return
  $DF5A LD ($BFDB),A  ;
  $DF5D RET           ; }
 
-; Routine at DF5E
+; Process a line of a data in a table
 ;
 ; Used by the routines at #R$DC07, #R$DC0F, #R$DC17, #R$DC24, #R$DC7E, #R$DD9B
 ; and #R$DFBE.
-c$DF5E LD IX,($C8D2) ;
- $DF62 LD A,(IX+$01) ;
- $DF65 CP $2A        ;
- $DF67 JR NZ,$DF71   ;
+c$DF5E LD IX,($C8D2) ; Point #REGix at the current data item being looked at (#R$C8D2)
+ $DF62 LD A,(IX+$01) ; Get the second byte
+ $DF65 CP $2A        ; Is it #N$2A (ie: asterisk)?
+ $DF67 JR NZ,$DF71   ; If not, this is just text, no actions
  $DF69 CALL $CB10    ; Process next character
  $DF6C CALL $D9A9    ;
  $DF6F JR NC,$DF76   ;
@@ -8052,8 +8073,17 @@ w$E146 DEFW $0000
 ; Set to non zero if there is a queue of commands to execute
 g$E148 DEFB $00
 
-; Data block at E149
-b$E149 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+; Time stamp extracted from a line of data
+g$E149 DEFW $0000
+
+; Data ID of most recent event found
+g$E14B DEFB $00
+
+; Data block at E14C
+b$E14C DEFB $00
+
+; Data block at E14D
+b$E14D DEFB $00,$00,$00,$00
 
 ; Set bit 1 to mark a game should be loaded
 g$E151 DEFB $00
@@ -8215,13 +8245,13 @@ c$E265 LD C,$08      ; Use data table 8 (user flags)
  $E273 LD B,A        ; { Store this in B
  $E274 RET           ; }
 
-; Check for moving to another room or state
+; Add or update a panel if required
 ;
 ; Used by the routines at #R$E1D7 and #R$E304.
 c$E275 CALL $E30D    ;
  $E278 JR C,$E280    ;
-*$E27A LD HL,$FFFF   ;
- $E27D LD ($E149),HL ;
+*$E27A LD HL,$FFFF   ; { Set "no timestamp found" in data
+ $E27D LD ($E149),HL ; }
 *$E280 CALL $E3CC    ;
  $E283 JR NC,$E2FB   ;
  $E285 LD HL,($E14D) ;
@@ -8290,52 +8320,56 @@ c$E304 LD A,($E14F)  ;
  $E307 CALL $E448    ;
  $E30A JP $E275      ;
 
-; Routine at E30D
+; Check for timed event information
 ;
 ; Used by the routine at #R$E275.
+;.
+; On return, holds the carry flag set if data was found
 c$E30D CALL $E398    ;
  $E310 JR NC,$E36F   ;
-*$E312 CALL $CB10    ;
- $E315 LD ($E149),A  ;
- $E318 CALL $CB10    ;
- $E31B LD ($E14A),A  ;
- $E31E LD IX,$E149   ;
+*$E312 CALL $CB10    ; { Put the next two characters in #R$E149
+ $E315 LD ($E149),A  ; 
+ $E318 CALL $CB10    ; 
+ $E31B LD ($E14A),A  ; }
+ $E31E LD IX,$E149   ; Point #REGix at the time from the data table
  $E322 LD IY,$CD62   ; Point #REGiy at the last sampled time
- $E326 LD H,(IX+$00) ;
- $E329 LD L,(IX+$01) ;
+ $E326 LD H,(IX+$00) ; { Put the time from data in #REGhl and the
+ $E329 LD L,(IX+$01) ; sampled time in #REGde
  $E32C LD D,(IY+$00) ;
- $E32F LD E,(IY+$01) ;
- $E332 SCF           ;
+ $E32F LD E,(IY+$01) ; }
+ $E332 SCF           ; { Are the times equal?
  $E333 CCF           ;
- $E334 SBC HL,DE     ;
- $E336 JR NZ,$E36F   ;
- $E338 CALL $CB10    ;
- $E33B CALL $CB10    ;
- $E33E LD HL,$8113   ;
- $E341 SUB (HL)      ;
- $E342 LD ($E14B),A  ;
+ $E334 SBC HL,DE     ; }
+ $E336 JR NZ,$E36F   ; Skip the next bit if not
+; A time event has been found
+ $E338 CALL $CB10    ; Skip the next character
+ $E33B CALL $CB10    ; Get the next character
+ $E33E LD HL,$8113   ; { Subtract #N$E3
+ $E341 SUB (HL)      ; }
+ $E342 LD ($E14B),A  ; Store this as the found data ID
  $E345 LD C,$13      ; Select data table #N$13
- $E347 LD B,A        ;
+ $E347 LD B,A        ; Set the data ID
  $E348 CALL $D6C0    ; Extract the data
- $E34B LD A,($C8BE)  ;
- $E34E AND $40       ;
- $E350 CP $00        ;
- $E352 JR NZ,$E366   ;
- $E354 LD A,($C8CE)  ;
+ $E34B LD A,($C8BE)  ; Get the first extracted byte
+ $E34E AND $40       ; { Is bit 6 set?
+ $E350 CP $00        ; }
+ $E352 JR NZ,$E366   ; Jump forward if not
+ $E354 LD A,($C8CE)  ; { Jump forward if there is more data to process
  $E357 CP $00        ;
- $E359 JR NZ,$E36D   ;
- $E35B LD A,($E14B)  ;
- $E35E CALL $CA3C    ;
+ $E359 JR NZ,$E36D   ; }
+; The event has all the information and should be fired now
+ $E35B LD A,($E14B)  ; Get the stored data ID
+ $E35E CALL $CA3C    ; Store this
  $E361 CALL $D9A9    ;
  $E364 JR C,$E36D    ;
 *$E366 CALL $E38A    ;
  $E369 JR NC,$E36F   ;
  $E36B JR $E312      ;
-*$E36D SCF           ;
- $E36E RET           ;
-*$E36F SCF           ;
+*$E36D SCF           ; { Set the carry flag indicating success
+ $E36E RET           ; }
+*$E36F SCF           ; { Clear the carry flag indicating data not found
  $E370 CCF           ;
- $E371 RET           ;
+ $E371 RET           ; }
 
 ; Routine at E372
 ;
@@ -8390,7 +8424,7 @@ c$E398 LD HL,($E146) ;
  $E3CA CCF           ;
  $E3CB RET           ;
 
-; Routine at E3CC
+; Check for timed events
 ;
 ; Used by the routine at #R$E275.
 c$E3CC LD A,($C8C8)  ;
@@ -8406,20 +8440,21 @@ c$E3CC LD A,($C8C8)  ;
  $E3E6 CP $00        ;
  $E3E8 JP M,$E430    ;
  $E3EB LD IY,$CD62   ; Point #REGiy at the last sampled time
- $E3EF LD IX,$C8BE   ;
- $E3F3 LD A,(IX+$00) ;
- $E3F6 AND $3F       ;
+ $E3EF LD IX,$C8BE   ; Point #REGix at the extracted data
+ $E3F3 LD A,(IX+$00) ; { Put the sampled time in #REGde and the time extracted from the table
+ $E3F6 AND $3F       ; in #REGde, but leaving out the top two significant bits
  $E3F8 LD H,A        ;
  $E3F9 LD L,(IX+$01) ;
  $E3FC LD D,(IY+$00) ;
- $E3FF LD E,(IY+$01) ;
- $E402 SCF           ;
+ $E3FF LD E,(IY+$01) ; }
+ $E402 SCF           ; { Get a difference between the two times
  $E403 CCF           ;
- $E404 SBC HL,DE     ;
- $E406 JR Z,$E40A    ;
- $E408 JR NC,$E430   ;
+ $E404 SBC HL,DE     ; }
+ $E406 JR Z,$E40A    ; { Skip the code if the event hasn't occured yet
+ $E408 JR NC,$E430   ; }
+; An event should occur now
 *$E40A LD IX,$E14D   ;
- $E40E LD IY,$C8BE   ;
+ $E40E LD IY,$C8BE   ; Point #REGiy at the extracted data
  $E412 LD H,(IX+$00) ;
  $E415 LD L,(IX+$01) ;
  $E418 LD D,(IY+$00) ;
@@ -10367,10 +10402,10 @@ c$F32C LD HL,$4056   ; { Clear 8 characters starting at #N$4056
 ; Data block at F3C2
 b$F3C2 DEFB $00,$02,$30
 
-; Display a new panel
+; Update panel
 ;
 ; Used by the routine at #R$DC07.
-c$F3C5 CALL $F83F    ;
+c$F3C5 CALL $F83F    ; Put the sprites in the panel
  $F3C8 RET NC        ;
  $F3C9 LD HL,$D1E3   ; Point #REGhl at the text buffer (#R$D1E3)
  $F3CC LD ($D3AA),HL ; Store this
@@ -10390,9 +10425,9 @@ c$F3C5 CALL $F83F    ;
  $F3ED JR Z,$F40A    ;
  $F3EF CP $3D        ;
  $F3F1 JR Z,$F3FC    ;
- $F3F3 PUSH IX       ;
- $F3F5 CALL $F68A    ;
- $F3F8 POP IX        ;
+ $F3F3 PUSH IX       ; {
+ $F3F5 CALL $F68A    ; Draw sprites on the panel 
+ $F3F8 POP IX        ; }
  $F3FA JR $F414      ;
 *$F3FC CALL $ECD4    ;
  $F3FF LD A,$38      ;
