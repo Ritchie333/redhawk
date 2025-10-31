@@ -4834,7 +4834,7 @@ g$C8C6 DEFB $00,$00
 ; Game status buffer entry at C8C8
 g$C8C8 DEFB $00,$00,$00
 
-; Game status buffer entry at C8CB
+; Temporary storage for expanding macros
 g$C8CB DEFB $00
 
 ; Current offset of the input buffer being processed
@@ -4868,10 +4868,10 @@ b$C8E9 DEFB $00,$00,$00,$00,$00,$00,$00
 ; Last buffer entry searched for
 g$C8F0 DEFB $00
 
-; Last index in the command buffer searched for
+; Last data table type searched for
 g$C8F1 DEFB $00
 
-; Game status buffer entry at C8F2
+; Last index in the data table searched for
 g$C8F2 DEFB $00
 
 ; Data block at C8F3
@@ -5452,18 +5452,18 @@ c$CCA6 LD HL,$8106   ; Point #REGhl at the offset buffer
 ; #R$D889, #R$DD9B, #R$DE83 and #R$DFBE.
 ;
 ; A Value to search for
-; C Command table ID
+; C Data table ID
 c$CCD2 LD ($C8F0),A  ; Put the value to search to #R$C8F0
  $CCD5 LD HL,$C8E9   ; Point #REGhl at the command table entries starting from #R$C8E9
  $CCD8 PUSH BC       ; Store #REGbc
- $CCD9 LD B,$00      ; { Add the command table ID
+ $CCD9 LD B,$00      ; { Add the data table ID
  $CCDB ADD HL,BC     ; }
- $CCDC LD A,(HL)     ; { Store the found command value (?)
+ $CCDC LD A,(HL)     ; { Store the found data entry
  $CCDD LD ($C8F1),A  ; }
- $CCE0 LD HL,$C8EF   ; Point #REGhl at the back of the command table entries (#R$C8E9)
- $CCE3 ADD HL,BC     ; Add the command ID
- $CCE4 LD A,(HL)     ;
- $CCE5 LD ($C8F2),A  ;
+ $CCE0 LD HL,$C8EF   ; Point #REGhl at the back of the data table entries (#R$C8E9)
+ $CCE3 ADD HL,BC     ; Add the data table ID
+ $CCE4 LD A,(HL)     ; Get the value found
+ $CCE5 LD ($C8F2),A  ; Store it
  $CCE8 POP BC        ;
  $CCE9 CALL $CB37    ; Look up the table data and point to it in #REGix
  $CCEC LD A,(IX+$01) ; { Compare the first value with the one we're looking for.
@@ -5481,8 +5481,8 @@ c$CCD2 LD ($C8F0),A  ; Put the value to search to #R$C8F0
  $CD01 LD HL,$C8F1   ;
  $CD04 CP (HL)       ;
  $CD05 JR Z,$CD0D    ;
- $CD07 LD HL,$C8F2   ;
- $CD0A CP (HL)       ;
+ $CD07 LD HL,$C8F2   ; { Does this match the value stored earlier?
+ $CD0A CP (HL)       ; }
  $CD0B JR NZ,$CCF5   ;
 *$CD0D RET NC        ;
  $CD0E CCF           ; { Invert the carry flag and return
@@ -6164,7 +6164,10 @@ u$D200 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $D2C8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $D2D0 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $D2D8 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $D2E0 DEFB $00,$00,$00,$00,$00
+ $D2E0 DEFB $00,$00,$00
+ 
+; Temporary storage for expanding macros
+b$D2E3 DEFB $00,$00
 
 ; Expand macros to form a complete string
 ;
@@ -6195,7 +6198,7 @@ c$D2E5 LD IX,$D1E3   ; Point #REGix at the text buffer (#R$D1E3)
 ; 
 ; A Macro to process
 ; IX Pointer to text output buffer
-c$D30E CP $FE        ; Is this #N$FE / 00?
+c$D30E CP $FE        ; Is this #N$FE / #N$FF / 00?
  $D310 JR NC,$D352   ; Jump forward if it is
  $D312 AND $7F       ; Switch off bit 7
  $D314 LD HL,$8106   ; { Subtract 9 to get the real macro definition
@@ -6226,45 +6229,48 @@ c$D30E CP $FE        ; Is this #N$FE / 00?
  $D34F JR NZ,$D341   ;
  $D351 RET           ;
 
-; Routine at D352
+; Substitute macro text from data table 9
 ;
 ; Used by the routines at #R$D30E and #R$D3AC.
-c$D352 LD ($D2E3),A  ;
- $D355 PUSH IX       ;
+;
+; IX Buffer for output text
+c$D352 LD ($D2E3),A  ; Store the macro ID (#R$D2E3)
+ $D355 PUSH IX       ; { Get the next character
  $D357 CALL $CB10    ;
- $D35A POP IX        ;
- $D35C LD ($C8CB),A  ;
- $D35F CALL $D711    ;
- $D362 PUSH IX       ;
- $D364 LD B,$00      ;
- $D366 LD C,$08      ;
- $D368 LD A,($D2E3)  ;
- $D36B CP $FF        ;
- $D36D JP Z,$D412    ;
- $D370 LD C,$09      ;
- $D372 LD A,B        ;
- $D373 LD ($EBFA),A  ;
- $D376 CALL $CB45    ;
- $D379 LD A,($C8CB)  ;
- $D37C LD B,A        ;
- $D37D INC B         ;
-*$D37E DEC B         ;
- $D37F JR Z,$D386    ;
- $D381 CALL $CB96    ;
- $D384 JR $D37E      ;
-*$D386 POP IX        ;
-*$D388 PUSH IX       ;
+ $D35A POP IX        ; }
+ $D35C LD ($C8CB),A  ; Store this
+ $D35F CALL $D711    ; Push working variables onto the stack
+ $D362 PUSH IX       ; Store pointer to the output text buffer
+ $D364 LD B,$00      ; Set #REGb to data entry 0
+ $D366 LD C,$08      ; Set #REGc to data table type 8
+ $D368 LD A,($D2E3)  ; Restore the macro ID
+ $D36B CP $FF        ; Is it #N$FF?
+ $D36D JP Z,$D412    ; Jump forward if so
+ $D370 LD C,$09      ; Set #REGc to data table type 9
+ $D372 LD A,B        ; { Store this
+ $D373 LD ($EBFA),A  ; }
+ $D376 CALL $CB45    ; Get the data
+ $D379 LD A,($C8CB)  ; { Put the first found byte in #REGb
+ $D37C LD B,A        ; }
+ $D37D INC B         ; { Is it zero?
+*$D37E DEC B         ; }
+ $D37F JR Z,$D386    ; If it is, the data has been found
+ $D381 CALL $CB96    ; Get the text
+ $D384 JR $D37E      ; Loop back while there is more to do
+; The data has been found
+*$D386 POP IX        ; Restore the pointer to the text buffer
+*$D388 PUSH IX       ; { Get the next character 
  $D38A CALL $CB10    ;
- $D38D POP IX        ;
- $D38F CP $00        ;
- $D391 JP M,$D3A4    ;
- $D394 LD (IX+$00),A ;
- $D397 INC IX        ;
-*$D399 LD A,($C8CE)  ;
- $D39C CP $00        ;
- $D39E JR Z,$D388    ;
+ $D38D POP IX        ; }
+ $D38F CP $00        ; { Skip the next bit if bit 7 is set
+ $D391 JP M,$D3A4    ; }
+ $D394 LD (IX+$00),A ; Put the character in the text buffer
+ $D397 INC IX        ; Move the pointer to the text buffer forward
+*$D399 LD A,($C8CE)  ; { Is this the end of the string?
+ $D39C CP $00        ; }
+ $D39E JR Z,$D388    ; Loop back if it isn't
 ; This entry point is used by the routine at #R$D412.
-*$D3A0 CALL $D734    ;
+*$D3A0 CALL $D734    ; Pop working variables off the stack
  $D3A3 RET           ;
 *$D3A4 CALL $D30E    ;
  $D3A7 JR $D399      ;
@@ -6288,7 +6294,7 @@ c$D3AC LD C,$0C      ; Use text table #N$0C
  $D3B5 LD A,($D757)  ; Put the current player in #REGa
 *$D3B8 LD ($D3AA),IX ; Store the current position of the output string
  $D3BC LD B,A        ; Use data item based on the player
- $D3BD CALL $D711    ; Push local variables
+ $D3BD CALL $D711    ; Push local variables onto the stack
  $D3C0 LD A,$4E      ; { Look up an entry starting with #N$4E
  $D3C2 CALL $CCD2    ; }
  $D3C5 JR NC,$D40C   ;
@@ -6320,15 +6326,17 @@ c$D3AC LD C,$0C      ; Use text table #N$0C
  $D405 LD A,($C8CE)  ;
  $D408 CP $00        ;
  $D40A JR Z,$D3D0    ;
-*$D40C CALL $D734    ;
+*$D40C CALL $D734    ; Pop working variables off the stack
  $D40F RET           ;
 
 ; Data block at D410
 b$D410 DEFB $00,$00
 
-; Routine at D412
+; Substitute macro text from data table 8
 ;
 ; Used by the routine at #R$D2E5.
+;
+; IX Buffer for output text
 c$D412 LD C,$08      ;
  $D414 LD A,($C8CB)  ;
  $D417 LD B,A        ;
@@ -6755,49 +6763,49 @@ c$D6C0 PUSH BC        ; Store #REGbc
 ;
 ; Used by the routines at #R$D2E5, #R$D3AC, #R$D84C, #R$D889, #R$DD6B, #R$DD9B,
 ; #R$DDD8, #R$DE83, #R$DEE2, #R$DF1B and #R$DF79.
-c$D711 POP DE        ;
- $D712 LD HL,($C8D2) ;
- $D715 PUSH HL       ;
- $D716 LD HL,($C8D0) ;
- $D719 PUSH HL       ;
- $D71A LD HL,($C8D4) ;
- $D71D PUSH HL       ;
- $D71E LD A,($C8CE)  ;
- $D721 PUSH AF       ;
- $D722 LD A,($C8CF)  ;
- $D725 PUSH AF       ;
- $D726 LD A,($C8F1)  ;
- $D729 PUSH AF       ;
- $D72A LD A,($C8F0)  ;
- $D72D PUSH AF       ;
- $D72E LD A,($C8F2)  ;
- $D731 PUSH AF       ;
- $D732 PUSH DE       ;
- $D733 RET           ;
+c$D711 POP DE        ; Pop top of the stack into #REGde
+ $D712 LD HL,($C8D2) ; {Push main pointer to text (#R$C8D2)
+ $D715 PUSH HL       ; }
+ $D716 LD HL,($C8D0) ; {Push pointer to next command text to check (#R$C8D0)
+ $D719 PUSH HL       ; }
+ $D71A LD HL,($C8D4) ; {Push pointer to previous text (#R$C8D4)
+ $D71D PUSH HL       ; }
+ $D71E LD A,($C8CE)  ; {Push string flags (#R$C8CE)
+ $D721 PUSH AF       ; }
+ $D722 LD A,($C8CF)  ; {Push number of characters left (#R$C8CF)
+ $D725 PUSH AF       ; }
+ $D726 LD A,($C8F1)  ; {Push last index (#R$C8F1)
+ $D729 PUSH AF       ; }
+ $D72A LD A,($C8F0)  ; {Push last buffer entry (#R$C8F0)
+ $D72D PUSH AF       ; }
+ $D72E LD A,($C8F2)  ; {Push last matched data ID (#R$C8F2)
+ $D731 PUSH AF       ; }
+ $D732 PUSH DE       ; {Push top of the stack and return
+ $D733 RET           ; }
 
 ; Pop working variables off the stack
 ;
 ; Used by the routines at #R$D2E5, #R$D3AC, #R$D84C, #R$D889, #R$DD6B, #R$DD9B,
 ; #R$DDD8, #R$DE83, #R$DEE2 and #R$DF79.
-c$D734 POP DE        ;
- $D735 POP AF        ;
- $D736 LD ($C8F2),A  ;
- $D739 POP AF        ;
- $D73A LD ($C8F0),A  ;
- $D73D POP AF        ;
- $D73E LD ($C8F1),A  ;
- $D741 POP AF        ;
- $D742 LD ($C8CF),A  ;
- $D745 POP AF        ;
- $D746 LD ($C8CE),A  ;
- $D749 POP HL        ;
- $D74A LD ($C8D4),HL ;
- $D74D POP HL        ;
- $D74E LD ($C8D0),HL ;
- $D751 POP HL        ;
- $D752 LD ($C8D2),HL ;
- $D755 PUSH DE       ;
- $D756 RET           ;
+c$D734 POP DE        ; Pop top of the stack into #REGde
+ $D735 POP AF        ; {
+ $D736 LD ($C8F2),A  ; Push last matched data ID (#R$C8F2)}
+ $D739 POP AF        ; {
+ $D73A LD ($C8F0),A  ; Push last buffer entry (#R$C8F0)}
+ $D73D POP AF        ; {
+ $D73E LD ($C8F1),A  ; Push last index (#R$C8F1)}
+ $D741 POP AF        ; {
+ $D742 LD ($C8CF),A  ; Push number of characters left (#R$C8CF)}
+ $D745 POP AF        ; {
+ $D746 LD ($C8CE),A  ; Push string flags (#R$C8CE)}
+ $D749 POP HL        ; {
+ $D74A LD ($C8D4),HL ; Push pointer to previous text (#R$C8D4)}
+ $D74D POP HL        ; {
+ $D74E LD ($C8D0),HL ; Push pointer to next command text to check (#R$C8D0)}
+ $D751 POP HL        ; {
+ $D752 LD ($C8D2),HL ; Push main pointer to text (#R$C8D2)}
+ $D755 PUSH DE       ; { Return to the value set in #REGde
+ $D756 RET           ; }
 
 ; Current player
 g$D757 DEFB $00
@@ -6964,7 +6972,7 @@ c$D84C LD A,C        ;
  $D853 JR Z,$D859    ;
  $D855 CP $0D        ;
  $D857 JR NZ,$D7F7   ;
-*$D859 CALL $D711    ;
+*$D859 CALL $D711    ; Push local variables onto the stack
  $D85C LD A,$53      ;
  $D85E CALL $CCD2    ;
  $D861 JR NC,$D86D   ;
@@ -6972,9 +6980,9 @@ c$D84C LD A,C        ;
  $D866 JR C,$D872    ;
  $D868 CALL $CCF5    ;
  $D86B JR C,$D863    ;
-*$D86D CALL $D734    ;
+*$D86D CALL $D734    ; Pop working variables off the stack
  $D870 JR $D7F7      ;
-*$D872 CALL $D734    ;
+*$D872 CALL $D734    ; Pop working variables off the stack
  $D875 SCF           ;
  $D876 RET           ;
 
@@ -7003,7 +7011,7 @@ c$D889 LD A,C        ;
  $D89E JR Z,$D8A5    ;
  $D8A0 CP $0C        ;
  $D8A2 JP NZ,$D7F7   ;
-*$D8A5 CALL $D711    ;
+*$D8A5 CALL $D711    ; Push local variables onto the stack
  $D8A8 LD A,C        ;
  $D8A9 LD ($D778),A  ;
  $D8AC LD HL,($C8BA) ;
@@ -7018,9 +7026,9 @@ c$D889 LD A,C        ;
  $D8C2 JR C,$D8CD    ;
  $D8C4 CALL $CCF5    ;
  $D8C7 JR C,$D8BF    ;
-*$D8C9 CALL $D734    ;
+*$D8C9 CALL $D734    ; Pop working variables off the stack
  $D8CC RET           ;
-*$D8CD CALL $D734    ;
+*$D8CD CALL $D734    ; Pop working variables off the stack
  $D8D0 SCF           ;
  $D8D1 RET           ;
 
@@ -7590,7 +7598,7 @@ c$DD65 CALL $C920    ;
 c$DD6B LD A,$07      ;
  $DD6D LD ($E151),A  ;
  $DD70 RET           ;
- $DD71 CALL $D711    ;
+ $DD71 CALL $D711    ; Push local variables onto the stack
  $DD74 CALL $D5E6    ;
  $DD77 LD A,($C8BC)  ;
  $DD7A CP $0E        ;
@@ -7599,17 +7607,17 @@ c$DD6B LD A,$07      ;
  $DD81 LD ($DB33),A  ;
  $DD84 LD A,($C8BD)  ;
  $DD87 CALL $CA3C    ;
-*$DD8A CALL $D734    ;
+*$DD8A CALL $D734    ; Pop working variables off the stack
  $DD8D RET           ;
- $DD8E CALL $D711    ;
+ $DD8E CALL $D711    ; Push local variables onto the stack
  $DD91 LD A,($DB33)  ;
  $DD94 CALL $CA3C    ;
- $DD97 CALL $D734    ;
+ $DD97 CALL $D734    ; Pop working variables off the stack
  $DD9A RET           ;
 
 ; Command 11
 c$DD9B CALL $D5E6    ;
- $DD9E CALL $D711    ;
+ $DD9E CALL $D711    ; Push local variables onto the stack
  $DDA1 LD A,($C8BC)  ;
  $DDA4 LD C,A        ;
  $DDA5 CP $0D        ;
@@ -7628,7 +7636,7 @@ c$DD9B CALL $D5E6    ;
  $DDC1 CALL $F1A2    ;
 *$DDC4 CALL $CCF5    ;
  $DDC7 JR C,$DDBC    ;
-*$DDC9 CALL $D734    ;
+*$DDC9 CALL $D734    ; Pop working variables off the stack
  $DDCC RET           ;
 
 ; Command 12 - RESET
@@ -7649,7 +7657,7 @@ c$DDD8 CALL $D5E6    ;
  $DDE6 LD BC,$0417   ;
  $DDE9 LD ($E088),BC ;
 ; This entry point is used by the routine at #R$DDCD.
-*$DDED CALL $D711    ;
+*$DDED CALL $D711    ; Push local variables onto the stack
  $DDF0 LD A,($C8BC)  ;
  $DDF3 LD ($DB26),A  ;
  $DDF6 LD C,A        ;
@@ -7707,16 +7715,16 @@ c$DDD8 CALL $D5E6    ;
  $DE6F LD A,($C8C9)  ;
  $DE72 LD ($DB2A),A  ;
  $DE75 JP $DE1B      ;
-*$DE78 CALL $D734    ;
+*$DE78 CALL $D734    ; Pop working variables off the stack
  $DE7B SCF           ;
  $DE7C CCF           ;
  $DE7D RET           ;
-*$DE7E CALL $D734    ;
+*$DE7E CALL $D734    ; Pop working variables off the stack
  $DE81 SCF           ;
  $DE82 RET           ;
 
 ; Command 14
-c$DE83 CALL $D711    ;
+c$DE83 CALL $D711    ; Push local variables onto the stack
  $DE86 CALL $D5E6    ;
  $DE89 LD A,($C8BC)  ;
  $DE8C LD C,A        ;
@@ -7728,7 +7736,7 @@ c$DE83 CALL $D711    ;
  $DE98 CP (HL)       ;
  $DE99 JR Z,$DEA2    ;
  $DE9B CALL $DEB9    ;
-*$DE9E CALL $D734    ;
+*$DE9E CALL $D734    ; Pop working variables off the stack
  $DEA1 RET           ;
 *$DEA2 LD B,$00      ;
 *$DEA4 LD A,B        ;
@@ -7765,7 +7773,7 @@ c$DED9 CALL $DF79    ;
  $DEE1 RET           ;
 
 ; Command 17
-c$DEE2 CALL $D711    ;
+c$DEE2 CALL $D711    ; Push local variables onto the stack
  $DEE5 CALL $D5E6    ;
  $DEE8 LD A,($C8BC)  ;
  $DEEB CP $0E        ;
@@ -7788,11 +7796,11 @@ c$DEE2 CALL $D711    ;
  $DF11 LD (IY+$00),L ;
  $DF14 LD (IY+$01),H ;
 ; This entry point is used by the routine at #R$DF1B.
-*$DF17 CALL $D734    ;
+*$DF17 CALL $D734    ; Pop working variables off the stack
  $DF1A RET           ;
 
 ; Command 18
-c$DF1B CALL $D711    ;
+c$DF1B CALL $D711    ; Push local variables onto the stack
  $DF1E CALL $D5E6    ;
  $DF21 LD A,($C8BC)  ;
  $DF24 CP $0E        ;
@@ -7846,9 +7854,9 @@ c$DF5E LD IX,($C8D2) ; Point #REGix at the current data item being looked at (#R
 ; Routine at DF79
 ;
 ; Used by the routines at #R$DED0 and #R$DED9.
-c$DF79 CALL $D711    ;
+c$DF79 CALL $D711    ; Push local variables onto the stack
  $DF7C CALL $D5E6    ;
- $DF7F CALL $D734    ;
+ $DF7F CALL $D734    ; Pop working variables off the stack
  $DF82 LD A,($C8BC)  ;
  $DF85 CP $0E        ;
  $DF87 JR NZ,$DF9A   ;
