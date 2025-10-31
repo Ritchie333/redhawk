@@ -1,3 +1,9 @@
 [Game]
 Game=Redhawk
 Copyright(c) 1986 Melbourne House
+
+[Index]
+MemoryMaps
+CommandTypes
+Reference
+
