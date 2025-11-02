@@ -75,7 +75,8 @@ b $79F7 Fusor walking R
 b $7A6F Mugger walking R
 b $7AE7 Character set (small)
 b $7CBF Character set (small letters)
-b $7DBE Character set (large)
+u $7DBE Unused
+b $7DBF Character set (large)
 b $80DE Pointers to jump tables
 W $80DE
 W $80EE Points to user flags

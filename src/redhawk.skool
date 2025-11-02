@@ -1294,205 +1294,397 @@ b$7A6F DEFB $00,$00,$00,$00,$1E,$00,$00,$3E
  $7ADF DEFB $E3,$80,$00,$C1,$E0,$01,$E1,$F0
 
 ; Character set (small)
+;
+; #CALL:print_udg(#PC,small_20,1,1,7)
 b$7AE7 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+; #CALL:print_udg(#PC,small_21,1,1,7)
  $7AEF DEFB $00,$80,$80,$80,$80,$00,$80,$00
+; #CALL:print_udg(#PC,small_22,1,1,7)
  $7AF7 DEFB $00,$A0,$A0,$00,$00,$00,$00,$00
+; #CALL:print_udg(#PC,small_23,1,1,7)
  $7AFF DEFB $00,$00,$A0,$E0,$A0,$E0,$A0,$00
+; #CALL:print_udg(#PC,small_24,1,1,7)
  $7B07 DEFB $00,$40,$60,$80,$40,$20,$C0,$40
+; #CALL:print_udg(#PC,small_25,1,1,7)
  $7B0F DEFB $00,$00,$80,$20,$40,$80,$20,$00
+; #CALL:print_udg(#PC,small_26,1,1,7)
  $7B17 DEFB $00,$10,$28,$10,$2A,$44,$3A,$00
+; #CALL:print_udg(#PC,small_27,1,1,7)
  $7B1F DEFB $00,$40,$80,$00,$00,$00,$00,$00
+; #CALL:print_udg(#PC,small_28,1,1,7)
  $7B27 DEFB $00,$40,$80,$80,$80,$80,$40,$00
+; #CALL:print_udg(#PC,small_29,1,1,7)
  $7B2F DEFB $00,$40,$20,$20,$20,$20,$40,$00
+; #CALL:print_udg(#PC,small_2A,1,1,7)
  $7B37 DEFB $00,$00,$00,$A0,$40,$A0,$00,$00
+; #CALL:print_udg(#PC,small_2B,1,1,7)
  $7B3F DEFB $00,$00,$00,$40,$E0,$40,$00,$00
+; #CALL:print_udg(#PC,small_2C,1,1,7)
  $7B47 DEFB $00,$00,$00,$00,$00,$40,$40,$80
+; #CALL:print_udg(#PC,small_2D,1,1,7)
  $7B4F DEFB $00,$00,$00,$00,$E0,$00,$00,$00
+; #CALL:print_udg(#PC,small_2E,1,1,7)
  $7B57 DEFB $00,$00,$00,$00,$00,$00,$80,$00
+; #CALL:print_udg(#PC,small_2F,1,1,7)
  $7B5F DEFB $00,$80,$40,$40,$40,$40,$20,$00
+; #CALL:print_udg(#PC,small_30,1,1,7)
  $7B67 DEFB $00,$00,$E0,$A0,$A0,$A0,$E0,$00
+; #CALL:print_udg(#PC,small_31,1,1,7)
  $7B6F DEFB $00,$00,$40,$C0,$40,$40,$E0,$00
+; #CALL:print_udg(#PC,small_32,1,1,7)
  $7B77 DEFB $00,$00,$C0,$20,$40,$80,$E0,$00
+; #CALL:print_udg(#PC,small_33,1,1,7)
  $7B7F DEFB $00,$00,$C0,$20,$C0,$20,$C0,$00
+; #CALL:print_udg(#PC,small_34,1,1,7) 
  $7B87 DEFB $00,$00,$20,$60,$A0,$E0,$20,$00
+; #CALL:print_udg(#PC,small_35,1,1,7)
  $7B8F DEFB $00,$00,$E0,$80,$C0,$20,$C0,$00
+; #CALL:print_udg(#PC,small_36,1,1,7)
  $7B97 DEFB $00,$00,$40,$80,$C0,$A0,$40,$00
+; #CALL:print_udg(#PC,small_37,1,1,7)
  $7B9F DEFB $00,$00,$E0,$20,$40,$80,$80,$00
+; #CALL:print_udg(#PC,small_38,1,1,7)
  $7BA7 DEFB $00,$00,$40,$A0,$40,$A0,$40,$00
+; #CALL:print_udg(#PC,small_39,1,1,7)
  $7BAF DEFB $00,$00,$60,$A0,$60,$20,$20,$00
+; #CALL:print_udg(#PC,small_3A,1,1,7)
  $7BB7 DEFB $00,$00,$00,$40,$00,$40,$00,$00
+; #CALL:print_udg(#PC,small_3B,1,1,7)
  $7BBF DEFB $00,$00,$00,$40,$00,$40,$40,$80
+; #CALL:print_udg(#PC,small_3C,1,1,7)
  $7BC7 DEFB $00,$00,$20,$40,$80,$40,$20,$00
+; #CALL:print_udg(#PC,small_3D,1,1,7)
  $7BCF DEFB $00,$00,$00,$E0,$00,$E0,$00,$00
+; #CALL:print_udg(#PC,small_3E,1,1,7)
  $7BD7 DEFB $00,$00,$80,$40,$20,$40,$80,$00
+; #CALL:print_udg(#PC,small_3F,1,1,7)
  $7BDF DEFB $00,$40,$A0,$A0,$20,$40,$00,$40
+; #CALL:print_udg(#PC,small_40,1,1,7)
  $7BE7 DEFB $00,$00,$60,$A0,$E0,$80,$60,$00
+; #CALL:print_udg(#PC,small_41,1,1,7)
  $7BEF DEFB $00,$40,$A0,$E0,$A0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_42,1,1,7)
  $7BF7 DEFB $00,$C0,$A0,$C0,$A0,$A0,$C0,$00
+; #CALL:print_udg(#PC,small_43,1,1,7)
  $7BFF DEFB $00,$40,$A0,$80,$80,$A0,$40,$00
+; #CALL:print_udg(#PC,small_44,1,1,7)
  $7C07 DEFB $00,$C0,$A0,$A0,$A0,$A0,$C0,$00
+; #CALL:print_udg(#PC,small_45,1,1,7)
  $7C0F DEFB $00,$E0,$80,$E0,$80,$80,$E0,$00
+; #CALL:print_udg(#PC,small_46,1,1,7)
  $7C17 DEFB $00,$E0,$80,$C0,$80,$80,$80,$00
+; #CALL:print_udg(#PC,small_47,1,1,7)
  $7C1F DEFB $00,$40,$A0,$80,$E0,$A0,$40,$00
+; #CALL:print_udg(#PC,small_48,1,1,7)
  $7C27 DEFB $00,$A0,$A0,$E0,$A0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_49,1,1,7)
  $7C2F DEFB $00,$E0,$40,$40,$40,$40,$E0,$00
+; #CALL:print_udg(#PC,small_4A,1,1,7)
  $7C37 DEFB $00,$20,$20,$20,$A0,$A0,$40,$00
+; #CALL:print_udg(#PC,small_4B,1,1,7)
  $7C3F DEFB $00,$80,$A0,$C0,$A0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_4C,1,1,7)
  $7C47 DEFB $00,$80,$80,$80,$80,$80,$E0,$00
+; #CALL:print_udg(#PC,small_4D,1,1,7)
  $7C4F DEFB $00,$A0,$E0,$E0,$E0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_4E,1,1,7)
  $7C57 DEFB $00,$40,$A0,$A0,$A0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_4F,1,1,7)
  $7C5F DEFB $00,$40,$A0,$A0,$A0,$A0,$40,$00
+; #CALL:print_udg(#PC,small_50,1,1,7)
  $7C67 DEFB $00,$C0,$A0,$C0,$80,$80,$80,$00
+; #CALL:print_udg(#PC,small_51,1,1,7)
  $7C6F DEFB $00,$40,$A0,$A0,$A0,$A0,$40,$60
+; #CALL:print_udg(#PC,small_52,1,1,7)
  $7C77 DEFB $00,$C0,$A0,$A0,$C0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_53,1,1,7)
  $7C7F DEFB $00,$60,$80,$40,$20,$A0,$40,$00
+; #CALL:print_udg(#PC,small_54,1,1,7)
  $7C87 DEFB $00,$E0,$40,$40,$40,$40,$40,$00
+; #CALL:print_udg(#PC,small_55,1,1,7)
  $7C8F DEFB $00,$A0,$A0,$A0,$A0,$A0,$E0,$00
+; #CALL:print_udg(#PC,small_56,1,1,7)
  $7C97 DEFB $00,$A0,$A0,$A0,$A0,$A0,$40,$00
+; #CALL:print_udg(#PC,small_57,1,1,7)
  $7C9F DEFB $00,$A0,$A0,$E0,$E0,$E0,$A0,$00
+; #CALL:print_udg(#PC,small_58,1,1,7)
  $7CA7 DEFB $00,$A0,$A0,$40,$A0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_59,1,1,7)
  $7CAF DEFB $00,$A0,$A0,$40,$40,$40,$40,$00
+; #CALL:print_udg(#PC,small_5A,1,1,7)
  $7CB7 DEFB $00,$E0,$20,$40,$40,$80,$E0,$00
-
-; Character set (small letters)
-b$7CBF DEFB $00,$C0,$80,$80,$80,$80,$C0,$00
+; #CALL:print_udg(#PC,small_5B,1,1,7)
+ $7CBF DEFB $00,$C0,$80,$80,$80,$80,$C0,$00
+; #CALL:print_udg(#PC,small_5C,1,1,7)
  $7CC7 DEFB $00,$80,$40,$40,$40,$40,$20,$00
+; #CALL:print_udg(#PC,small_5D,1,1,7) 
  $7CCF DEFB $00,$C0,$40,$40,$40,$40,$C0,$00
+; #CALL:print_udg(#PC,small_5E,1,1,7)
  $7CD7 DEFB $00,$00,$40,$E0,$40,$40,$40,$00
+; #CALL:print_udg(#PC,small_5F,1,1,7)
  $7CDF DEFB $00,$00,$00,$00,$00,$00,$00,$E0
+; #CALL:print_udg(#PC,small_60,1,1,7) 
  $7CE7 DEFB $00,$60,$40,$E0,$40,$40,$E0,$00
+; #CALL:print_udg(#PC,small_61,1,1,7)
  $7CEF DEFB $00,$00,$C0,$20,$E0,$A0,$E0,$00
+; #CALL:print_udg(#PC,small_62,1,1,7)
  $7CF7 DEFB $00,$00,$80,$80,$C0,$A0,$C0,$00
+; #CALL:print_udg(#PC,small_63,1,1,7)
  $7CFF DEFB $00,$00,$40,$A0,$80,$A0,$40,$00
+; #CALL:print_udg(#PC,small_64,1,1,7)
  $7D07 DEFB $00,$00,$20,$20,$60,$A0,$60,$00
+; #CALL:print_udg(#PC,small_65,1,1,7)
  $7D0F DEFB $00,$00,$40,$A0,$E0,$80,$E0,$00
+; #CALL:print_udg(#PC,small_66,1,1,7)
  $7D17 DEFB $00,$00,$60,$80,$C0,$80,$80,$00
+; #CALL:print_udg(#PC,small_67,1,1,7)
  $7D1F DEFB $00,$00,$60,$A0,$A0,$60,$20,$C0
+; #CALL:print_udg(#PC,small_68,1,1,7)
  $7D27 DEFB $00,$00,$80,$80,$E0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_69,1,1,7)
  $7D2F DEFB $00,$40,$00,$C0,$40,$40,$E0,$00
+; #CALL:print_udg(#PC,small_6A,1,1,7)
  $7D37 DEFB $00,$20,$00,$20,$20,$20,$A0,$40
+; #CALL:print_udg(#PC,small_6B,1,1,7)
  $7D3F DEFB $00,$00,$80,$A0,$C0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_6C,1,1,7)
  $7D47 DEFB $00,$00,$80,$80,$80,$80,$40,$00
+; #CALL:print_udg(#PC,small_6D,1,1,7)
  $7D4F DEFB $00,$00,$A0,$E0,$E0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_6E,1,1,7)
  $7D57 DEFB $00,$00,$40,$A0,$A0,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_6F,1,1,7)
  $7D5F DEFB $00,$00,$40,$A0,$A0,$A0,$40,$00
+; #CALL:print_udg(#PC,small_70,1,1,7)
  $7D67 DEFB $00,$00,$C0,$A0,$A0,$C0,$80,$80
+; #CALL:print_udg(#PC,small_71,1,1,7)
  $7D6F DEFB $00,$00,$60,$A0,$A0,$60,$20,$20
+; #CALL:print_udg(#PC,small_72,1,1,7)
  $7D77 DEFB $00,$00,$40,$A0,$80,$80,$80,$00
+; #CALL:print_udg(#PC,small_73,1,1,7)
  $7D7F DEFB $00,$00,$60,$80,$40,$20,$C0,$00
+; #CALL:print_udg(#PC,small_74,1,1,7)
  $7D87 DEFB $00,$00,$40,$E0,$40,$40,$20,$00
+; #CALL:print_udg(#PC,small_75,1,1,7)
  $7D8F DEFB $00,$00,$A0,$A0,$A0,$A0,$E0,$00
+; #CALL:print_udg(#PC,small_76,1,1,7)
  $7D97 DEFB $00,$00,$A0,$A0,$A0,$40,$40,$00
+; #CALL:print_udg(#PC,small_77,1,1,7)
  $7D9F DEFB $00,$00,$A0,$A0,$E0,$E0,$A0,$00
+; #CALL:print_udg(#PC,small_78,1,1,7)
  $7DA7 DEFB $00,$00,$A0,$A0,$40,$A0,$A0,$00
+; #CALL:print_udg(#PC,small_79,1,1,7)
  $7DAF DEFB $00,$00,$A0,$A0,$A0,$60,$20,$C0
- $7DB7 DEFB $00,$00,$E0,$20,$40,$80,$E0
+; #CALL:print_udg(#PC,small_7A,1,1,7)
+ $7DB7 DEFB $00,$00,$E0,$20,$40,$80,$E0,$00
 
 ; Character set (large)
-b$7DBE DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $7DC6 DEFB $00,$00,$18,$18,$18,$18,$00,$18
- $7DCE DEFB $00,$00,$24,$24,$00,$00,$00,$00
- $7DD6 DEFB $00,$00,$0F,$1F,$37,$3B,$38,$30
- $7DDE DEFB $3F,$00,$F0,$F8,$FC,$9C,$1C,$0C
- $7DE6 DEFB $FC,$31,$2E,$10,$10,$10,$09,$08
- $7DEE DEFB $07,$8C,$74,$08,$08,$08,$90,$10
- $7DF6 DEFB $E0,$00,$08,$10,$00,$00,$00,$00
- $7DFE DEFB $00,$00,$00,$0C,$18,$30,$18,$0C
- $7E06 DEFB $00,$00,$00,$30,$18,$0C,$18,$30
- $7E0E DEFB $00,$00,$00,$14,$08,$3E,$08,$14
- $7E16 DEFB $00,$00,$00,$08,$08,$3E,$08,$08
- $7E1E DEFB $00,$00,$00,$00,$00,$00,$08,$08
- $7E26 DEFB $10,$00,$00,$00,$00,$3C,$00,$00
- $7E2E DEFB $00,$00,$00,$00,$00,$00,$18,$18
- $7E36 DEFB $00,$00,$00,$06,$0C,$18,$30,$60
- $7E3E DEFB $00,$00,$3C,$66,$6E,$76,$66,$3C
- $7E46 DEFB $00,$00,$18,$38,$18,$18,$18,$3C
- $7E4E DEFB $00,$00,$3C,$46,$06,$3C,$60,$7E
- $7E56 DEFB $00,$00,$3C,$66,$0C,$06,$66,$3C
- $7E5E DEFB $00,$00,$0C,$1C,$3C,$6C,$7E,$0C
- $7E66 DEFB $00,$00,$7E,$60,$7C,$06,$66,$3C
- $7E6E DEFB $00,$00,$3C,$60,$7C,$66,$66,$3C
- $7E76 DEFB $00,$00,$7E,$06,$0C,$18,$30,$30
- $7E7E DEFB $00,$00,$3C,$66,$3C,$66,$66,$3C
- $7E86 DEFB $00,$00,$3C,$66,$66,$3E,$06,$3C
- $7E8E DEFB $00,$00,$18,$18,$00,$00,$18,$18
- $7E96 DEFB $00,$00,$00,$10,$00,$00,$10,$10
- $7E9E DEFB $20,$00,$00,$0C,$18,$30,$18,$0C
- $7EA6 DEFB $00,$00,$00,$00,$3E,$00,$3E,$00
- $7EAE DEFB $00,$00,$00,$30,$18,$0C,$18,$30
- $7EB6 DEFB $00,$00,$3C,$66,$0C,$18,$00,$18
- $7EBE DEFB $00,$00,$3C,$4A,$56,$5E,$40,$3C
- $7EC6 DEFB $00,$00,$3C,$66,$66,$7E,$66,$66
- $7ECE DEFB $00,$00,$7C,$66,$7C,$66,$66,$7C
- $7ED6 DEFB $00,$00,$3C,$66,$60,$60,$66,$3C
- $7EDE DEFB $00,$00,$78,$6C,$66,$66,$6C,$78
- $7EE6 DEFB $00,$00,$7E,$60,$7C,$60,$60,$7E
- $7EEE DEFB $00,$00,$7E,$60,$7C,$60,$60,$60
- $7EF6 DEFB $00,$00,$3C,$66,$60,$6E,$66,$3C
- $7EFE DEFB $00,$00,$66,$66,$7E,$66,$66,$66
- $7F06 DEFB $00,$00,$3C,$18,$18,$18,$18,$3C
- $7F0E DEFB $00,$00,$06,$06,$06,$66,$66,$3C
- $7F16 DEFB $00,$00,$6C,$78,$70,$78,$6C,$66
- $7F1E DEFB $00,$00,$60,$60,$60,$60,$60,$7E
- $7F26 DEFB $00,$00,$42,$66,$7E,$66,$66,$66
- $7F2E DEFB $00,$00,$66,$66,$76,$6E,$66,$66
- $7F36 DEFB $00,$00,$3C,$66,$66,$66,$66,$3C
- $7F3E DEFB $00,$00,$7C,$66,$66,$7C,$60,$60
- $7F46 DEFB $00,$00,$3C,$66,$66,$76,$6E,$3C
- $7F4E DEFB $00,$00,$7C,$66,$66,$7C,$6C,$66
- $7F56 DEFB $00,$00,$3C,$60,$3C,$06,$66,$3C
- $7F5E DEFB $00,$00,$7E,$18,$18,$18,$18,$18
- $7F66 DEFB $00,$00,$66,$66,$66,$66,$66,$3C
- $7F6E DEFB $00,$00,$66,$66,$66,$66,$3C,$18
- $7F76 DEFB $00,$00,$66,$66,$66,$66,$7E,$24
- $7F7E DEFB $00,$00,$66,$3C,$18,$18,$3C,$66
- $7F86 DEFB $00,$00,$66,$3C,$18,$18,$18,$18
- $7F8E DEFB $00,$00,$7E,$06,$0C,$18,$30,$7E
- $7F96 DEFB $00,$00,$07,$0F,$1E,$1D,$1E,$1F
- $7F9E DEFB $1B,$00,$E0,$50,$B8,$58,$A8,$78
- $7FA6 DEFB $D8,$19,$1F,$1C,$08,$08,$09,$0C
- $7FAE DEFB $07,$98,$F8,$38,$10,$10,$90,$30
- $7FB6 DEFB $E0,$00,$00,$00,$00,$00,$00,$00
- $7FBE DEFB $FF,$00,$1C,$36,$78,$30,$30,$7E
- $7FC6 DEFB $00,$00,$18,$3C,$66,$66,$7E,$66
- $7FCE DEFB $66,$00,$FC,$66,$66,$7C,$66,$66
- $7FD6 DEFB $FC,$00,$3C,$66,$C0,$C0,$C0,$66
- $7FDE DEFB $3C,$00,$F8,$6C,$66,$66,$66,$6C
- $7FE6 DEFB $F8,$00,$FE,$62,$68,$78,$68,$62
- $7FEE DEFB $FE,$00,$FE,$62,$68,$78,$68,$60
- $7FF6 DEFB $F0,$00,$3C,$66,$C0,$C0,$CE,$66
- $7FFE DEFB $3E,$00,$66,$66,$66,$7E,$66,$66
- $8006 DEFB $66,$00,$7E,$18,$18,$18,$18,$18
- $800E DEFB $7E,$00,$1E,$0C,$0C,$0C,$CC,$CC
- $8016 DEFB $78,$00,$E6,$66,$6C,$78,$6C,$66
- $801E DEFB $E6,$00,$F0,$60,$60,$60,$62,$66
- $8026 DEFB $FE,$00,$C6,$EE,$FE,$FE,$D6,$C6
- $802E DEFB $C6,$00,$C6,$E6,$F6,$DE,$CE,$C6
- $8036 DEFB $C6,$00,$38,$6C,$C6,$C6,$C6,$6C
- $803E DEFB $38,$00,$FC,$66,$66,$7C,$60,$60
- $8046 DEFB $F0,$00,$38,$6C,$C6,$C6,$DA,$CC
- $804E DEFB $76,$00,$FC,$66,$66,$7C,$6C,$66
- $8056 DEFB $E6,$00,$3C,$66,$60,$3C,$06,$66
- $805E DEFB $3C,$00,$7E,$5A,$18,$18,$18,$18
- $8066 DEFB $3C,$00,$66,$66,$66,$66,$66,$66
- $806E DEFB $3C,$00,$66,$66,$66,$66,$66,$3C
- $8076 DEFB $18,$00,$C6,$C6,$C6,$D6,$FE,$EE
- $807E DEFB $C6,$00,$C6,$6C,$38,$38,$6C,$C6
- $8086 DEFB $C6,$00,$66,$66,$66,$3C,$18,$18
- $808E DEFB $3C,$00,$FE,$C6,$8C,$18,$32,$66
- $8096 DEFB $FE,$00,$7E,$46,$4A,$56,$66,$7E
- $809E DEFB $00,$00,$08,$08,$08,$18,$18,$18
- $80A6 DEFB $00,$00,$7E,$42,$02,$7E,$60,$7E
- $80AE DEFB $00,$00,$7C,$44,$1E,$06,$46,$7E
- $80B6 DEFB $00,$00,$7C,$44,$44,$44,$7E,$0C
- $80BE DEFB $00,$00,$7E,$40,$7E,$06,$46,$7E
- $80C6 DEFB $00,$00,$7E,$40,$7E,$46,$46,$7E
- $80CE DEFB $00,$00,$7C,$04,$04,$0C,$0C,$0C
- $80D6 DEFB $00,$00,$3C,$24,$7E,$46,$46,$7E
- $80DE DEFB $00,$00,$7E,$42,$42,$7E,$06,$06
+;
+; #CALL:print_udg(#PC,large_20,1,1,56)
+b$7DBF DEFB $00,$00,$00,$00,$00,$00,$00,$00
+; #CALL:print_udg(#PC,large_21,1,1,56)
+ $7DC7 DEFB $00,$18,$18,$18,$18,$00,$18,$00
+; #CALL:print_udg(#PC,large_22,1,1,56)
+ $7DCF DEFB $00,$24,$24,$00,$00,$00,$00,$00
+; #CALL:print_udg(#PC,large_23,1,1,56)
+ $7DD7 DEFB $00,$0F,$1F,$37,$3B,$38,$30,$3F
+; #CALL:print_udg(#PC,large_24,1,1,56)
+ $7DDF DEFB $00,$F0,$F8,$FC,$9C,$1C,$0C,$FC
+; #CALL:print_udg(#PC,large_25,1,1,56) 
+ $7DE7 DEFB $31,$2E,$10,$10,$10,$09,$08,$07
+; #CALL:print_udg(#PC,large_26,1,1,56) 
+ $7DEF DEFB $8C,$74,$08,$08,$08,$90,$10,$E0
+; #CALL:print_udg(#PC,large_27,1,1,56) 
+ $7DF7 DEFB $00,$08,$10,$00,$00,$00,$00,$00
+; #CALL:print_udg(#PC,large_28,1,1,56) 
+ $7DFF DEFB $00,$00,$0C,$18,$30,$18,$0C,$00
+; #CALL:print_udg(#PC,large_29,1,1,56) 
+ $7E07 DEFB $00,$00,$30,$18,$0C,$18,$30,$00
+; #CALL:print_udg(#PC,large_2A,1,1,56) 
+ $7E0F DEFB $00,$00,$14,$08,$3E,$08,$14,$00
+; #CALL:print_udg(#PC,large_2B,1,1,56) 
+ $7E17 DEFB $00,$00,$08,$08,$3E,$08,$08,$00
+; #CALL:print_udg(#PC,large_2C,1,1,56) 
+ $7E1F DEFB $00,$00,$00,$00,$00,$08,$08,$10
+; #CALL:print_udg(#PC,large_2D,1,1,56) 
+ $7E27 DEFB $00,$00,$00,$00,$3C,$00,$00,$00
+; #CALL:print_udg(#PC,large_2E,1,1,56) 
+ $7E2F DEFB $00,$00,$00,$00,$00,$18,$18,$00
+; #CALL:print_udg(#PC,large_2F,1,1,56) 
+ $7E37 DEFB $00,$00,$06,$0C,$18,$30,$60,$00
+; #CALL:print_udg(#PC,large_30,1,1,56) 
+ $7E3F DEFB $00,$3C,$66,$6E,$76,$66,$3C,$00
+; #CALL:print_udg(#PC,large_31,1,1,56) 
+ $7E47 DEFB $00,$18,$38,$18,$18,$18,$3C,$00
+; #CALL:print_udg(#PC,large_32,1,1,56) 
+ $7E4F DEFB $00,$3C,$46,$06,$3C,$60,$7E,$00
+; #CALL:print_udg(#PC,large_33,1,1,56) 
+ $7E57 DEFB $00,$3C,$66,$0C,$06,$66,$3C,$00
+; #CALL:print_udg(#PC,large_34,1,1,56) 
+ $7E5F DEFB $00,$0C,$1C,$3C,$6C,$7E,$0C,$00
+; #CALL:print_udg(#PC,large_35,1,1,56) 
+ $7E67 DEFB $00,$7E,$60,$7C,$06,$66,$3C,$00
+; #CALL:print_udg(#PC,large_36,1,1,56) 
+ $7E6F DEFB $00,$3C,$60,$7C,$66,$66,$3C,$00
+; #CALL:print_udg(#PC,large_37,1,1,56) 
+ $7E77 DEFB $00,$7E,$06,$0C,$18,$30,$30,$00
+; #CALL:print_udg(#PC,large_38,1,1,56) 
+ $7E7F DEFB $00,$3C,$66,$3C,$66,$66,$3C,$00
+; #CALL:print_udg(#PC,large_39,1,1,56) 
+ $7E87 DEFB $00,$3C,$66,$66,$3E,$06,$3C,$00
+; #CALL:print_udg(#PC,large_3A,1,1,56) 
+ $7E8F DEFB $00,$18,$18,$00,$00,$18,$18,$00
+; #CALL:print_udg(#PC,large_3B,1,1,56) 
+ $7E97 DEFB $00,$00,$10,$00,$00,$10,$10,$20
+; #CALL:print_udg(#PC,large_3C,1,1,56) 
+ $7E9F DEFB $00,$00,$0C,$18,$30,$18,$0C,$00
+; #CALL:print_udg(#PC,large_3D,1,1,56) 
+ $7EA7 DEFB $00,$00,$00,$3E,$00,$3E,$00,$00
+; #CALL:print_udg(#PC,large_3E,1,1,56) 
+ $7EAF DEFB $00,$00,$30,$18,$0C,$18,$30,$00
+; #CALL:print_udg(#PC,large_3F,1,1,56) 
+ $7EB7 DEFB $00,$3C,$66,$0C,$18,$00,$18,$00
+; #CALL:print_udg(#PC,large_40,1,1,56) 
+ $7EBF DEFB $00,$3C,$4A,$56,$5E,$40,$3C,$00
+; #CALL:print_udg(#PC,large_41,1,1,56) 
+ $7EC7 DEFB $00,$3C,$66,$66,$7E,$66,$66,$00
+; #CALL:print_udg(#PC,large_42,1,1,56) 
+ $7ECF DEFB $00,$7C,$66,$7C,$66,$66,$7C,$00
+; #CALL:print_udg(#PC,large_43,1,1,56)  
+ $7ED7 DEFB $00,$3C,$66,$60,$60,$66,$3C,$00
+; #CALL:print_udg(#PC,large_44,1,1,56)  
+ $7EDF DEFB $00,$78,$6C,$66,$66,$6C,$78,$00
+; #CALL:print_udg(#PC,large_45,1,1,56)  
+ $7EE7 DEFB $00,$7E,$60,$7C,$60,$60,$7E,$00
+; #CALL:print_udg(#PC,large_46,1,1,56)  
+ $7EEF DEFB $00,$7E,$60,$7C,$60,$60,$60,$00
+; #CALL:print_udg(#PC,large_47,1,1,56)  
+ $7EF7 DEFB $00,$3C,$66,$60,$6E,$66,$3C,$00
+; #CALL:print_udg(#PC,large_48,1,1,56)  
+ $7EFF DEFB $00,$66,$66,$7E,$66,$66,$66,$00
+; #CALL:print_udg(#PC,large_49,1,1,56)  
+ $7F07 DEFB $00,$3C,$18,$18,$18,$18,$3C,$00
+; #CALL:print_udg(#PC,large_4A,1,1,56)  
+ $7F0F DEFB $00,$06,$06,$06,$66,$66,$3C,$00
+; #CALL:print_udg(#PC,large_4B,1,1,56)  
+ $7F17 DEFB $00,$6C,$78,$70,$78,$6C,$66,$00
+; #CALL:print_udg(#PC,large_4C,1,1,56)  
+ $7F1F DEFB $00,$60,$60,$60,$60,$60,$7E,$00
+; #CALL:print_udg(#PC,large_4D,1,1,56)  
+ $7F27 DEFB $00,$42,$66,$7E,$66,$66,$66,$00
+; #CALL:print_udg(#PC,large_4E,1,1,56)  
+ $7F2F DEFB $00,$66,$66,$76,$6E,$66,$66,$00
+; #CALL:print_udg(#PC,large_4F,1,1,56)  
+ $7F37 DEFB $00,$3C,$66,$66,$66,$66,$3C,$00
+; #CALL:print_udg(#PC,large_50,1,1,56)  
+ $7F3F DEFB $00,$7C,$66,$66,$7C,$60,$60,$00
+; #CALL:print_udg(#PC,large_51,1,1,56)  
+ $7F47 DEFB $00,$3C,$66,$66,$76,$6E,$3C,$00
+; #CALL:print_udg(#PC,large_52,1,1,56)  
+ $7F4F DEFB $00,$7C,$66,$66,$7C,$6C,$66,$00
+; #CALL:print_udg(#PC,large_53,1,1,56)  
+ $7F57 DEFB $00,$3C,$60,$3C,$06,$66,$3C,$00
+; #CALL:print_udg(#PC,large_54,1,1,56)  
+ $7F5F DEFB $00,$7E,$18,$18,$18,$18,$18,$00
+; #CALL:print_udg(#PC,large_55,1,1,56)  
+ $7F67 DEFB $00,$66,$66,$66,$66,$66,$3C,$00
+; #CALL:print_udg(#PC,large_56,1,1,56)  
+ $7F6F DEFB $00,$66,$66,$66,$66,$3C,$18,$00
+; #CALL:print_udg(#PC,large_57,1,1,56)  
+ $7F77 DEFB $00,$66,$66,$66,$66,$7E,$24,$00
+; #CALL:print_udg(#PC,large_58,1,1,56)  
+ $7F7F DEFB $00,$66,$3C,$18,$18,$3C,$66,$00
+; #CALL:print_udg(#PC,large_59,1,1,56)  
+ $7F87 DEFB $00,$66,$3C,$18,$18,$18,$18,$00
+; #CALL:print_udg(#PC,large_5A,1,1,56)  
+ $7F8F DEFB $00,$7E,$06,$0C,$18,$30,$7E,$00
+; #CALL:print_udg(#PC,large_5B,1,1,56)  
+ $7F97 DEFB $00,$07,$0F,$1E,$1D,$1E,$1F,$1B
+; #CALL:print_udg(#PC,large_5C,1,1,56)  
+ $7F9F DEFB $00,$E0,$50,$B8,$58,$A8,$78,$D8
+; #CALL:print_udg(#PC,large_5D,1,1,56)  
+ $7FA7 DEFB $19,$1F,$1C,$08,$08,$09,$0C,$07
+; #CALL:print_udg(#PC,large_5E,1,1,56)  
+ $7FAF DEFB $98,$F8,$38,$10,$10,$90,$30,$E0
+; #CALL:print_udg(#PC,large_5F,1,1,56)  
+ $7FB7 DEFB $00,$00,$00,$00,$00,$00,$00,$FF
+; #CALL:print_udg(#PC,large_60,1,1,56)  
+ $7FBF DEFB $00,$1C,$36,$78,$30,$30,$7E,$00
+; #CALL:print_udg(#PC,large_61,1,1,56)  
+ $7FC7 DEFB $00,$18,$3C,$66,$66,$7E,$66,$66
+; #CALL:print_udg(#PC,large_62,1,1,56)  
+ $7FCF DEFB $00,$FC,$66,$66,$7C,$66,$66,$FC
+; #CALL:print_udg(#PC,large_63,1,1,56)  
+ $7FD7 DEFB $00,$3C,$66,$C0,$C0,$C0,$66,$3C
+; #CALL:print_udg(#PC,large_64,1,1,56)  
+ $7FDF DEFB $00,$F8,$6C,$66,$66,$66,$6C,$F8
+; #CALL:print_udg(#PC,large_65,1,1,56)  
+ $7FE7 DEFB $00,$FE,$62,$68,$78,$68,$62,$FE
+; #CALL:print_udg(#PC,large_66,1,1,56)  
+ $7FEF DEFB $00,$FE,$62,$68,$78,$68,$60,$F0
+; #CALL:print_udg(#PC,large_67,1,1,56)  
+ $7FF7 DEFB $00,$3C,$66,$C0,$C0,$CE,$66,$3E
+; #CALL:print_udg(#PC,large_68,1,1,56)  
+ $7FFF DEFB $00,$66,$66,$66,$7E,$66,$66,$66
+; #CALL:print_udg(#PC,large_69,1,1,56)  
+ $8007 DEFB $00,$7E,$18,$18,$18,$18,$18,$7E
+; #CALL:print_udg(#PC,large_6A,1,1,56)  
+ $800F DEFB $00,$1E,$0C,$0C,$0C,$CC,$CC,$78
+; #CALL:print_udg(#PC,large_6B,1,1,56)  
+ $8017 DEFB $00,$E6,$66,$6C,$78,$6C,$66,$E6
+; #CALL:print_udg(#PC,large_6C,1,1,56)  
+ $801F DEFB $00,$F0,$60,$60,$60,$62,$66,$FE
+; #CALL:print_udg(#PC,large_6D,1,1,56)  
+ $8027 DEFB $00,$C6,$EE,$FE,$FE,$D6,$C6,$C6
+; #CALL:print_udg(#PC,large_6E,1,1,56)  
+ $802F DEFB $00,$C6,$E6,$F6,$DE,$CE,$C6,$C6
+; #CALL:print_udg(#PC,large_6F,1,1,56)  
+ $8037 DEFB $00,$38,$6C,$C6,$C6,$C6,$6C,$38
+; #CALL:print_udg(#PC,large_70,1,1,56)  
+ $803F DEFB $00,$FC,$66,$66,$7C,$60,$60,$F0
+; #CALL:print_udg(#PC,large_71,1,1,56)  
+ $8047 DEFB $00,$38,$6C,$C6,$C6,$DA,$CC,$76
+; #CALL:print_udg(#PC,large_72,1,1,56)  
+ $804F DEFB $00,$FC,$66,$66,$7C,$6C,$66,$E6
+; #CALL:print_udg(#PC,large_73,1,1,56)  
+ $8057 DEFB $00,$3C,$66,$60,$3C,$06,$66,$3C
+; #CALL:print_udg(#PC,large_74,1,1,56)  
+ $805F DEFB $00,$7E,$5A,$18,$18,$18,$18,$3C
+; #CALL:print_udg(#PC,large_75,1,1,56)  
+ $8067 DEFB $00,$66,$66,$66,$66,$66,$66,$3C
+; #CALL:print_udg(#PC,large_76,1,1,56)  
+ $806F DEFB $00,$66,$66,$66,$66,$66,$3C,$18
+; #CALL:print_udg(#PC,large_77,1,1,56)  
+ $8077 DEFB $00,$C6,$C6,$C6,$D6,$FE,$EE,$C6
+; #CALL:print_udg(#PC,large_78,1,1,56)  
+ $807F DEFB $00,$C6,$6C,$38,$38,$6C,$C6,$C6
+; #CALL:print_udg(#PC,large_79,1,1,56)  
+ $8087 DEFB $00,$66,$66,$66,$3C,$18,$18,$3C
+; #CALL:print_udg(#PC,large_7A,1,1,56)  
+ $808F DEFB $00,$FE,$C6,$8C,$18,$32,$66,$FE
+; #CALL:print_udg(#PC,large_7B,1,1,56)  
+ $8097 DEFB $00,$7E,$46,$4A,$56,$66,$7E,$00
+; #CALL:print_udg(#PC,large_7C,1,1,56)  
+ $809F DEFB $00,$08,$08,$08,$18,$18,$18,$00
+; #CALL:print_udg(#PC,large_7D,1,1,56)  
+ $80A7 DEFB $00,$7E,$42,$02,$7E,$60,$7E,$00
+; #CALL:print_udg(#PC,large_7E,1,1,56)  
+ $80AF DEFB $00,$7C,$44,$1E,$06,$46,$7E,$00
+; #CALL:print_udg(#PC,large_7F,1,1,56)  
+ $80B7 DEFB $00,$7C,$44,$44,$44,$7E,$0C,$00
+; #CALL:print_udg(#PC,large_80,1,1,56)  
+ $80BF DEFB $00,$7E,$40,$7E,$06,$46,$7E,$00
+; #CALL:print_udg(#PC,large_81,1,1,56)  
+ $80C7 DEFB $00,$7E,$40,$7E,$46,$46,$7E,$00
+; #CALL:print_udg(#PC,large_82,1,1,56)  
+ $80CF DEFB $00,$7C,$04,$04,$0C,$0C,$0C,$00
+; #CALL:print_udg(#PC,large_83,1,1,56)  
+ $80D7 DEFB $00,$3C,$24,$7E,$46,$46,$7E,$00
+; #CALL:print_udg(#PC,large_84,1,1,56) 
+ $80DF DEFB $00,$7E,$42,$42,$7E,$06,$06,$00
 
 ;Unused
-u$80E6 DEFB $00,$00
+u$80E7 DEFB $00
 
 ; Pointers to text tables
 ;
@@ -3089,11 +3281,13 @@ b$ADF1 DEFM $02,"C"
 b$B5FF DEFB $06,$45,$02,$73,$68,$F5
  $B605 DEFB $06,$99,$40,$56,$68,$E3
  $B60B DEFB $06,$A9,$68,$E4,$40,$58
- $B611 DEFM $0E,$96,$FE,$15," Start >>>"            ; Blocking message - "[<<< Press SPACE to] Start >>>"
+; Blocking message - "[<<< Press SPACE to] Start >>>"
+ $B611 DEFM $0E,$96,$FE,$15," Start >>>"
  $B61F DEFB $06,$45,$02,$73,$68,$E3
- $B625 DEFM $16,$94,"(",$91," awoke in Hospital"
+ $B625 DEFM $16,$94,$28,$91," awoke in Hospital"
+; Speech - "How did I get here?"
  $B63B DEFM $16,$95,"How did I get here? "
- $B651 DEFM $13,$94,")He doesn't know!"
+ $B651 DEFM $13,$94,$29,"He doesn't know!"
  $B664 DEFB $06,$45,$02,$75,$68,$F5
  $B66A DEFB $04,$AD,$40,$56
  $B66E DEFM $1A,$94,"(Suddenly, ",$91," remembers",$FE,$05
@@ -3560,7 +3754,7 @@ b$BF08 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$00,$00
  $BF58 DEFB $00,$FF,$FF,$FF,$00,$00,$00,$FF
  $BF60 DEFB $FF,$FF,$00,$00,$00,$FF,$FF,$FF
 
-; Standard character set
+; Address of large character set minus #N$100
 b$BF68 DEFW $7CBF
 
 ; Next screen address to print at
@@ -6301,7 +6495,7 @@ c$D3AC LD C,$0C      ; Use text table #N$0C
  $D3C5 JR NC,$D40C   ;
  $D3C7 LD A,$FF      ;
  $D3C9 LD ($D3A9),A  ;
- $D3CC LD IX,($D3AA) ;
+ $D3CC LD IX,($D3AA) ; Point #REGix at the current text
 *$D3D0 PUSH IX       ; { Process the next character
  $D3D2 CALL $CB10    ;
  $D3D5 POP IX        ; }
@@ -7147,7 +7341,7 @@ c$D9A9 LD A,$00      ; Set #REGa to 0 to set some flags
 *$D9B8 LD A,($C8CE)  ;
  $D9BB CP $00        ;
  $D9BD JR NZ,$DA13   ;
- $D9BF CALL $CB10    ;
+ $D9BF CALL $CB10    ; Get the next character
  $D9C2 CP $2C        ;
  $D9C4 JR Z,$DA13    ;
  $D9C6 CP $2B        ;
@@ -8016,9 +8210,9 @@ c$E08B LD A,$00      ;
 *$E0A8 CP $0E        ;
  $E0AA JR NC,$E0B5   ;
  $E0AC LD ($F529),A  ;
- $E0AF LD IY,($D3AA) ;
+ $E0AF LD IY,($D3AA) ; Point #REGiy at the current text
  $E0B3 JR $E0D0      ;
-*$E0B5 LD HL,($D3AA) ;
+*$E0B5 LD HL,($D3AA) ; Point #REGhl at the current text
  $E0B8 LD DE,$000F   ;
  $E0BB ADD HL,DE     ;
  $E0BC LD BC,$000F   ;
@@ -8027,7 +8221,7 @@ c$E08B LD A,$00      ;
  $E0C3 INC HL        ;
  $E0C4 INC BC        ;
  $E0C5 LD ($F529),BC ;
- $E0C9 LD IY,($D3AA) ;
+ $E0C9 LD IY,($D3AA) ; Point #REGiy at the current text
  $E0CD LD ($D3AA),HL ;
 *$E0D0 LD A,($F3C2)  ;
  $E0D3 LD HL,$F529   ;
@@ -8527,7 +8721,9 @@ w$E45E DEFW $FFBF
 ; Data block at E460
 b$E460 DEFB $00,$00,$BF,$FF
 
-; Pointer to the character set to print, minus #N$100 (#R$F52B)
+; Pointer to the character set to print, minus #N$100
+;
+; Used by the routine at #R$F52B
 g$E464 DEFW $79E7
 
 ; Scratch buffer for temporary storing register values
@@ -10146,7 +10342,7 @@ c$F0EE LD HL,($EBFC) ;
 c$F1A2 CALL $F83F    ; Set up sprite data
  $F1A5 RET NC        ;
  $F1A6 LD IX,$D1E3   ; Point #REGix at the text buffer (#R$D1E3)
- $F1AA LD ($D3AA),IX ;
+ $F1AA LD ($D3AA),IX ; Store this
  $F1AE LD A,(IX+$00) ;
  $F1B1 CP $40        ;
  $F1B3 JR Z,$F1C8    ;
@@ -10165,56 +10361,58 @@ c$F1A2 CALL $F83F    ; Set up sprite data
 ; Used by the routines at #R$DC24 and #R$F1A2.
 ;
 ; IX pointer to text
-c$F1CA LD ($D3AA),IX ;
+c$F1CA LD ($D3AA),IX ; Store the text pointer
 *$F1CE CALL $F32C    ;
- $F1D1 LD HL,($D3AA) ;
+ $F1D1 LD HL,($D3AA) ; { Jump forward if the length is below #N$47
  $F1D4 LD BC,$0050   ;
  $F1D7 LD A,$0D      ;
  $F1D9 CPIR          ;
  $F1DB LD A,C        ;
  $F1DC CP $47        ;
- $F1DE JR NC,$F214   ;
- $F1E0 LD IX,($D3AA) ;
- $F1E4 LD B,$05      ;
-*$F1E6 PUSH BC       ;
- $F1E7 CALL $F29A    ;
- $F1EA POP BC        ;
- $F1EB DJNZ $F1E6    ;
-*$F1ED LD A,(IX+$00) ;
- $F1F0 CP $0D        ;
- $F1F2 JR Z,$F23A    ;
- $F1F4 CALL $F275    ;
- $F1F7 LD HL,$407E   ;
- $F1FA LD ($BF6A),HL ;
- $F1FD LD A,(IX+$00) ;
- $F200 CP $60        ;
+ $F1DE JR NC,$F214   ; }
+; The text needs to be scrolled
+ $F1E0 LD IX,($D3AA) ; Point #REGix at the text (#R$F1E0)
+ $F1E4 LD B,$05      ; {
+*$F1E6 PUSH BC       ; 
+ $F1E7 CALL $F29A    ; Pause 5 times
+ $F1EA POP BC        ; 
+ $F1EB DJNZ $F1E6    ; }
+*$F1ED LD A,(IX+$00) ; Get the next text pointer
+ $F1F0 CP $0D        ; { Jump forward if this is the end
+ $F1F2 JR Z,$F23A    ; }
+ $F1F4 CALL $F275    ; Scroll one character
+ $F1F7 LD HL,$407E   ; { Set the initial screen position
+ $F1FA LD ($BF6A),HL ; }
+ $F1FD LD A,(IX+$00) ; Get the next character
+ $F200 CP $60        ; { Convert lower case to upper case
  $F202 JR NC,$F20A   ;
  $F204 CP $40        ;
  $F206 JR C,$F20A    ;
- $F208 ADD A,$20     ;
-*$F20A CALL $C75B    ;  Draw the character
- $F20D INC IX        ;
- $F20F CALL $F29A    ;
- $F212 JR $F1ED      ;
-*$F214 LD HL,$4077   ;
- $F217 LD ($BF6A),HL ;
- $F21A LD IY,($D3AA) ;
- $F21E LD B,$08      ;
-*$F220 LD A,(IY+$00) ;
- $F223 CP $0D        ;
- $F225 JR Z,$F23A    ;
- $F227 CP $60        ;
+ $F208 ADD A,$20     ; }
+*$F20A CALL $C75B    ; Draw the character
+ $F20D INC IX        ; Move to the next place in the buffer
+ $F20F CALL $F29A    ; Pause
+ $F212 JR $F1ED      ; Loop back to draw more
+; The text can be displayed in one go
+*$F214 LD HL,$4077   ; Point #REGhl at the starting screen address to print
+ $F217 LD ($BF6A),HL ; Store this
+ $F21A LD IY,($D3AA) ; Point #REGiy at the text to print
+ $F21E LD B,$08      ; 8 characters to print
+*$F220 LD A,(IY+$00) ; Put the next character in #REGa
+ $F223 CP $0D        ; { Jump forward if a newline was reached
+ $F225 JR Z,$F23A    ; }
+ $F227 CP $60        ; { Convert lowercase to uppercase if necessary
  $F229 JR NC,$F231   ;
  $F22B CP $40        ;
  $F22D JR C,$F231    ;
- $F22F ADD A,$20     ;
-*$F231 PUSH BC       ;
- $F232 CALL $C75B    ;  Draw the character
- $F235 POP BC        ;
- $F236 INC IY        ;
- $F238 DJNZ $F220    ;
-*$F23A CALL $F241    ;
- $F23D RET NC        ;
+ $F22F ADD A,$20     ; }
+*$F231 PUSH BC       ; {
+ $F232 CALL $C75B    ; Draw the character
+ $F235 POP BC        ; }
+ $F236 INC IY        ; Move one place forwards in the buffer
+ $F238 DJNZ $F220    ; Loop back while there is more to display
+*$F23A CALL $F241    ; { Return if BREAK pressed
+ $F23D RET NC        ; }
  $F23E JP $F1CE      ; Jump back to draw some more
 
 ; Return with the carry flag set if BREAK was pressed
@@ -10247,9 +10445,9 @@ c$F241 LD A,$00      ; { Disable interrupts
 ; Scroll speech bubble text
 ;
 ; Used by the routine at #R$F1CA.
-c$F275 LD BC,$0008   ;
- $F278 LD HL,$4077   ;
- $F27B LD DE,$4076   ;
+c$F275 LD BC,$0008   ; 8 lines to shift
+ $F278 LD HL,$4077   ; Set starting screen address
+ $F27B LD DE,$4076   ; Set destination screen address
  $F27E LD A,$08      ;
  $F280 LD ($EBFA),A  ;
 *$F283 PUSH BC       ;
@@ -10271,14 +10469,14 @@ c$F275 LD BC,$0008   ;
 ; Pause
 ;
 ; Used by the routines at #R$ECD4 and #R$F1CA.
-c$F29A LD C,$FF      ;
-*$F29C LD B,$FF      ;
-*$F29E DJNZ $F29E    ;
- $F2A0 DEC C         ;
+c$F29A LD C,$FF      ; Initialize first counter
+*$F29C LD B,$FF      ; Initialize second counter
+*$F29E DJNZ $F29E    ; Loop second counter to zero
+ $F2A0 DEC C         ; { Loop first counter to zero
  $F2A1 LD A,C        ;
  $F2A2 CP $00        ;
- $F2A4 JR NZ,$F29C   ;
- $F2A6 RET           ;
+ $F2A4 JR NZ,$F29C   ; }
+ $F2A6 RET           ; All done
 
 ; Speech bubble graphic bottom
 ;
@@ -10438,11 +10636,11 @@ c$F3C5 CALL $F83F    ; Put the sprites in the panel
  $F3F5 CALL $F68A    ; Draw sprites on the panel 
  $F3F8 POP IX        ; }
  $F3FA JR $F414      ;
-*$F3FC CALL $ECD4    ;
- $F3FF LD A,$38      ;
+*$F3FC CALL $ECD4    ; Update the panels
+ $F3FF LD A,$38      ; { Fill the background 
  $F401 LD BC,$0216   ;
  $F404 LD DE,$090B   ;
- $F407 CALL $EBC8    ;
+ $F407 CALL $EBC8    ; }
 *$F40A LD A,($F3C2)  ;
  $F40D SUB $01       ;
  $F40F LD ($F3C2),A  ;
@@ -10586,7 +10784,7 @@ b$F529 DEFB $00,$00
 ; Used by the routines at #R$DB34, #R$E08B and #R$F3C5.
 ;
 ; IY Pointer to the string data
-c$F52B LD HL,$F529   ; Point #REGhl to the length
+c$F52B LD HL,$F529   ; Point #REGhl to the length (#R$F529)
  $F52E LD B,(HL)     ; Store it in #REGb
  $F52F PUSH IY       ; { Put the text in #REGhl
  $F531 POP HL        ; }
@@ -10595,35 +10793,36 @@ c$F52B LD HL,$F529   ; Point #REGhl to the length
  $F537 PUSH HL       ;
  $F538 PUSH DE       ; }
  $F539 LD A,(HL)     ;
- $F53A LD HL,($E464) ;
- $F53D LD C,A        ;
- $F53E LD B,$00      ;
- $F540 SLA C         ;
+ $F53A LD HL,($E464) ; Point #REGhl at the character set (#R$E464)
+ $F53D LD C,A        ; { Put the character to print in #REGbc 
+ $F53E LD B,$00      ; }
+ $F540 SLA C         ; { Multiply by 8 to get the right offset
  $F542 RL B          ;
  $F544 SLA C         ;
  $F546 RL B          ;
  $F548 SLA C         ;
- $F54A RL B          ;
- $F54C XOR A         ;
- $F54D ADC HL,BC     ;
- $F54F LD B,$08      ;
-*$F551 LD A,(HL)     ;
- $F552 SRL A         ;
- $F554 LD (DE),A     ;
- $F555 INC HL        ;
- $F556 INC D         ;
- $F557 DJNZ $F551    ;
- $F559 POP DE        ;
+ $F54A RL B          ; }
+ $F54C XOR A         ; Reset the carry flag (for next instruction)
+ $F54D ADC HL,BC     ; Add the offset to the base address
+ $F54F LD B,$08      ; 8 characters to draw
+*$F551 LD A,(HL)     ; Get the next character
+ $F552 SRL A         ; Shift right
+ $F554 LD (DE),A     ; Put this on screen
+ $F555 INC HL        ; Move forward one step in the character set buffer
+ $F556 INC D         ; Move down a row
+ $F557 DJNZ $F551    ; Loop while there are more characters to draw
+ $F559 POP DE        ; { Restore main registers
  $F55A POP HL        ;
- $F55B POP BC        ;
- $F55C DJNZ $F560    ;
- $F55E JR $F5BD      ;
-*$F560 INC HL        ;
- $F561 PUSH BC       ;
+ $F55B POP BC        ; }
+ $F55C DJNZ $F560    ; Repeat while there are more characters to draw
+ $F55E JR $F5BD      ; Otherwise jump forward to exit the routine
+; Move to the next character
+*$F560 INC HL        ; Move to the next place in the buffer
+ $F561 PUSH BC       ; { Store main registers
  $F562 PUSH HL       ;
- $F563 PUSH DE       ;
+ $F563 PUSH DE       ; }
  $F564 LD A,(HL)     ;
- $F565 LD HL,($E464) ;
+ $F565 LD HL,($E464) ; Point #REGhl at the character set
  $F568 LD C,A        ;
  $F569 LD B,$00      ;
  $F56B SLA C         ;
@@ -10678,6 +10877,7 @@ c$F52B LD HL,$F529   ; Point #REGhl to the length
  $F5B7 LD A,B        ; { Have we reached the end?
  $F5B8 CP $00        ; }
  $F5BA JP NZ,$F536   ; Jump back if not
+; Finished drawing
 *$F5BD LD ($BF6A),DE ; { Store the next screen address (#R$BF6A) and return
  $F5C1 RET           ; }
 
