@@ -1939,7 +1939,8 @@ b$8445 DEFM $0D,"Vgo,walk,run"
 b$8711 DEFM $02,"L"
  $8713 DEFM $02,"T"
  $8715 DEFM $0B,"*",$B3,$82,$00,$00,"-",$B3,$82,$84,"."
- $8720 DEFM $07,$96,"What!"     ; Blocking message
+; Blocking message : "What!"
+ $8720 DEFM $07,$96,"What!"
  $8727 DEFM $08,"*+",$B3,"@Vh",$E4
  $872F DEFM $06,$9B,"@X",$00,$01
  $8735 DEFM $06,$AA,"h",$E4,"@X"
@@ -1993,7 +1994,8 @@ b$8711 DEFM $02,"L"
  $891C DEFM $10,$94,")",$FE,$19,"hits ",$FE,$03,"roof"
  $892C DEFM $08,$95,"@Ouch!"
  $8934 DEFM $08,"*",$B7,$82,$B5,$82,"-."
- $893C DEFM $0F,$96,$91," ",$FE,$07,"l",$FE,$19,"there!"    ; Blocking message
+; Blocking message
+ $893C DEFM $0F,$96,$91," ",$FE,$07,"l",$FE,$19,"there!"   
  $894B DEFM $09,"*",$B6,$82,$B8,$BC,$82,"-."
  $8954 DEFM $17,$96,"*",$B3,$82,$C3,"-,",$91," ",$FE,$07,"leave town!"
  $896B DEFM $0B,$98,"*",$B3,$82,$C3,",THUD"
@@ -2007,7 +2009,8 @@ b$8711 DEFM $02,"L"
  $899D DEFM $06,$AA,"h",$E4,"@X"
  $89A3 DEFM $06,"TP",$8D,"P",$8E
  $89A9 DEFM $05,"*",$B3,$82,$85
- $89AE DEFM $0B,$96,$91," is ",$FE,$17,$90,"!"  ; Blocking message
+; Blocking message
+ $89AE DEFM $0B,$96,$91," is ",$FE,$17,$90,"!"  
  $89B9 DEFM $06,"*+",$B8,$BC,$82
  $89BF DEFM $05,$99,"@Z",$85
  $89C4 DEFM $02,$9D
@@ -2042,21 +2045,26 @@ b$8711 DEFM $02,"L"
  $8AC8 DEFM $03,$A5,$85
  $8ACB DEFM $07,"TP",$90,$02,$60,$D5
  $8AD2 DEFM $10,"*",$B3,$85,"X",$AE,$B3,$85,"X",$AB,$B3,$85,"X",$B0,"//"
- $8AE2 DEFM $0B,$96,$91," ",$FE,$07,$8A," ",$FE,$03,$8B ; Blocking message
+; Blocking message
+ $8AE2 DEFM $0B,$96,$91," ",$FE,$07,$8A," ",$FE,$03,$8B
  $8AED DEFM $15,"*",$B3,$85,"X",$A9,$B3,$85,"X",$B4,$B3,$85,"X",$BB,$B3,$85,"X",$C4,"///"
- $8B02 DEFM $05,$96,"No!" ; Blocking message
+; Blocking message
+ $8B02 DEFM $05,$96,"No!" 
  $8B07 DEFM $09,"TP",$90,$02,"X",$CF,$03,$D2
  $8B10 DEFM $16,"*",$B3,$85,"X",$A9,$B3,$85,"X",$B4,$B3,$85,"X",$BB,$B3,$85,"X",$C4,"///-"
- $8B26 DEFM $10,$96,$91,$FE,$18,$FE,$17,$FE,$06,"station" ; Blocking message
+; Blocking message
+ $8B26 DEFM $10,$96,$91,$FE,$18,$FE,$17,$FE,$06,"station" 
  $8B36 DEFM $06,"*",$B8,$BD,$84,"-"
- $8B3C DEFM $17,$96,"A station called \"",$8D,"\"?" ; Blocking message
+; Blocking message
+ $8B3C DEFM $17,$96,"A station called \"",$8D,"\"?" 
  $8B53 DEFM $03,"*+"
  $8B56 DEFM $05,$99,"@[",$88
  $8B5B DEFM $06,$99,"@Z",$00,$01
  $8B61 DEFM $05,$99,"@f",$84
  $8B66 DEFM $09,"TP",$90,$02,"X",$CE,$03,$D2
  $8B6F DEFM $05,"*",$B5,$85,"-"
- $8B74 DEFM $15,$96,$91," ",$FE,$07,"get ",$FE,$06,$8B," in here" ; Blocking message
+; Blocking message
+ $8B74 DEFM $15,$96,$91," ",$FE,$07,"get ",$FE,$06,$8B," in here" 
  $8B89 DEFM $03,"*+"
  $8B8C DEFM $06,$99,"@[",$00,$05
  $8B92 DEFM $06,$99,"@Z",$00,$05
@@ -2084,12 +2092,15 @@ b$8711 DEFM $02,"L"
  $8C24 DEFM $07,"*+",$B3,$84,"X",$C5
  $8C2B DEFM $06,$99,"@fX",$C4
  $8C31 DEFM $0A,"*",$B7,"@f",$B5,"@f-."
- $8C3B DEFM $14,$96,$91," ",$FE,$07,$8A," ",$FE,$06,$8B," to there" ; Blocking message
+; Blocking message
+ $8C3B DEFM $14,$96,$91," ",$FE,$07,$8A," ",$FE,$06,$8B," to there" 
  $8C4F DEFM $09,"TP",$90,$02,"X",$CF,"X",$CE
  $8C58 DEFM $06,"*",$B3,$83,$D2,"-"
- $8C5E DEFM $0D,$96,$8A," ",$FE,$06,$8B," to ",$FE,$02 ; Blocking message
+; Blocking message
+ $8C5E DEFM $0D,$96,$8A," ",$FE,$06,$8B," to ",$FE,$02 
  $8C6B DEFM $05,"*",$B3,$85,$84
- $8C70 DEFM $0A,$96,$91," is ",$FE,$17,$90 ; Blocking message
+; Blocking message
+ $8C70 DEFM $0A,$96,$91," is ",$FE,$17,$90 
  $8C7A DEFM $0C,"*",$B4,"@Z@]",$B2,$60,$D3,"-/"
  $8C86 DEFM $1A,$94,"(",$91," doesn't have ",$60,$FF,$04," fare"
  $8CA0 DEFM $08,"*+",$B3,"@Z@]"
@@ -2111,7 +2122,8 @@ b$8711 DEFM $02,"L"
  $8CFF DEFM $03,$A5,$85
  $8D02 DEFM $07,"TP",$90,$02,$60,$D2
  $8D09 DEFM $06,"*",$B2,$60,$D0,"-"
- $8D0F DEFM $12,$96,$91," needs ",$FE,$06,"camera" ; Blocking message
+; Blocking message
+ $8D0F DEFM $12,$96,$91," needs ",$FE,$06,"camera" 
  $8D21 DEFM $06,"*",$B2,$60,$D1,"-"
  $8D27 DEFM $0F,$95,"Rats! No film"
  $8D36 DEFM $0D,"*",$B3,"@d",$00,$00,$B3,"@e",$85,"-/"
@@ -2124,9 +2136,11 @@ b$8711 DEFM $02,"L"
  $8D8E DEFM $06,$99,"@d",$00,$00
  $8D94 DEFM $07,"TP",$90,$03,$C9,$CC
  $8D9B DEFM $05,"*",$B1,$82,"-"
- $8DA0 DEFM $06,$96,$8A," ",$FE,$01 ; Blocking message
+; Blocking message
+ $8DA0 DEFM $06,$96,$8A," ",$FE,$01 
  $8DA6 DEFM $05,"*",$B0,$84,"-"
- $8DAB DEFM $0E,$96,$8A," ",$FE,$03,$8B," ",$8C," who?" ; Blocking message
+; Blocking message
+ $8DAB DEFM $0E,$96,$8A," ",$FE,$03,$8B," ",$8C," who?" 
  $8DB9 DEFM $02,"*"
  $8DBB DEFM $0C,$95,$FE,$03,$8B," please"
  $8DC7 DEFM $05,$92,$84,$00,$00
@@ -2139,18 +2153,23 @@ b$8711 DEFM $02,"L"
  $8DF7 DEFM $05,$9C,$82,"@V"
  $8DFC DEFM $04,"TP",$90
  $8E00 DEFM $11,"*",$B6,$82,$B3,$82,$C2,"-.",$B6,$84,$B3,$84,$C2,"-./"
- $8E11 DEFM $06,$96,$8A," ",$FE,$01 ; Blocking message
+; Blocking message
+ $8E11 DEFM $06,$96,$8A," ",$FE,$01 
  $8E17 DEFM $0A,"*+",$B3,$84,$00,$00,$B6,$84,"/"
  $8E21 DEFM $05,$99,"@",$5E,$82
  $8E26 DEFM $05,"*+",$B6,$82
  $8E2B DEFM $05,$99,"@",$5E,$84
  $8E30 DEFM $04,"TP",$90
  $8E34 DEFM $05,"*",$B2,"@",$5E
- $8E39 DEFM $0B,$96,"*",$B3,"@",$5E,$82,",",$FE,$1E,$8B ; Blocking message
- $8E44 DEFM $0B,$96,"*",$B3,"@",$5E,$84,",",$FE,$1E,$8D ; Blocking message
+; Blocking message
+ $8E39 DEFM $0B,$96,"*",$B3,"@",$5E,$82,",",$FE,$1E,$8B 
+; Blocking message
+ $8E44 DEFM $0B,$96,"*",$B3,"@",$5E,$84,",",$FE,$1E,$8D 
  $8E4F DEFM $06,"*",$AF,"@",$5E,"-"
- $8E55 DEFM $0B,$96,"*",$B3,"@",$5E,$82,",",$FE,$1F,$8B ; Blocking message
- $8E60 DEFM $0B,$96,"*",$B3,"@",$5E,$84,",",$FE,$1F,$8D ; Blocking message
+; Blocking message
+ $8E55 DEFM $0B,$96,"*",$B3,"@",$5E,$82,",",$FE,$1F,$8B
+; Blocking message
+ $8E60 DEFM $0B,$96,"*",$B3,"@",$5E,$84,",",$FE,$1F,$8D 
  $8E6B DEFM $05,"*",$B5,"@",$5E
  $8E70 DEFM $0D,$95,"I ",$FE,$07,"get ",$FE,$04,"!"
  $8E7D DEFM $02,"*"
@@ -2160,9 +2179,11 @@ b$8711 DEFM $02,"L"
  $8EAF DEFM $05,$9C,"@",$5E,$86
  $8EB4 DEFM $0A,"TP",$91,"P",$95,"P",$92,"P",$94
  $8EBE DEFM $08,"*",$B2,$82,"-",$AF,$82,"."
- $8EC6 DEFM $17,$96,$91," must get ",$FE,$03,$8B," first!" ; Blocking message
+; Blocking message
+ $8EC6 DEFM $17,$96,$91," must get ",$FE,$03,$8B," first!" 
  $8EDD DEFM $05,"*",$B2,$82,"-"
- $8EE2 DEFM $08,$96,$8A," ",$FE,$00,$8B,"?" ; Blocking message
+; Blocking message
+ $8EE2 DEFM $08,$96,$8A," ",$FE,$00,$8B,"?" 
  $8EEA DEFM $04,"TP",$92
  $8EEE DEFM $03,"*+"
  $8EF1 DEFM $10,$94,$91," tries on ",$FE,$03,$8B
@@ -2178,7 +2199,8 @@ b$8711 DEFM $02,"L"
  $8F47 DEFM $0F,$94,$91," removes ",$FE,$03,$8B
  $8F56 DEFM $06,$99,"@g",$00,$00
  $8F5C DEFM $02,"*"
- $8F5E DEFM $0F,$96,$91,$FE,$18,"wearing ",$FE,$04 ; Blocking message
+; Blocking message
+ $8F5E DEFM $0F,$96,$91,$FE,$18,"wearing ",$FE,$04 
  $8F6D DEFM $04,"TP",$91
  $8F71 DEFM $03,"*+"
  $8F74 DEFM $0A,$94,$91," ",$8A,"s ",$FE,$03,$8B
@@ -2203,7 +2225,8 @@ b$8711 DEFM $02,"L"
  $8FFC DEFM $08,"*+",$B1,$84,$B6,$82,"."
  $9004 DEFM $05,$99,"@",$5E,$84
  $9009 DEFM $0D,"*",$B2,"@",$5E,"-",$B3,"@",$5E,$00,$00,"-."
- $9016 DEFM $13,$96,$91," doesn't have it" ; Blocking message
+; Blocking message
+ $9016 DEFM $13,$96,$91," doesn't have it" 
  $9029 DEFM $0C,"*+",$B3,$82,$60,$D8,$B3,$84,$60,$D8,"/"
  $9035 DEFM $06,$99,"@g",$00,$00
  $903B DEFM $08,"*",$B3,"@",$5E,$00,$00,"-"
@@ -2213,10 +2236,13 @@ b$8711 DEFM $02,"L"
  $9061 DEFM $05,$9C,"@",$5E,$85
  $9066 DEFM $08,"TP",$93,"P",$95,"P",$94
  $906E DEFM $05,"*",$AF,$84,"-"
- $9073 DEFM $0D,$96,"*",$B0,$84,"-,",$8C," ",$FE,$00,$8D,"?" ; Blocking message
- $9080 DEFM $0C,$96,"*",$B0,$84,",",$8D,$FE,$18,$FE,$17,$90 ; Blocking message
+; Blocking message
+ $9073 DEFM $0D,$96,"*",$B0,$84,"-,",$8C," ",$FE,$00,$8D,"?"
+; Blocking message
+ $9080 DEFM $0C,$96,"*",$B0,$84,",",$8D,$FE,$18,$FE,$17,$90 
  $908C DEFM $09,"*",$B3,$84,$86,$B3,$82,$86,"/"
- $9095 DEFM $13,$96,$91," is cracking up!" ; Blocking message
+; Blocking message
+ $9095 DEFM $13,$96,$91," is cracking up!" 
  $90A8 DEFM $07,"*+",$B3,$82,$60,$D8
  $90AF DEFM $06,$99,"@g",$00,$00
  $90B5 DEFM $06,"TP",$95,$03,$D4
@@ -2259,7 +2285,8 @@ b$8711 DEFM $02,"L"
  $91FB DEFM $06,$95,"T",$FE,$1A,"!"
  $9201 DEFM $0C,$94,$8D," keeps it"
  $920D DEFM $04,$9C,$82,$84
- $9211 DEFM $06,"TP",$96,$03,$D5 ; Blocking message
+; Blocking message
+ $9211 DEFM $06,"TP",$96,$03,$D5 
  $9217 DEFM $05,$99,"@Z",$82
  $921C DEFM $05,$9B,"@Z",$87
  $9221 DEFM $06,$94,$91," ",$8A,"s"
@@ -2272,7 +2299,8 @@ b$8711 DEFM $02,"L"
  $9246 DEFM $02,$AB
  $9248 DEFM $04,"TP",$99
  $924C DEFM $05,"*",$AF,$82,"-"
- $9251 DEFM $08,$96,$8A," ",$FE,$00,$8B,"?" ; Blocking message
+; Blocking message
+ $9251 DEFM $08,$96,$8A," ",$FE,$00,$8B,"?" 
  $9259 DEFM $03,"*+"
  $925C DEFM $0D,$94,"(",$91," ",$8A,"s ",$FE,$03,$8B,$FE,$05
  $9269 DEFM $05,"*",$B5,$82,"-"
@@ -2292,8 +2320,10 @@ b$8711 DEFM $02,"L"
  $9327 DEFM $06,$99,"@[",$00,$03
  $932D DEFM $06,"TP",$98,"P",$97
  $9333 DEFM $05,"*",$AF,$82,"-"
- $9338 DEFM $0D,$96,"*",$B0,$82,"-,",$8A," ",$FE,$00,$8B,"?" ; Blocking message
- $9345 DEFM $0C,$96,"*",$B0,$82,",",$8B,$FE,$18,$FE,$17,$90 ; Blocking message
+; Blocking message
+ $9338 DEFM $0D,$96,"*",$B0,$82,"-,",$8A," ",$FE,$00,$8B,"?" 
+; Blocking message
+ $9345 DEFM $0C,$96,"*",$B0,$82,",",$8B,$FE,$18,$FE,$17,$90 
  $9351 DEFM $04,"TP",$97
  $9355 DEFM $06,"*",$B3,$82,"@V"
  $935B DEFM $0E,$95,"I'm nicked!?"
@@ -2402,9 +2432,11 @@ b$8711 DEFM $02,"L"
  $9719 DEFM $03,$A3,$85
  $971C DEFM $09,"TP",$9A,$03,$D4,$CE,$D1,$C8
  $9725 DEFM $06,"*",$B3,$82,$00,$00
- $972B DEFM $08,$96,$8A," ",$8C," ",$FE,$01 ; Blocking message
+; Blocking message
+ $972B DEFM $08,$96,$8A," ",$8C," ",$FE,$01 
  $9733 DEFM $08,"*",$B7,$82,$AF,$82,"-."
- $973B DEFM $08,$96,$91,$FE,$18,$FE,$17,$8B ; Blocking message
+; Blocking message
+ $973B DEFM $08,$96,$91,$FE,$18,$FE,$17,$8B 
  $9743 DEFM $04,"*",$B7,$82
  $9747 DEFM $0A,$94,$91," ",$8A,"s ",$8C," ",$90
  $9751 DEFM $02,$AB
@@ -2414,8 +2446,10 @@ b$8711 DEFM $02,"L"
  $975D DEFM $08,$94,"*",$BA,$85,",",$FE,"\""
  $9765 DEFM $03,$A5,$85
  $9768 DEFM $05,"*",$AF,$82,"-"
- $976D DEFM $0F,$96,"*",$B0,$82,"-,",$8A," ",$8C," ",$FE,$00,$8B,"?" ; Blocking message
- $977C DEFM $0C,$96,"*",$B0,$82,",",$8B,$FE,$18,$FE,$17,$90 ; Blocking message
+; Blocking message
+ $976D DEFM $0F,$96,"*",$B0,$82,"-,",$8A," ",$8C," ",$FE,$00,$8B,"?" 
+; Blocking message
+ $977C DEFM $0C,$96,"*",$B0,$82,",",$8B,$FE,$18,$FE,$17,$90 
  $9788 DEFM $02,"*"
  $978A DEFM $11,$94,"*",$B0,$82,"-,",$91," ",$8A,"s ",$8C," ",$FE,$03,$8B
  $979B DEFM $0D,$94,"*",$B0,$82,",",$91," ",$FE,$08,$FE,$17,$8B
@@ -2432,8 +2466,10 @@ b$8711 DEFM $02,"L"
  $9848 DEFM $03,$A5,$86
  $984B DEFM $04,"TP",$9D
  $984F DEFM $05,"*",$AF,$82,"-"
- $9854 DEFM $0D,$96,"*",$B0,$82,",",$8B,$FE,$18,$FE,$17,$90,"." ; Blocking message
- $9861 DEFM $0D,$96,"*",$B0,$82,"-,",$8A," ",$FE,$00,$8B,"?" ; Blocking message
+; Blocking message
+ $9854 DEFM $0D,$96,"*",$B0,$82,",",$8B,$FE,$18,$FE,$17,$90,"." 
+; Blocking message
+ $9861 DEFM $0D,$96,"*",$B0,$82,"-,",$8A," ",$FE,$00,$8B,"?" 
  $986E DEFM $06,"*",$B3,$82,"h",$E5
  $9874 DEFM $14,$95,"I don't hit ladies"
  $9888 DEFM $05,"*",$B3,$82,$86
@@ -2453,7 +2489,8 @@ b$8711 DEFM $02,"L"
  $992F DEFM $10,$94,")",$FE,$05,"to no avail"
  $993F DEFM $06,"TP",$9D,$03,$D3
  $9945 DEFM $05,"*",$B2,$84,"-"
- $994A DEFM $17,$96,$91," must get ",$FE,$03,$8D," first!" ; Blocking message
+; Blocking message
+ $994A DEFM $17,$96,$91," must get ",$FE,$03,$8D," first!"
  $9961 DEFM $05,"*+",$B0,$82
  $9966 DEFM $05,$99,"@Y",$82
  $996B DEFM $0B,$94,"(",$91," ",$8A,"s ",$8B,$FE,$05
@@ -2474,12 +2511,14 @@ b$8711 DEFM $02,"L"
  $99FB DEFM $03,$95,$8E
  $99FE DEFM $03,$A6,$86
  $9A01 DEFM $05,"*",$AF,$82,"-"
- $9A06 DEFM $08,$96,$8B,$FE,$18,$FE,$17,$90 ; Blocking message
+; Blocking message
+ $9A06 DEFM $08,$96,$8B,$FE,$18,$FE,$17,$90 
  $9A0E DEFM $02,"*"
  $9A10 DEFM $06,$95,$8B,", ",$8E
  $9A16 DEFM $03,$A6,$82
  $9A19 DEFM $04,"TP",$9F
- $9A1D DEFM $0D,$96,"GAME STORED" ; Blocking message
+; Blocking message : "GAME STORED"
+ $9A1D DEFM $0D,$96,"GAME STORED" 
  $9A2A DEFM $02,$9E
  $9A2C DEFM $04,"TP",$A0
  $9A30 DEFM $06,$98,"TIME"
@@ -2494,11 +2533,13 @@ b$8711 DEFM $02,"L"
  $9A82 DEFM $06,$98,"GAME"
  $9A88 DEFM $02,$A0
  $9A8A DEFM $04,"TP",$A2
- $9A8E DEFM $0D,$96,$FE,$15," Save >>>" ; Blocking message - "[<<< Press SPACE to] Save>>>"
+; Blocking message - "[<<< Press SPACE to] Save>>>"
+ $9A8E DEFM $0D,$96,$FE,$15," Save >>>"
  $9A9B DEFM $06,$98,"SAVE"
  $9AA1 DEFM $02,$A1
  $9AA3 DEFM $04,"TP",$A3
- $9AA7 DEFM $0D,$96,$FE,$15," Load >>>" ; Blocking message - "[<<< Press SPACE to] Load>>>"
+; Blocking message - "[<<< Press SPACE to] Load>>>"
+ $9AA7 DEFM $0D,$96,$FE,$15," Load >>>" 
  $9AB4 DEFM $06,$98,"LOAD"
  $9ABA DEFM $02,$A2
  $9ABC DEFM $04,"TP",$A4
@@ -2605,23 +2646,29 @@ b$8711 DEFM $02,"L"
  $9DEF DEFM $12,"*",$AF,"h",$E4,$B3,"@W",$00,$00,$B6,$82,$B7,$82,"/-.."
  $9E01 DEFM $04,$AD,"h",$E6
  $9E05 DEFM $05,$9C,$86,"X",$AB
- $9E0A DEFM $16,$95,"No you don't! Crook!"  ; Speech
+; Speech
+ $9E0A DEFM $16,$95,"No you don't! Crook!"  
  $9E20 DEFM $13,"*+",$AF,"h",$E4,$B4,"@W",$00,$00,$B6,$82,$B7,$82,"/-.."
  $9E33 DEFM $04,$AD,"h",$E6
  $9E37 DEFM $05,$9C,$86,"X",$AB
- $9E3C DEFM $0C,$95,"Hey Reddy!" ; Speech
- $9E48 DEFM "3",$95,"Someone rang - There's a bomb at ",$FE,$03,"power station!" ; Speech
+; Speech
+ $9E3C DEFM $0C,$95,"Hey Reddy!"
+; Speech
+ $9E48 DEFM "3",$95,"Someone rang - There's a bomb at ",$FE,$03,"power station!" 
  $9E7B DEFM $02,$AE
  $9E7D DEFM $07,"TP",$99,$02,$60,$D5
  $9E84 DEFM $07,"*",$B3,"@_",$00,$01
  $9E8B DEFM $06,$92,"@V",$00,$00
- $9E91 DEFM $0E,$95,"NO VACANCIES" ; Speech
+; Speech
+ $9E91 DEFM $0E,$95,"NO VACANCIES"
  $9E9F DEFM $07,"*",$B3,"@_",$00,$00
- $9EA6 DEFM $1D,$95,"WANTED - CRIME PHOTOGRAPHER" ; Speech
+; Speech
+ $9EA6 DEFM $1D,$95,"WANTED - CRIME PHOTOGRAPHER" 
  $9EC3 DEFM $06,$92,"h",$E6,$00,$00
  $9EC9 DEFM $06,$9C,"h",$E6,"X",$AB
  $9ECF DEFM $12,$94,"*",$AF,"h",$E6,"-,",$91," enters",$FE,$05
- $9EE1 DEFM "\"",$95,$FE,$03,"job's yours! Say wh",$FE,$17,"you need?" ; Speech
+; Speech
+ $9EE1 DEFM "\"",$95,$FE,$03,"job's yours! Say wh",$FE,$17,"you need?" 
  $9F03 DEFM $06,$99,"@_",$00,$01
  $9F09 DEFM $02,"L"
  $9F0B DEFM $14,"Ntown square,square"
@@ -2643,17 +2690,22 @@ b$8711 DEFM $02,"L"
  $9F88 DEFM $09,"W",$BC,"X",$AD,$00,$01,$BF,$C5
  $9F91 DEFM $04,"TP",$9E
  $9F95 DEFM $05,"*",$AF,"h",$E3
- $9F9A DEFM $06,$95,"Uh",$FE,$05 ; Speech
+; Speech
+ $9F9A DEFM $06,$95,"Uh",$FE,$05
  $9FA0 DEFM $06,$92,"h",$F0,$00,$00
- $9FA6 DEFM $07,$95,"Shhh!" ; Speech
+; Speech
+ $9FA6 DEFM $07,$95,"Shhh!" 
  $9FAD DEFM $07,"*",$B3,"@W",$00,$00
  $9FB4 DEFM $06,$92,"h",$F0,$00,$00
- $9FBA DEFM $11,$95,"SHHH",$FE,$05," Villain!" ; Speech
+; Speech
+ $9FBA DEFM $11,$95,"SHHH",$FE,$05," Villain!" 
  $9FCB DEFM $07,"*",$B4,"@W",$00,$00
- $9FD2 DEFM $03,$95,$8E ; Speech
+; Speech
+ $9FD2 DEFM $03,$95,$8E 
  $9FD5 DEFM $03,$A8,$86
  $9FD8 DEFM $06,$92,"h",$F0,$00,$00
- $9FDE DEFM $0F,$95,"Wait ",$FE,$06,"moment" ; Speech
+; Speech
+ $9FDE DEFM $0F,$95,"Wait ",$FE,$06,"moment" 
  $9FED DEFM $0D,$94,$91," goes away"
  $9FFA DEFM $05,$9C,$86,"X",$A5
  $9FFF DEFM $02,$AB
@@ -2664,11 +2716,13 @@ b$8711 DEFM $02,"L"
  $A012 DEFM $0C,$94,"He returns"
  $A01E DEFM $03,$A6,$86
  $A021 DEFM $07,"TP",$99,$02,$60,$D5
- $A028 DEFM $0E,$95,"NO RIFF RAFF" ; Speech
+; Speech
+ $A028 DEFM $0E,$95,"NO RIFF RAFF" 
  $A036 DEFM $0A,"TP",$90,"P",$91,"P",$93,"P",$98
  $A040 DEFM $06,$9C,"h",$F0,"X",$AE
  $A046 DEFM $06,$92,"h",$F0,$00,$00
- $A04C DEFM "-",$95,"Just say who or wh",$FE,$17,"you want to know about!" ; Speech
+; Speech
+ $A04C DEFM "-",$95,"Just say who or wh",$FE,$17,"you want to know about!" 
  $A079 DEFM $02,"L"
  $A07B DEFM $0C,"Nbow street"
  $A087 DEFM $08,"W",$BC,"X",$AC,$00,$02,$BE
@@ -2688,10 +2742,12 @@ b$8711 DEFM $02,"L"
  $A0F7 DEFM $0C,$94,$91," ",$FE,$07,"escape"
  $A103 DEFM $06,"*",$B3,$86,"h",$E4
  $A109 DEFM $19,$94,")He contemplates escape"
- $A122 DEFM $16,$95,"@No! I'll do my time" ; Speech
+; Speech
+ $A122 DEFM $16,$95,"@No! I'll do my time" 
  $A138 DEFM $04,"TP",$9E
  $A13C DEFM $03,"*+"
- $A13F DEFM $03,$95,$8E ; Speech
+; Speech
+ $A13F DEFM $03,$95,$8E 
  $A142 DEFM $06,$99,"@Z@V"
  $A148 DEFM $03,$A6,$86
  $A14B DEFM $04,$A8,"h",$E7
@@ -2699,14 +2755,16 @@ b$8711 DEFM $02,"L"
  $A155 DEFM $12,$94,"A guard comes in"
  $A167 DEFM $07,"*",$B3,"@Z@V"
  $A16E DEFM $06,$92,"h",$E7,$00,$00
- $A174 DEFM $1A,$95,"Your cell needs padding!" ; Speech
+; Speech
+ $A174 DEFM $1A,$95,"Your cell needs padding!" 
  $A18E DEFM $06,$9C,"h",$E7,"X",$B0
  $A194 DEFM $06,$92,"@V",$00,$00
  $A19A DEFM $0B,$94,"He leaves"
  $A1A5 DEFM $04,$A7,"h",$E7
  $A1A9 DEFM $02,"*"
  $A1AB DEFM $06,$92,"h",$E7,$00,$00
- $A1B1 DEFM $1D,$95,"You're not ",$FE,$03,"one we jailed!" ; Speech
+; Speech
+ $A1B1 DEFM $1D,$95,"You're not ",$FE,$03,"one we jailed!" 
  $A1CE DEFM $06,$9C,"@VX",$B0
  $A1D4 DEFM $06,$9C,"h",$E7,"X",$B0
  $A1DA DEFM $06,$92,"@V",$00,$00
@@ -2775,8 +2833,10 @@ b$8711 DEFM $02,"L"
  $A3C3 DEFM $0E,$94,"(",$91," gives ",$FE,$03,$8B
  $A3D1 DEFM $08,$94,"@",$8C," ",$FE,$03,$8D
  $A3D9 DEFM $06,$92,"h",$EA,$00,$00
- $A3DF DEFM $10,$95,$FE,$03,"stolen vase!" ; Speech
- $A3EF DEFM $1B,$95,"Have this book as reward!" ; Speech
+; Speech
+ $A3DF DEFM $10,$95,$FE,$03,"stolen vase!"
+; Speech
+ $A3EF DEFM $1B,$95,"Have this book as reward!" 
  $A40A DEFM $06,$9C,$60,$D4,"@V"
  $A410 DEFM $02,"L"
  $A412 DEFM $0D,"Nback street"
@@ -2787,7 +2847,8 @@ b$8711 DEFM $02,"L"
  $A43D DEFM $05,"*",$B2,$60,$D0
  $A442 DEFM $05,$9C,"h",$EA,$85
  $A447 DEFM $06,$92,"h",$EA,$00,$00
- $A44D DEFM $12,$95,"Sorry no cameras" ; Speech
+; Speech
+ $A44D DEFM $12,$95,"Sorry no cameras" 
  $A45F DEFM $05,$9C,$86,"X",$B9
  $A464 DEFM $06,$92,"@V",$00,$00
  $A46A DEFM $0B,$94,"He leaves"
@@ -2823,7 +2884,8 @@ b$8711 DEFM $02,"L"
  $A57D DEFM $0F,"*",$AF,"h",$E5,$B4,$00,$05,"@h",$AF,"h",$F1,".."
  $A58C DEFM $06,$99,"@h",$00,$05
  $A592 DEFM $06,$92,"h",$F1,$00,$00
- $A598 DEFM $10,$95,"No! I'll shoot" ; Speech
+; Speech
+ $A598 DEFM $10,$95,"No! I'll shoot" 
  $A5A8 DEFM $09,"*",$AF,"h",$E5,$AF,"h",$F1,"."
  $A5B1 DEFM $06,$98,"BANG"
  $A5B7 DEFM $15,$94,"Prof shoots Lesley!"
@@ -2833,7 +2895,8 @@ b$8711 DEFM $02,"L"
  $A5F8 DEFM $02,$A0
  $A5FA DEFM $0D,"TP",$93,$02,$60,$DD,$60,$DE,$60,$DF,$60,$E0
  $A607 DEFM $05,"*",$B2,$82,"-"
- $A60C DEFM $08,$96,"Wh",$FE,$17,$8B,"?" ; Blocking message
+; Blocking message
+ $A60C DEFM $08,$96,"Wh",$FE,$17,$8B,"?" 
  $A614 DEFM $05,"*",$AF,"h",$F1
  $A619 DEFM $05,$9C,$82,"h",$F1
  $A61E DEFM $11,$94,"Prof steals ",$FE,$03,$8B
@@ -2846,7 +2909,8 @@ b$8711 DEFM $02,"L"
  $A659 DEFM $02,$AC
  $A65B DEFM $02,"*"
  $A65D DEFM $13,$94,$91," defuses ",$FE,$03,"bomb!"
- $A670 DEFM $18,$95,"Shucks! It was nothing" ; Speech
+; Speech
+ $A670 DEFM $18,$95,"Shucks! It was nothing" 
  $A688 DEFM $05,$98,"THE"
  $A68D DEFM $05,$98,"END"
  $A692 DEFM $02,$A0
@@ -2865,12 +2929,14 @@ b$8711 DEFM $02,"L"
  $A6E7 DEFM $09,"W",$BC,"X",$BE,$00,$01,$C1,$C5
  $A6F0 DEFM $09,"TP",$94,$03,$D2,$04,"h",$F1
  $A6F9 DEFM $05,"*",$B2,$82,"-"
- $A6FE DEFM $0A,$96,$8A," wh",$FE,$17,$8B,"?" ; Blocking message
+; Blocking message
+ $A6FE DEFM $0A,$96,$8A," wh",$FE,$17,$8B,"?" 
  $A708 DEFM $02,"*"
  $A70A DEFM $0E,$94,$91," ",$8A,"s him ",$FE,$03,$8B
  $A718 DEFM $06,$92,"h",$F1,$00,$00
  $A71E DEFM $04,$9C,$82,$85
- $A722 DEFM $04,$95,$FE,"!" ; Speech
+; Speech
+ $A722 DEFM $04,$95,$FE,"!" 
  $A726 DEFM $04,$A8,"@V"
  $A72A DEFM $02,$AB
  $A72C DEFM $06,$92,"@V",$00,$0A
@@ -2880,12 +2946,15 @@ b$8711 DEFM $02,"L"
  $A73D DEFM $04,$A7,"@V"
  $A741 DEFM $06,$99,"@Z",$00,$00
  $A747 DEFM $0B,"*",$B3,$82,$60,$DA,"-",$B9,$00,$1E,"."
- $A752 DEFM $0F,$95,"Radio active!" ; Speech
+; Speech
+ $A752 DEFM $0F,$95,"Radio active!" 
  $A761 DEFM $06,$99,"@Z",$00,$01
  $A767 DEFM $0D,"*",$B3,$82,$60,$DA,"-",$B3,"@Z",$00,$00,"."
- $A774 DEFM $08,$95,"Just ",$8B ; Speech
+; Speech
+ $A774 DEFM $08,$95,"Just ",$8B 
  $A77C DEFM $06,"*",$B3,$82,$60,$DA
- $A782 DEFM $07,$95,"My ",$8B,"!" ; Speech
+; Speech
+ $A782 DEFM $07,$95,"My ",$8B,"!" 
  $A789 DEFM $06,$9C,$60,$DA,"h",$F1
  $A78F DEFM $02,"L"
  $A791 DEFM $09,"N",$FE,$03,"sewer"
@@ -2921,12 +2990,14 @@ b$8711 DEFM $02,"L"
  $A885 DEFM $09,"W",$BC,"X",$C4,$00,$01,$C1,$C5
  $A88E DEFM $09,"TP",$94,$03,$D2,$04,"h",$E9
  $A897 DEFM $05,"*",$B2,$82,"-"
- $A89C DEFM $0A,$96,$8A," wh",$FE,$17,$8B,"?" ; Blocking message
+; Blocking message
+ $A89C DEFM $0A,$96,$8A," wh",$FE,$17,$8B,"?" 
  $A8A6 DEFM $02,"*"
  $A8A8 DEFM $0E,$94,$91," ",$8A,"s him ",$FE,$03,$8B
  $A8B6 DEFM $06,$92,"h",$E9,$00,$00
  $A8BC DEFM $04,$9C,$82,$85
- $A8C0 DEFM $04,$95,$FE,"!" ; Speech
+; Speech
+ $A8C0 DEFM $04,$95,$FE,"!" 
  $A8C4 DEFM $04,$A8,"@V"
  $A8C8 DEFM $02,$AB
  $A8CA DEFM $06,$92,"@V",$00,$0A
@@ -2935,15 +3006,18 @@ b$8711 DEFM $02,"L"
  $A8D8 DEFM $03,"*+"
  $A8DB DEFM $04,$A7,"@V"
  $A8DF DEFM $07,"*",$B3,$82,$60,$DA,"-"
- $A8E6 DEFM $04,$95,$FE," " ; Speech
+; Speech
+ $A8E6 DEFM $04,$95,$FE," " 
  $A8EA DEFM $06,"*",$B3,$82,$60,$DA
- $A8F0 DEFM $16,$95,"Traces of explosive!" ; Speech
+; Speech
+ $A8F0 DEFM $16,$95,"Traces of explosive!" 
  $A906 DEFM $02,"L"
  $A908 DEFM $0D,"N",$FE,$03,"warehouse"
  $A915 DEFM $09,"W",$BC,"X",$C7,$00,$02,$C1,$C5
  $A91E DEFM $04,"TP",$98
  $A922 DEFM $10,"*",$B3,$82,"X",$C6,$B3,$82,$00,$00,"/",$B2,$60,$E2,"-."
- $A932 DEFM $09,$95,"A vase!" ; Speech
+; Speech
+ $A932 DEFM $09,$95,"A vase!" 
  $A93B DEFM $06,$9C,$60,$E2,"X",$C6
  $A941 DEFM $02,"L"
  $A943 DEFM $0E,"N",$FE,$03,"docks,dock"
@@ -6393,7 +6467,7 @@ c$D2E5 LD IX,$D1E3   ; Point #REGix at the text buffer (#R$D1E3)
 ; 
 ; A Macro to process
 ; IX Pointer to text output buffer
-c$D30E CP $FE        ; Is this #N$FE / #N$FF / 00?
+c$D30E CP $FE        ; Is this a text substitution? (#N$FE / #N$FF)
  $D310 JR NC,$D352   ; Jump forward if it is
  $D312 AND $7F       ; Switch off bit 7
  $D314 LD HL,$8106   ; { Subtract 9 to get the real macro definition
