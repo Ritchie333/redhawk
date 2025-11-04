@@ -7499,7 +7499,7 @@ c$DA73 CALL $CB96    ;
  $DA76 CALL $CB10    ;
  $DA79 CP $2A        ;
  $DA7B JR NZ,$DAC2   ;
-*$DA7D CALL $D9A9    ;
+*$DA7D CALL $D9A9    ; Process logic
  $DA80 JR NC,$DA8E   ;
  $DA82 LD A,($D51F)  ;
  $DA85 PUSH AF       ; { Run the command
@@ -8106,13 +8106,15 @@ c$DF58 LD A,$00      ; { Set the flag (#R$BFDB) and return
 ;
 ; Used by the routines at #R$DC07, #R$DC0F, #R$DC17, #R$DC24, #R$DC7E, #R$DD9B
 ; and #R$DFBE.
+; .
+; Return with carry flag set if everything okay, otherwise reset
 c$DF5E LD IX,($C8D2) ; Point #REGix at the current data item being looked at (#R$C8D2)
  $DF62 LD A,(IX+$01) ; Get the second byte
  $DF65 CP $2A        ; Is it #N$2A (ie: asterisk)?
  $DF67 JR NZ,$DF71   ; If not, this is just text, no actions
  $DF69 CALL $CB10    ; Process next character
- $DF6C CALL $D9A9    ;
- $DF6F JR NC,$DF76   ;
+ $DF6C CALL $D9A9    ; Process logic
+ $DF6F JR NC,$DF76   ; Bail out if there was an error
 *$DF71 CALL $D2E5    ; Expand any macros
  $DF74 SCF           ; { Set the carry flag and return 
  $DF75 RET           ; }
@@ -8637,11 +8639,11 @@ c$E30D CALL $E398    ;
 ; The event has all the information and should be fired now
  $E35B LD A,($E14B)  ; Get the stored data ID
  $E35E CALL $CA3C    ; Store this
- $E361 CALL $D9A9    ;
- $E364 JR C,$E36D    ;
+ $E361 CALL $D9A9    ; Process logic
+ $E364 JR C,$E36D    ; Jump forward if this was successful
 *$E366 CALL $E38A    ;
  $E369 JR NC,$E36F   ;
- $E36B JR $E312      ;
+ $E36B JR $E312      ; Loop back for the next event
 *$E36D SCF           ; { Set the carry flag indicating success
  $E36E RET           ; }
 *$E36F SCF           ; { Clear the carry flag indicating data not found
@@ -8707,8 +8709,8 @@ c$E398 LD HL,($E146) ;
 c$E3CC LD A,($C8C8)  ;
  $E3CF SUB $01       ;
  $E3D1 LD ($E14C),A  ;
- $E3D4 LD HL,$FFFF   ;
- $E3D7 LD ($E14D),HL ;
+ $E3D4 LD HL,$FFFF   ; { Set no data for timed event (#R$E14D)
+ $E3D7 LD ($E14D),HL ; }
 *$E3DA LD C,$13      ; Select data table #N$13
  $E3DC LD A,($E14C)  ;
  $E3DF LD B,A        ;
@@ -8730,16 +8732,16 @@ c$E3CC LD A,($C8C8)  ;
  $E406 JR Z,$E40A    ; { Skip the code if the event hasn't occured yet
  $E408 JR NC,$E430   ; }
 ; An event should occur now
-*$E40A LD IX,$E14D   ;
+*$E40A LD IX,$E14D   ; Point #REGix at the previous data
  $E40E LD IY,$C8BE   ; Point #REGiy at the extracted data
- $E412 LD H,(IX+$00) ;
- $E415 LD L,(IX+$01) ;
- $E418 LD D,(IY+$00) ;
- $E41B LD E,(IY+$01) ;
- $E41E SCF           ;
+ $E412 LD H,(IX+$00) ; { Get the previous data items
+ $E415 LD L,(IX+$01) ; }
+ $E418 LD D,(IY+$00) ; { Get the new data items
+ $E41B LD E,(IY+$01) ; }
+ $E41E SCF           ; { Calculate the elapsed length
  $E41F CCF           ;
- $E420 SBC HL,DE     ;
- $E422 JR C,$E430    ;
+ $E420 SBC HL,DE     ; }
+ $E422 JR C,$E430    ; 
  $E424 LD HL,($C8BE) ;
  $E427 LD ($E14D),HL ;
  $E42A LD A,($E14C)  ;
@@ -10674,10 +10676,10 @@ c$F32C LD HL,$4056   ; { Clear 8 characters starting at #N$4056
  $F3AE ADD A,E       ;
  $F3AF ADD A,$B0     ;
  $F3B1 LD ($FAC8),A  ;
- $F3B4 LD HL,$F300   ;
+ $F3B4 LD HL,$F300   ; { Copy this to the working graphic buffer
  $F3B7 LD DE,$F93B   ;
  $F3BA LD BC,$0008   ;
- $F3BD LDIR          ;
+ $F3BD LDIR          ; }
  $F3BF JP $FAF7      ;
 
 ; Data block at F3C2
@@ -10770,7 +10772,7 @@ c$F3C5 CALL $F83F    ; Put the sprites in the panel
  $F486 PUSH BC       ;
  $F487 LD DE,$0901   ;
  $F48A LD A,($F3C4)  ;
- $F48D CALL $EBC8    ;
+ $F48D CALL $EBC8    ; Fill the background
  $F490 LD HL,($D3AA) ;
  $F493 LD DE,($F529) ;
  $F497 LD D,$00      ;
@@ -10795,7 +10797,7 @@ c$F3C5 CALL $F83F    ; Put the sprites in the panel
  $F4BD POP BC        ;
  $F4BE LD DE,$0901   ;
  $F4C1 LD A,($F3C4)  ;
- $F4C4 CALL $EBC8    ;
+ $F4C4 CALL $EBC8    ; Fill the attribute
  $F4C7 LD A,($F3C3)  ;
  $F4CA CP $0B        ;
  $F4CC JR Z,$F4D3    ;
@@ -10820,7 +10822,7 @@ c$F3C5 CALL $F83F    ; Put the sprites in the panel
  $F4FB POP BC        ;
  $F4FC LD DE,$0901   ;
  $F4FF LD A,($F3C4)  ;
- $F502 CALL $EBC8    ;
+ $F502 CALL $EBC8    ; Fill in the attribute
  $F505 LD A,($F3C3)  ;
  $F508 CP $0B        ;
  $F50A JR Z,$F511    ;
@@ -10832,7 +10834,7 @@ c$F3C5 CALL $F83F    ; Put the sprites in the panel
  $F516 LD A,H        ;
  $F517 ADD A,$48     ;
  $F519 LD H,A        ;
- $F51A CALL $F51E    ;
+ $F51A CALL $F51E    ; Draw the box
  $F51D RET           ;
 
 ; Draw a box
@@ -11619,17 +11621,17 @@ c$FBD1 LD HL,($FAC3) ;
 ; H x co-ordinate
 ; L y co-ordinate
 ; DE On return, holds the screen address to draw at
-c$FC96 LD A,L        ;
- $FC97 AND $C0       ;
- $FC99 RRA           ;
+c$FC96 LD A,L        ; Put the y co-ordinate in #REGa
+ $FC97 AND $C0       ; Take the top two bits
+ $FC99 RRA           ; 
  $FC9A SCF           ;
  $FC9B RRA           ;
- $FC9C RRCA          ;
- $FC9D XOR L         ;
- $FC9E AND $F8       ;
- $FCA0 XOR L         ;
- $FCA1 LD D,A        ;
- $FCA2 LD A,H        ;
+ $FC9C RRCA          ; 
+ $FC9D XOR L         ; 
+ $FC9E AND $F8       ; 
+ $FCA0 XOR L         ; 
+ $FCA1 LD D,A        ; Store the high byte
+ $FCA2 LD A,H        ; Put the x co-ordinate in #REGa
  $FCA3 RLCA          ;
  $FCA4 RLCA          ;
  $FCA5 RLCA          ;
@@ -11638,8 +11640,8 @@ c$FC96 LD A,L        ;
  $FCA9 XOR L         ;
  $FCAA RLCA          ;
  $FCAB RLCA          ;
- $FCAC LD E,A        ;
- $FCAD RET           ;
+ $FCAC LD E,A        ; Store the low byte
+ $FCAD RET           ; All done
 
 ; Attributes to use for big text panel
 b$FCAE DEFB $28,$30,$18,$20
@@ -11684,34 +11686,34 @@ c$FCB4 PUSH IY       ;
  $FD00 LD ($FCB2),HL ;
 *$FD03 LD HL,($FCB2) ;
  $FD06 LD A,(HL)     ;
- $FD07 LD BC,$0216   ;
+ $FD07 LD BC,$0216   ; { Fill the background
  $FD0A LD DE,$090B   ;
- $FD0D CALL $EBC8    ;
+ $FD0D CALL $EBC8    ; }
  $FD10 POP IX        ;
  $FD12 POP IY        ;
  $FD14 RET           ;
 
-; Draw a block stripes across the screen
+; Draw a block of stripes across the screen
 ;
 ; Used by the routines at #R$DB34 and #R$FD93.
 ;
 ; HL Start address
 ; BC Length
-c$FD15 PUSH HL       ;
- $FD16 POP DE        ;
- $FD17 INC DE        ;
- $FD18 LD A,$04      ;
- $FD1A LD ($F308),A  ;
-*$FD1D LD A,$00      ;
- $FD1F CALL $FD34    ;
- $FD22 LD A,$FF      ;
- $FD24 CALL $FD34    ;
- $FD27 LD A,($F308)  ;
- $FD2A SUB $01       ;
- $FD2C LD ($F308),A  ;
- $FD2F CP $00        ;
- $FD31 JR NZ,$FD1D   ;
- $FD33 RET           ;
+c$FD15 PUSH HL       ; { Copy the start address to #REGde
+ $FD16 POP DE        ; }
+ $FD17 INC DE        ; Move forward one character
+ $FD18 LD A,$04      ; { Set four sets of rows to draw
+ $FD1A LD ($F308),A  ; }
+*$FD1D LD A,$00      ; { Draw empty pixels
+ $FD1F CALL $FD34    ; }
+ $FD22 LD A,$FF      ; { Draw full pixels
+ $FD24 CALL $FD34    ; }
+ $FD27 LD A,($F308)  ; { Decrement count left by 1
+ $FD2A SUB $01       ; 
+ $FD2C LD ($F308),A  ; }
+ $FD2F CP $00        ; { Loop until everything has been drawn
+ $FD31 JR NZ,$FD1D   ; }
+ $FD33 RET           ; All done
 
 ; Fill a line on screen with a byte
 ;
@@ -11721,17 +11723,17 @@ c$FD15 PUSH HL       ;
 ; DE Start address + 1. On exit, points to the next line
 ; BC Length
 ; A Byte to fill with
-c$FD34 LD (HL),A     ;
- $FD35 PUSH BC       ;
+c$FD34 LD (HL),A     ; Write the byte
+ $FD35 PUSH BC       ; { Copy this
  $FD36 PUSH HL       ;
  $FD37 PUSH DE       ;
  $FD38 LDIR          ;
  $FD3A POP DE        ;
  $FD3B POP HL        ;
- $FD3C POP BC        ;
- $FD3D INC H         ;
- $FD3E INC D         ;
- $FD3F RET           ;
+ $FD3C POP BC        ; }
+ $FD3D INC H         ; { Move forward a row in source and destination
+ $FD3E INC D         ; }
+ $FD3F RET           ; All done
 
 ; Data for clearing the input area
 b$FD40 DEFB $49,$59,$0F,$0F,$49,$59,$0F,$5F
@@ -11890,9 +11892,9 @@ c$FD93 LD HL,$4000   ; { Clear the screen
  $FECD LD ($FAC6),A  ;
  $FED0 CALL $FADD    ; Draw it
  $FED3 LD BC,$0001   ;
- $FED6 LD DE,$1F18   ;ß
+ $FED6 LD DE,$1F18   ;
  $FED9 LD A,$38      ;
- $FEDB CALL $EBC8    ;
+ $FEDB CALL $EBC8    ; Fill in the background
  $FEDE LD A,$B0      ;
  $FEE0 LD ($E461),A  ;
  $FEE3 LD A,$10      ;
