@@ -5806,9 +5806,14 @@ b$CD62 DEFW $0000
 ; Data block at CD64
 b$CD64 DEFB $00,$00
 
-; Data block at CD66
-b$CD66 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $CD6E DEFB $00,$00,$00,$00,$00,$00
+; Macro lookup table
+b$CD66 DEFW $0000
+ $CD68 DEFW $0000
+ $CD6A DEFW $0000
+ $CD6C DEFW $0000
+ $CD6E DEFW $0000
+ $CD70 DEFW $0000
+ $CD72 DEFW $0000
 
 ; Data block at CD74
 b$CD74 DEFB $44,$41,$50,$56,$4C,$4F,$43
@@ -5831,12 +5836,12 @@ b$CD7E DEFB $12,$74,$68,$65,$2C,$74,$68,$65
 ; Data block at CDA0
 b$CDA0 DEFB $02,$00,$03,$01,$02,$02,$02
 
-; Pointer to queue (?)
+; Pointer to current command processing buffer position
 ;
 ; This points to a location in the buffer at #R$CDA9
 w$CDA7 DEFW $0000
 
-; Data block at CDA9
+; Command processing buffer
 b$CDA9 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $CDB1 DEFB $00,$00,$00,$00,$00
  
@@ -6066,14 +6071,16 @@ c$CF46 LD HL,$C8EC   ; { Increment running count of characters
  $CF4F LD A,(IX+$00) ;
  $CF52 JR $CF46      ; }
 
-; Routine at CF54
+; Set an offset in the command processing buffer
 ;
 ; Used by the routines at #R$CDB6, #R$CEAA and #R$CFCA.
-c$CF54 LD HL,($CDA7) ;
- $CF57 LD (HL),A     ;
- $CF58 LD HL,$CDA7   ;
+;
+; A The low byte of the address to set, minus 1
+c$CF54 LD HL,($CDA7) ; Point #REGhl at the offset pointer
+ $CF57 LD (HL),A     ; Set the value
+ $CF58 LD HL,$CDA7   ; { Increment it and return
  $CF5B INC (HL)      ;
- $CF5C RET           ;
+ $CF5C RET           ; }
 
 ; Set up a command for processing
 ;
@@ -6185,11 +6192,11 @@ c$CFCA LD A,$00      ;
  $D05C LD E,A        ;
  $D05D JR $D07B      ;
 ; An entry has been found in tables B - F
-*$D05F LD BC,($CDB3) ;
- $D063 LD HL,$8105   ;
- $D066 ADD HL,BC     ;
- $D067 ADD A,(HL)    ;
- $D068 LD ($C8BB),A  ;
+*$D05F LD BC,($CDB3) ; Put the table type in #REGbc
+ $D063 LD HL,$8105   ; { Add the base address of the offset table (#R$8106)
+ $D066 ADD HL,BC     ; }
+ $D067 ADD A,(HL)    ; { Add the offset found to the entry and store it
+ $D068 LD ($C8BB),A  ; }
  $D06B PUSH AF       ;
  $D06C LD HL,$8114   ;
  $D06F ADD HL,BC     ;
@@ -6234,10 +6241,10 @@ c$CFCA LD A,$00      ;
  $D0B1 LD A,($C8BB)  ;
  $D0B4 INC HL        ;
  $D0B5 LD (HL),A     ;
- $D0B6 LD HL,$CD66   ;
+ $D0B6 LD HL,$CD66   ; Point #REGhl at the macro lookup table (#R$CD66)
  $D0B9 ADD HL,BC     ;
  $D0BA LD A,($C8CC)  ;
- $D0BD LD (HL),A     ;
+ $D0BD LD (HL),A     ; Set it
  $D0BE INC HL        ;
  $D0BF LD A,($C8EA)  ;
  $D0C2 LD (HL),A     ;
@@ -6303,15 +6310,15 @@ c$D103 CALL $D120    ;
 ; Used by the routine at #R$D103
 ;.
 ; Returns with the carry flag set if the parameters are okay
-c$D120 LD HL,($CDA7) ;
- $D123 LD DE,$CDA9   ;
+c$D120 LD HL,($CDA7) ; Point #REGhl at the current place in the command buffer
+ $D123 LD DE,$CDA9   ; Point #REGde at the sart of the command buffer
  $D126 JR NC,$D129   ;
  $D128 CCF           ;
 *$D129 SBC HL,DE     ;
  $D12B JR Z,$D177    ;
  $D12D LD A,$00      ;
  $D12F LD ($D1E2),A  ;
- $D132 LD IY,$CDA9   ;
+ $D132 LD IY,$CDA9   ; Point #REGiy at the start of the command buffer
 *$D136 LD A,($C8CE)  ;
  $D139 CP $00        ;
  $D13B JR NZ,$D185   ;
@@ -6476,27 +6483,29 @@ c$D30E CP $FE        ; Is this a text substitution? (#N$FE / #N$FF)
  $D31A JP Z,$D3AC    ;
  $D31D CP $08        ;
  $D31F JP Z,$D3B3    ;
- $D322 SLA A         ;
- $D324 LD E,A        ;
- $D325 LD D,$00      ;
- $D327 LD IY,$CD66   ;
- $D32B ADD IY,DE     ;
- $D32D LD A,(IY+$01) ;
- $D330 LD ($D2E4),A  ;
- $D333 CP $00        ;
- $D335 JR Z,$D303    ;
- $D337 LD A,(IY+$00) ;
- $D33A LD E,A        ;
- $D33B LD IY,$C277   ;
- $D33F ADD IY,DE     ;
-*$D341 LD A,(IY+$00) ;
- $D344 INC IY        ;
- $D346 LD (IX+$00),A ;
- $D349 INC IX        ;
- $D34B LD HL,$D2E4   ;
- $D34E DEC (HL)      ;
- $D34F JR NZ,$D341   ;
- $D351 RET           ;
+; This is a custom macro based on a command
+ $D322 SLA A         ; otherwise double it to get a word offset
+ $D324 LD E,A        ; { Put this in #REGde
+ $D325 LD D,$00      ; }
+ $D327 LD IY,$CD66   ; Point #REGiy to the macro lookups (#R$CD66)
+ $D32B ADD IY,DE     ; Add the appropriate offset
+ $D32D LD A,(IY+$01) ; { Get the second byte found (length) and store it
+ $D330 LD ($D2E4),A  ; }
+ $D333 CP $00        ; Is there an action here?
+ $D335 JR Z,$D303    ; Jump back if there isn't
+; A macro has been found, and should be processed
+ $D337 LD A,(IY+$00) ; Get the first byte
+ $D33A LD E,A        ; Put this in #REGde
+ $D33B LD IY,$C277   ; { Add the base address of the input buffer (#R$C277)
+ $D33F ADD IY,DE     ; }
+*$D341 LD A,(IY+$00) ; Get the byte found
+ $D344 INC IY        ; Move to the next place in the input buffer
+ $D346 LD (IX+$00),A ; Store this in the output buffer
+ $D349 INC IX        ; Move to the next place in the output buffer
+ $D34B LD HL,$D2E4   ; { Decrement the count of bytes processed
+ $D34E DEC (HL)      ; }
+ $D34F JR NZ,$D341   ; Jump back while there is more to do
+ $D351 RET           ; Otherwise done
 
 ; Substitute macro text from data table 9
 ;
